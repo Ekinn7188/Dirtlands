@@ -1,0 +1,40 @@
+Npc Ids:
+  '0':
+    inventory: 0
+  '1':
+    inventory: 1
+inventories:
+  '0':
+    inventory name: "&edirt shop"
+    inventory size: 9
+    slots:
+      '0':
+        block: minecraft:dirt
+        name: cq
+        lore: "first line of lore \n second line of lore \n third line"
+        cost: 100
+      '1':
+        block: minecraft:coarse_dirt
+        name: jj
+        lore: "first line of lore \n second line of lore \n third line"
+        inventory: 1
+      default:
+        block: minecraft:black_stained_glass_pane
+        name: "&0"
+  '1':
+    inventory name: "<rainbow>tool shop"
+    inventory size: 54
+    slots:
+      '0':
+        block: minecraft:diamond_shovel
+        name: "cq"
+        lore: "first line of lore \n second line of lore \n third line"
+        sell: 100
+      '1':
+        block: minecraft:diamond_pickaxe
+        name: "jj"
+        lore: "first line of lore \n second line of lore \n third line"
+        inventory: 0
+      default:
+        block: minecraft:black_stained_glass_pane
+        name: "&0"
