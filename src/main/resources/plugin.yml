@@ -1,0 +1,80 @@
+name: Dirtlands
+version: 1.0
+api-version: 1.17
+description: Dirt (Requires WorldGuard and LuckPerms)
+depend: [WorldGuard, LuckPerms, ProtocolLib]
+author: Jeeper_
+main: net.dirtlands.Main
+commands:
+  setspawn:
+    description: Set the world spawn!
+  spawn:
+    description: Teleports you to spawn!
+  dirtlands:
+    description: dirtlands command that branches out to other server-related commands
+  nickname:
+    description: gives the player a nickname!
+    aliases: nick
+  warp:
+    description: Teleports the player to a warp!
+  setwarp:
+    description: Create a warp!
+  delwarp:
+    description: Delete a warp!
+  warps:
+    description: List all the warps!
+  home:
+    description: Teleport to your home!
+  sethome:
+    description: Set a home!
+  delhome:
+    description: Delete your home!
+  homes:
+    description: List all your homes!
+  broadcast:
+    description: Lets the user broadcast a message!
+  clearchat:
+    description: Clears the chat!
+    aliases: cc
+  mutechat:
+    description: Mutes the chat!
+  npc:
+    description: a link to all the npc-related commands
+permissions:
+  dirtlands.setspawn:
+    description: allows use of the setspawn command
+    default: op
+  dirtlands.dirtlands:
+    description: gives access to server-related commands
+    default: op
+  dirtlands.nickname:
+    description: gives the player access to change their nickanme!
+    default: op
+  dirtlands.warps.set:
+    description: gives the player permission to create a warp
+    default: op
+  dirtlands.warps.delete:
+    description: deletes a warp!
+    default: op
+  dirtlands.sethome:
+    description: gives the player access to set a home. dirtlands.sethome.# will give the player access to creating multiple homes
+    default: true
+  dirtlands.chat.color:
+    description: lets the player use colored text
+    default: op
+  dirtlands.broadcast:
+    description: gives access to the broadcast command
+    default: op
+  dirtlands.chat.clear:
+    description: gives access to the clearchat command
+    default: op
+  dirtlands.chat.mute:
+    description: gives access to the mutechat command
+    default: op
+  dirtlands.chat.bypass:
+    description: bypasses muted chat!
+    default: op
+  dirtlands.npc:
+    description: gives access to the npc-related commands!
+    default: op
+
