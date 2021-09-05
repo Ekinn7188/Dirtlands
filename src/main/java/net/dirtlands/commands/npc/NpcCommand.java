@@ -36,6 +36,7 @@ public class NpcCommand extends PluginCommand {
             switch (args[0].toLowerCase()){
                 case "create":
                     Main.getPlugin().getNpc().spawn(player.getLocation(), new ArrayList<>(Bukkit.getOnlinePlayers()));
+                    selectNearestNPC(player);
                     break;
                 case "select":
                     selectNearestNPC(player);

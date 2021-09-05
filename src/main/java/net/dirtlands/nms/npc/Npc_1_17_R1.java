@@ -5,15 +5,10 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
-import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
-import net.dirtlands.Main;
 import net.dirtlands.files.Npcs;
 import net.dirtlands.tools.LocationTools;
 import net.minecraft.network.protocol.game.*;
-import net.minecraft.network.syncher.DataWatcher;
-import net.minecraft.network.syncher.DataWatcherObject;
 import net.minecraft.network.syncher.DataWatcherRegistry;
-import net.minecraft.network.syncher.DataWatcherSerializer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.EntityPlayer;
 import net.minecraft.server.level.WorldServer;
@@ -26,7 +21,6 @@ import org.bukkit.craftbukkit.v1_17_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
 import java.io.InputStreamReader;
-import java.lang.reflect.Field;
 import java.net.URL;
 import java.util.List;
 import java.util.UUID;
@@ -43,7 +37,6 @@ public class Npc_1_17_R1 implements Npc {
         NPC.add(npc);
         npc.setLocation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
 
-        npc.getDataWatcher().set(DataWatcherRegistry.a.a(17), (byte)127);
         for (Player p : visibility) {
             addNPCPacket(npc, p);
         }
@@ -80,80 +73,20 @@ public class Npc_1_17_R1 implements Npc {
         }
         npc.getProfile().getProperties().put("textures", new Property("textures", texture, signature));
 
-//        npc.getDataWatcher().set(DataWatcherRegistry.a.a(17), (byte)127);
+        npc.getDataWatcher().set(DataWatcherRegistry.a.a(17), (byte) 127);
 
-        // Create Field object
-        Field privateField = null;
-        try {
-            privateField = DataWatcher.class.getDeclaredField("f");
-            privateField.setAccessible(true);
-            var map = (Int2ObjectMap<DataWatcher.Item<?>>) privateField.get(npc.getDataWatcher());
-            Bukkit.getLogger().info("Before set");
-            for (Int2ObjectMap.Entry<DataWatcher.Item<?>> entry : map.int2ObjectEntrySet()) {
-                var item = entry.getValue();
-                Bukkit.getLogger().info(entry.getIntKey() +": "+item+" [a: "+item.a()+", b: "+item.b()+", c: "+item.c()+"]");
-            }
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            e.printStackTrace();
+        for (Player p : players) {
+            addNPCPacket(npc, p);
         }
-
-        // Set the accessibility as true
-
-        // Store the value of private field in variable
-
-
-        npc.getDataWatcher().set(
-                new MyDataWatcher<>(17, DataWatcherRegistry.a),
-                (byte) 127);
-
-        if (privateField != null) {
-            try {
-                Bukkit.getLogger().info("After set");
-                var map = (Int2ObjectMap<DataWatcher.Item<?>>) privateField.get(npc.getDataWatcher());
-                for (Int2ObjectMap.Entry<DataWatcher.Item<?>> entry : map.int2ObjectEntrySet()) {
-                    var item = entry.getValue();
-                    var a = item.a();
-                    Bukkit.getLogger().info(entry.getIntKey() +": "+item+" [a: "+item.a()+", b: "+item.b()+", c: "+item.c()+"]");
-                }
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            }
-        }
-
-
-        //no idea what to do
-        Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(Main.getPlugin(), new Runnable() {
-            @Override
-            public void run() {
-                for (Player p : players) {
-                    addNPCPacket(npc, p);
-                }
-            }
-        }, 5L);
 
         return true;
     }
 
     private void addNPCPacket(EntityPlayer npc, Player p) {
         PlayerConnection connection = ((CraftPlayer) p).getHandle().b;
-
-        Field privateField = null;
-        try {
-            privateField = DataWatcher.class.getDeclaredField("f");
-            privateField.setAccessible(true);
-            var map = (Int2ObjectMap<DataWatcher.Item<?>>) privateField.get(npc.getDataWatcher());
-            Bukkit.getLogger().info("Before Send");
-            for (Int2ObjectMap.Entry<DataWatcher.Item<?>> entry : map.int2ObjectEntrySet()) {
-                var item = entry.getValue();
-                Bukkit.getLogger().info(entry.getIntKey() +": "+item+" [a: "+item.a()+", b: "+item.b()+", c: "+item.c()+"]");
-            }
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            e.printStackTrace();
-        }
-
         connection.sendPacket(new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.a, npc));
-        connection.sendPacket(new PacketPlayOutEntityMetadata(npc.getId(), npc.getDataWatcher(), false));
         connection.sendPacket(new PacketPlayOutNamedEntitySpawn(npc));
+        connection.sendPacket(new PacketPlayOutEntityMetadata(npc.getId(), npc.getDataWatcher(), true));
         connection.sendPacket(new PacketPlayOutEntityHeadRotation(npc, (byte) (npc.getBukkitYaw() * 256 / 360)));
     }
 
@@ -161,29 +94,4 @@ public class Npc_1_17_R1 implements Npc {
         PlayerConnection connection = ((CraftPlayer) player).getHandle().b;
         connection.sendPacket(new PacketPlayOutEntityDestroy(npc.getId()));
     }
-
-    private static final class MyDataWatcher <T> extends DataWatcherObject<T> {
-        public MyDataWatcher(int id, DataWatcherSerializer<T> dataType) {
-            super(id, dataType);
-        }
-
-        @Override
-        public int a() {
-            new Exception().printStackTrace();
-            return super.a();
-        }
-
-        @Override
-        public DataWatcherSerializer<T> b() {
-            new Exception().printStackTrace();
-            return super.b();
-        }
-
-        @Override
-        public boolean equals(Object object) {
-            new Exception().printStackTrace();
-            return super.equals(object);
-        }
-    }
-
 }
