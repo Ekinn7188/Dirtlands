@@ -20,17 +20,19 @@ repositories {
     maven { url "https://maven.enginehub.org/repo/" }
     maven { url 'file://C:/Users/ekinn/.m2/repository'}
     maven { url "https://repo.dmulloy2.net/repository/public/" }
+    maven { url "https://repo.citizensnpcs.co/" }
 }
 
 dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.2'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.2'
-    compileOnly files("libs/Paper-Server-1.17.1-R0.1-SNAPSHOT.jar")
     implementation "net.kyori:adventure-text-minimessage:4.2.0-SNAPSHOT"
     compileOnly 'net.luckperms:api:5.3'
     compileOnly 'com.sk89q.worldguard:worldguard-bukkit:7.0.5'
     compileOnly 'com.comphenix.protocol:ProtocolLib:4.7.0'
     implementation 'org.reflections:reflections:0.9.12'
+    compileOnly 'net.citizensnpcs:citizens-main:2.0.28-SNAPSHOT'
+    compileOnly 'io.papermc.paper:paper-api:1.17.1-R0.1-SNAPSHOT'
 }
 
 test {

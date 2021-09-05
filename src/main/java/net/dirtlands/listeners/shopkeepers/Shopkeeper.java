@@ -1,24 +1,40 @@
 package net.dirtlands.listeners.shopkeepers;
 
+import net.citizensnpcs.api.CitizensAPI;
+import net.citizensnpcs.api.npc.NPC;
 import net.dirtlands.Main;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.Arrays;
 
-public class Shopkeeper {
+public class Shopkeeper implements Listener {
 
-    public static void openMenu(Player player, String name){
+    @EventHandler
+    public void playerInteractWithEntity(PlayerInteractEntityEvent e) {
+        if (e.getHand() != EquipmentSlot.HAND){
+            return;
+        }
+        if (!CitizensAPI.getNPCRegistry().isNPC(e.getRightClicked())){
+            return;
+        }
+
+        NPC npc = CitizensAPI.getNPCRegistry().getNPC(e.getRightClicked());
+
+        Player player = e.getPlayer();
 
         final Inventory inventory;
 
-
-        inventory = Bukkit.createInventory(player, 54, Component.text(name));
+        inventory = Bukkit.createInventory(player, 54, Component.text(npc.getName()));
 
         inventory.setItem(5, createGuiItem(Material.DIRT, "test"));
 
@@ -28,9 +44,6 @@ public class Shopkeeper {
                 player.openInventory(inventory);
             }
         });
-
-
-
     }
 
     private static ItemStack createGuiItem(final Material material, final String name, final Component... lore) {
@@ -44,5 +57,7 @@ public class Shopkeeper {
 
         return item;
     }
+
+
 
 }

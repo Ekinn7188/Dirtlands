@@ -2,7 +2,7 @@ name: Dirtlands
 version: 1.0
 api-version: 1.17
 description: Dirt (Requires WorldGuard and LuckPerms)
-depend: [WorldGuard, LuckPerms, ProtocolLib]
+depend: [WorldGuard, LuckPerms, ProtocolLib, Citizens]
 author: Jeeper_
 main: net.dirtlands.Main
 commands:
@@ -38,8 +38,6 @@ commands:
     aliases: cc
   mutechat:
     description: Mutes the chat!
-  npc:
-    description: a link to all the npc-related commands
 permissions:
   dirtlands.setspawn:
     description: allows use of the setspawn command
@@ -73,8 +71,5 @@ permissions:
     default: op
   dirtlands.chat.bypass:
     description: bypasses muted chat!
-    default: op
-  dirtlands.npc:
-    description: gives access to the npc-related commands!
     default: op
 

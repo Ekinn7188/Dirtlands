@@ -1,163 +1,116 @@
 package net.dirtlands;
 
-import com.comphenix.protocol.PacketType;
-import com.comphenix.protocol.ProtocolLibrary;
-import com.comphenix.protocol.ProtocolManager;
-import com.comphenix.protocol.events.PacketAdapter;
-import com.comphenix.protocol.events.PacketEvent;
 import com.sk89q.worldguard.WorldGuard;
 import net.dirtlands.commands.PluginCommand;
 import net.dirtlands.commands.tab.PluginTabCompleter;
 import net.dirtlands.files.Config;
-import net.dirtlands.files.Npcs;
 import net.dirtlands.files.Warps;
 import net.dirtlands.handler.CombatSafezoneHandler;
-import net.dirtlands.listeners.shopkeepers.Shopkeeper;
-import net.dirtlands.nms.npc.Npc;
-import net.dirtlands.nms.npc.Npc_1_17_R1;
-import net.minecraft.server.level.EntityPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.reflections.Reflections;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.List;
+import java.util.Objects;
+import java.util.logging.Level;
 
 public class Main extends JavaPlugin {
 
     private static Main plugin;
-    private Npc npc;
-    private static ProtocolManager protocolManager;
 
-    @SuppressWarnings("ConstantConditions")
     @Override
     public void onEnable(){
         plugin = this;
+
+        checkForPluginDependencies(List.of("Citizens", "WorldGuard", "LuckPerms", "ProtocolLib"));
+
         startFileSetup();
 
-        if (loadNetMinecraftServer()) {
+        //CitizensAPI.getNPCRegistry();
+        //scheduler runs after the first server tick, which makes sure all plugins are fully ready
+        Bukkit.getServer().getScheduler().runTask(this, () -> {
+            Main.initializeClasses();
 
-            String packageName = getClass().getPackage().getName();
-            addPacketListeners();
-
-            //load Listeners in net.dirtlands.listeners
-            for (Class<?> listenerClass : new Reflections(packageName + ".listeners").getSubTypesOf(Listener.class)) {
-                try {
-                    Listener listener = (Listener) listenerClass.getDeclaredConstructor().newInstance(); //must have empty constructor
-                    getServer().getPluginManager().registerEvents(listener, this);
-                } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-                    e.printStackTrace();
-                }
-            }
-
-
-            //load PluginCommands in net.dirtlands.commands
-            for (Class<? extends PluginCommand> commandClass : new Reflections(packageName + ".commands").getSubTypesOf(PluginCommand.class)) {
-                try {
-                    PluginCommand pluginCommand = commandClass.getDeclaredConstructor().newInstance();
-                    getCommand(pluginCommand.getName()).setExecutor(pluginCommand);
-                } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            //load PluginTabCompleters in net.dirtlands.commands.tab
-            for (Class<? extends PluginTabCompleter> completerClass : new Reflections(packageName + ".commands.tab").getSubTypesOf(PluginTabCompleter.class)) {
-                try {
-                    PluginTabCompleter tabCompleter = completerClass.getDeclaredConstructor().newInstance();
-                    for (String commandName : tabCompleter.getNames()) {
-                        getCommand(commandName).setTabCompleter(tabCompleter);
-                    }
-                } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-                    e.printStackTrace();
-                }
-
-            }
             var sessionManager = WorldGuard.getInstance().getPlatform().getSessionManager();
-            sessionManager.registerHandler(CombatSafezoneHandler.FACTORY, null);
-        } else {
-            getLogger().info("Server version is incompatible!");
-
-            Bukkit.getPluginManager().disablePlugin(this);
-        }
-
-
+            sessionManager.registerHandler(CombatSafezoneHandler.FACTORY,null);
+        });
     }
 
-    @Override
-    public void onLoad() {
-        protocolManager = ProtocolLibrary.getProtocolManager();
-    }
+    protected static void initializeClasses(){
+        String packageName = Main.getPlugin().getClass().getPackage().getName();
+        //load Listeners in net.dirtlands.listeners
+        for(
+                Class<?> listenerClass :new
 
-    private boolean loadNetMinecraftServer(){
-        String version;
+                Reflections(packageName +".listeners").
 
-        try{
-            version = Bukkit.getServer().getClass().getPackageName().split("\\.")[3];
-        } catch (ArrayIndexOutOfBoundsException e){
-            return false; //weird version
-        }
+                getSubTypesOf(Listener.class))
 
-        getLogger().info("Your server is running version " + version);
-
-        if (version.equals("v1_17_R1")){
-            npc = new Npc_1_17_R1();
-
-        } else {
-            return false;
+        {
+            try {
+                Listener listener = (Listener) listenerClass.getDeclaredConstructor().newInstance(); //must have empty constructor
+                Main.getPlugin().getServer().getPluginManager().registerEvents(listener, Main.getPlugin());
+            } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+                e.printStackTrace();
+            }
         }
 
 
-        return true;
+        //load PluginCommands in net.dirtlands.commands
+        for(
+                Class<? extends PluginCommand> commandClass :new
+
+                Reflections(packageName +".commands").
+
+                getSubTypesOf(PluginCommand .class))
+
+        {
+            try {
+                PluginCommand pluginCommand = commandClass.getDeclaredConstructor().newInstance();
+                Objects.requireNonNull(Main.getPlugin().getCommand(pluginCommand.getName())).setExecutor(pluginCommand);
+            } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+                e.printStackTrace();
+            }
+        }
+
+        //load PluginTabCompleters in net.dirtlands.commands.tab
+        for(
+                Class<? extends PluginTabCompleter> completerClass :new
+
+                Reflections(packageName +".commands.tab").
+
+                getSubTypesOf(PluginTabCompleter .class))
+
+        {
+            try {
+                PluginTabCompleter tabCompleter = completerClass.getDeclaredConstructor().newInstance();
+                for (String commandName : tabCompleter.getNames()) {
+                    Objects.requireNonNull(Main.getPlugin().getCommand(commandName)).setTabCompleter(tabCompleter);
+                }
+            } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+                e.printStackTrace();
+            }
+
+        }
+
     }
 
     public static Main getPlugin(){
         return plugin;
     }
 
-    public Npc getNpc(){
-        return npc;
+    @SuppressWarnings("ConstantConditions")
+    public void checkForPluginDependencies(List<String> pluginNames) {
+        for (String plugin : pluginNames){
+            if (getServer().getPluginManager().getPlugin(plugin) == null || !getServer().getPluginManager().getPlugin(plugin).isEnabled()) {
+                getLogger().log(Level.SEVERE, plugin + " not found or not enabled");
+                getServer().getPluginManager().disablePlugin(this);
+                return;
+            }
+        }
     }
-    public ProtocolManager getProtocolManager(){
-        return protocolManager;
-    }
-
-    private void addPacketListeners(){
-
-        protocolManager.addPacketListener(
-
-                new PacketAdapter(this, PacketType.Play.Client.USE_ENTITY) {
-
-                    @Override
-                    public void onPacketReceiving(PacketEvent e) {
-
-                        if (e.getPacket().getEnumEntityUseActions().readSafely(0).getAction().name().equalsIgnoreCase("INTERACT")) {
-                            boolean npcFound = false;
-                            String npcName = "";
-                            for (EntityPlayer npc : Npc.getNpcs()){ // check if npc is registered
-                                if (npc.getId() == e.getPacket().getIntegers().read(0)){
-                                    npcName = npc.getDisplayName().getText();
-                                    npcFound = true;
-                                    break;
-                                }
-                            }
-                            if (!npcFound) {
-                                return;
-                            }
-
-                            Shopkeeper.openMenu(e.getPlayer(), npcName);
-                        }
-
-
-                    }
-
-
-                }
-
-        );
-
-    }
-
 
 
     private void startFileSetup(){
@@ -257,21 +210,6 @@ public class Main extends JavaPlugin {
         Warps.get().options().copyDefaults(true);
         Warps.get().options().copyHeader(true);
         Warps.save();
-
-        /*
-
-
-        npcs.yml
-
-
-         */
-
-        Npcs.setup();
-        Npcs.get().options().header(header);
-        Npcs.get().addDefault("Npcs", "");
-        Npcs.get().options().copyDefaults(true);
-        Npcs.get().options().copyHeader(true);
-        Npcs.save();
 
         //if making another file, add it to /dirtlands reload
     }
