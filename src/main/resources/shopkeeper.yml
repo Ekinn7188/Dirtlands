@@ -1,40 +1,105 @@
+# ############################################################
+# # +------------------------------------------------------+ #
+# # |                      Dirtlands                       | #
+# # +------------------------------------------------------+ #
+# ############################################################
+#
+# Developed by: Jeeper_ (Jeeper#6808)
+#
+# Color Choices:
+#    Hex Code Example: <#FFFFFF>text</#FFFFFF>
+#    Make sure to surround the text with its color and make sure it ends with a /!!
+#
+#    Minecraft Color Code Example: &aI'm typing in red!
+#    This website has all the codes! https://www.digminecraft.com/lists/color_list_pc.php
+#
+#     Extra info on text formatting: https://docs.adventure.kyori.net/minimessage.html#the-components
+#
+#
+# ******* /dirtlands reload to reload files *******
+#
+#
+# check https://github.com/Ekinn7188/Dirtlands/blob/master/src/main/resources/shopkeeper.yml for an example shopkeeper setup
 Npc Ids:
   '0':
     inventory: 0
   '1':
-    inventory: 1
+    inventory: 2
+  '2':
+    inventory: 3
+  '3':
+    inventory: 4
 Inventories:
   '0':
-    inventory name: '&edirt shop'
-    inventory size: 9
+    inventory name: "<gradient:yellow:white>Dirt Shop (1/2)"
+    inventory size: 18
     slots:
-      '0':
+      '3':
         block: DIRT
-        name: cq
-        lore: "first line of lore \n second line of lore \n third line"
-        cost: 100
-      '1':
+        name: "<#692C00>&lDirt"
+        lore: "<#893900>It's about as dirty as dirt gets ||&eBuy: &610 |&eSell: &65"
+        buy: 10
+        sell: 5
+      '5':
         block: COARSE_DIRT
-        name: jj
-        lore: "first line of lore \n second line of lore \n third line"
+        name: "<#A19364>&lCoarse Dirt"
+        lore: "<#D1C59F>Sandy Dirt ||&eBuy: &620 |&eSell: &610"
+        buy: 20
+        sell: 10
+      '17':
+        block: ARROW
+        name: "&cNext Page"
         inventory: 1
       default:
         block: BLACK_STAINED_GLASS_PANE
         name: '&0'
   '1':
-    inventory name: <rainbow>tool shop
+    inventory name: "<gradient:white:yellow>Dirt Shop (2/2)"
+    inventory size: 18
+    slots:
+      '3':
+        block: PODZOL
+        name: "<#692C00>&lPodzol"
+        lore: "<#893900>Leafy Dirt ||&eBuy: &6100 |&eSell: &650"
+        buy: 100
+        sell: 50
+      '5':
+        block: MYCELIUM
+        name: "<#46183E>&lMycelium"
+        lore: "<#702963>Purple Dirt ||&eBuy: &6200 |&eSell: &650"
+        buy: 200
+        sell: 50
+      '9':
+        block: ARROW
+        name: "&cPrevious Page"
+        inventory: 0
+      default:
+        block: BLACK_STAINED_GLASS_PANE
+        name: '&0'
+  '2':
+    inventory name: "&0J"
+    inventory size: 9
+    slots:
+      default:
+        block: PAPER
+        name: '&fJ'
+  '3':
+    inventory name: "<rainbow>Ok yeah"
     inventory size: 54
     slots:
-      '0':
-        block: DIAMOND_SHOVEL
-        name: cq
-        lore: "first line of lore \n second line of lore \n third line"
-        sell: 100
-      '1':
-        block: DIAMOND_PICKAXE
-        name: jj
-        lore: "first line of lore \n second line of lore \n third line"
-        inventory: 0
+      '13':
+        block: GOLD_INGOT
+        name: "<gradient:gold:white:yellow>Precious Butter"
+      default:
+        block: BLACK_STAINED_GLASS_PANE
+        name: '&0'
+  '4':
+    inventory name: "<gradient>Lets go"
+    inventory size: 27
+    slots:
+      '13':
+        block: BEDROCK
+        name: "&8Lets go bedrock"
       default:
         block: BLACK_STAINED_GLASS_PANE
         name: '&0'

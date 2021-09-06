@@ -4,9 +4,9 @@ import com.sk89q.worldguard.WorldGuard;
 import net.dirtlands.commands.PluginCommand;
 import net.dirtlands.commands.tab.PluginTabCompleter;
 import net.dirtlands.files.Config;
+import net.dirtlands.files.NpcInventory;
 import net.dirtlands.files.Warps;
 import net.dirtlands.handler.CombatSafezoneHandler;
-import org.bukkit.Bukkit;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.reflections.Reflections;
@@ -19,6 +19,9 @@ import java.util.logging.Level;
 public class Main extends JavaPlugin {
 
     private static Main plugin;
+    private NpcInventory npcInventory;
+    private Warps warps;
+    private Config config;
 
     @Override
     public void onEnable(){
@@ -28,14 +31,10 @@ public class Main extends JavaPlugin {
 
         startFileSetup();
 
-        //CitizensAPI.getNPCRegistry();
-        //scheduler runs after the first server tick, which makes sure all plugins are fully ready
-        Bukkit.getServer().getScheduler().runTask(this, () -> {
-            Main.initializeClasses();
+        Main.initializeClasses();
 
-            var sessionManager = WorldGuard.getInstance().getPlatform().getSessionManager();
-            sessionManager.registerHandler(CombatSafezoneHandler.FACTORY,null);
-        });
+        var sessionManager = WorldGuard.getInstance().getPlatform().getSessionManager();
+        sessionManager.registerHandler(CombatSafezoneHandler.FACTORY,null);
     }
 
     protected static void initializeClasses(){
@@ -59,12 +58,7 @@ public class Main extends JavaPlugin {
 
 
         //load PluginCommands in net.dirtlands.commands
-        for(
-                Class<? extends PluginCommand> commandClass :new
-
-                Reflections(packageName +".commands").
-
-                getSubTypesOf(PluginCommand .class))
+        for(Class<? extends PluginCommand> commandClass :new Reflections(packageName +".commands").getSubTypesOf(PluginCommand .class))
 
         {
             try {
@@ -76,14 +70,7 @@ public class Main extends JavaPlugin {
         }
 
         //load PluginTabCompleters in net.dirtlands.commands.tab
-        for(
-                Class<? extends PluginTabCompleter> completerClass :new
-
-                Reflections(packageName +".commands.tab").
-
-                getSubTypesOf(PluginTabCompleter .class))
-
-        {
+        for(Class<? extends PluginTabCompleter> completerClass :new Reflections(packageName +".commands.tab").getSubTypesOf(PluginTabCompleter .class)) {
             try {
                 PluginTabCompleter tabCompleter = completerClass.getDeclaredConstructor().newInstance();
                 for (String commandName : tabCompleter.getNames()) {
@@ -99,6 +86,18 @@ public class Main extends JavaPlugin {
 
     public static Main getPlugin(){
         return plugin;
+    }
+
+    public NpcInventory npcInventory() {
+        return npcInventory;
+    }
+    
+    public Warps warps() {
+        return warps;
+    }
+    
+    public Config config() {
+        return config;
     }
 
     @SuppressWarnings("ConstantConditions")
@@ -147,51 +146,51 @@ public class Main extends JavaPlugin {
 
         */
 
-        Config.setup();
-        Config.get().options().header(header);
-        Config.get().addDefault("Chat Style", "<Prefix><#893900><Player></#893900><Suffix> &a\u00BB &7<Message>");
-        Config.get().addDefault("Dont Move Message", "&cDont move or teleportation is &4canceled");
-        Config.get().addDefault("Teleport Countdown", "&cTeleporting to <Location> in: &4<Time>");
-        Config.get().addDefault("Spawn Set", "&aSpawn point set!");
-        Config.get().addDefault("Teleport Canceled", "&cTeleport &4canceled&c!");
-        Config.get().addDefault("Teleport Success", "&aSuccessfully teleported to <Location>!");
-        Config.get().addDefault("Dirtlands Reloaded", "&aDirtlands Reloaded!");
-        Config.get().addDefault("Nickname Change", "&aYour nickname has been set to <Name>!");
-        Config.get().addDefault("Warp Created", "&a/warp <Name> was successfully created!");
-        Config.get().addDefault("Warp Deleted", "&a/warp <Name> was successfully deleted!");
-        Config.get().addDefault("Warp Doesnt Exist", "&a/warp <Name> does not exist!");
-        Config.get().addDefault("Warp List", "&aYour current warps: <Warps>");
-        Config.get().addDefault("No Warps", "&cThere are no warps!");
-        Config.get().addDefault("Home Created", "&a/home <Name> was successfully created!");
-        Config.get().addDefault("Home Deleted", "&a/home <Name> was successfully deleted!");
-        Config.get().addDefault("Home Doesnt Exist", "&a/home <Name> does not exist!");
-        Config.get().addDefault("Too Many Homes", "&cYou've created too many homes! You can make up to &4<Number>");
-        Config.get().addDefault("Home List", "&aYour current homes: <Homes>");
-        Config.get().addDefault("No Homes", "&cYou dont have any homes! Create one with /sethome {name}!"); //the brackets are intentional, there's no Template.of for it
-        Config.get().addDefault("Combat Time In Seconds", "10");
-        Config.get().addDefault("Combat Timer", "&cYou will untagged in &4<Time>&c seconds");
-        Config.get().addDefault("Not Combat Tagged", "&cYou're no longer combat tagged");
-        Config.get().addDefault("Command In Combat", "&cYou cant send commands when you're combat tagged!");
-        Config.get().addDefault("Enter Safezone In Combat Title", "&4No Entry");
-        Config.get().addDefault("Enter Safezone In Combat Subtitle", "&cYou cant enter safezones while in combat!");
-        Config.get().addDefault("Join Message", "&7[&2+&7] <Player>");
-        Config.get().addDefault("First Join Message", "&6<Player> has joined for the first time! (#<Number>)");
-        Config.get().addDefault("Leave Message", "&7[&4-&7] <Player>");
-        Config.get().addDefault("Broadcast Prefix", "&a[<#893900>Dirtlands</#893900>&a] ");
-        Config.get().addDefault("No Command Permission", "&cYou dont have permission to use this command!");
-        Config.get().addDefault("Player Only Command", "&cYou must be a player to execute this command!");
-        Config.get().addDefault("Player Death", "&c\u2620 {Message}");
-        Config.get().addDefault("Chat Cleared By Message", "&c&lChat cleared by <Player>!");
-        Config.get().addDefault("Chat Muted By Message", "&c&lChat muted by <Player>!");
-        Config.get().addDefault("Chat Unmuted By Message", "&c&lChat unmuted by <Player>!");
-        Config.get().addDefault("Chat Is Muted", "&cThe chat is currently &4muted&c!");
-        Config.get().addDefault("Npc Selected", "<Name>&a has been selected!");
-        Config.get().addDefault("No Npcs", "&cYou need to create an npc first!");
-        Config.get().addDefault("Player Doesnt Exist", "&4<Player>&c doesn't exist!");
+        config = new Config();
+        config.get().options().header(header);
+        config.get().addDefault("Chat Style", "<Prefix><#893900><Player></#893900><Suffix> &a\u00BB &7<Message>");
+        config.get().addDefault("Dont Move Message", "&cDont move or teleportation is &4canceled");
+        config.get().addDefault("Teleport Countdown", "&cTeleporting to <Location> in: &4<Time>");
+        config.get().addDefault("Spawn Set", "&aSpawn point set!");
+        config.get().addDefault("Teleport Canceled", "&cTeleport &4canceled&c!");
+        config.get().addDefault("Teleport Success", "&aSuccessfully teleported to <Location>!");
+        config.get().addDefault("Dirtlands Reloaded", "&aDirtlands Reloaded!");
+        config.get().addDefault("Nickname Change", "&aYour nickname has been set to <Name>!");
+        config.get().addDefault("Warp Created", "&a/warp <Name> was successfully created!");
+        config.get().addDefault("Warp Deleted", "&a/warp <Name> was successfully deleted!");
+        config.get().addDefault("Warp Doesnt Exist", "&a/warp <Name> does not exist!");
+        config.get().addDefault("Warp List", "&aYour current warps: <Warps>");
+        config.get().addDefault("No Warps", "&cThere are no warps!");
+        config.get().addDefault("Home Created", "&a/home <Name> was successfully created!");
+        config.get().addDefault("Home Deleted", "&a/home <Name> was successfully deleted!");
+        config.get().addDefault("Home Doesnt Exist", "&a/home <Name> does not exist!");
+        config.get().addDefault("Too Many Homes", "&cYou've created too many homes! You can make up to &4<Number>");
+        config.get().addDefault("Home List", "&aYour current homes: <Homes>");
+        config.get().addDefault("No Homes", "&cYou dont have any homes! Create one with /sethome {name}!"); //the brackets are intentional, there's no Template.of for it
+        config.get().addDefault("Combat Time In Seconds", "10");
+        config.get().addDefault("Combat Timer", "&cYou will untagged in &4<Time>&c seconds");
+        config.get().addDefault("Not Combat Tagged", "&cYou're no longer combat tagged");
+        config.get().addDefault("Command In Combat", "&cYou cant send commands when you're combat tagged!");
+        config.get().addDefault("Enter Safezone In Combat Title", "&4No Entry");
+        config.get().addDefault("Enter Safezone In Combat Subtitle", "&cYou cant enter safezones while in combat!");
+        config.get().addDefault("Join Message", "&7[&2+&7] <Player>");
+        config.get().addDefault("First Join Message", "&6<Player> has joined for the first time! (#<Number>)");
+        config.get().addDefault("Leave Message", "&7[&4-&7] <Player>");
+        config.get().addDefault("Broadcast Prefix", "&a[<#893900>Dirtlands</#893900>&a] ");
+        config.get().addDefault("No Command Permission", "&cYou dont have permission to use this command!");
+        config.get().addDefault("Player Only Command", "&cYou must be a player to execute this command!");
+        config.get().addDefault("Player Death", "&c\u2620 {Message}");
+        config.get().addDefault("Chat Cleared By Message", "&c&lChat cleared by <Player>!");
+        config.get().addDefault("Chat Muted By Message", "&c&lChat muted by <Player>!");
+        config.get().addDefault("Chat Unmuted By Message", "&c&lChat unmuted by <Player>!");
+        config.get().addDefault("Chat Is Muted", "&cThe chat is currently &4muted&c!");
+        config.get().addDefault("Npc Selected", "<Name>&a has been selected!");
+        config.get().addDefault("No Npcs", "&cYou need to create an npc first!");
+        config.get().addDefault("Player Doesnt Exist", "&4<Player>&c doesn't exist!");
 
-        Config.get().options().copyDefaults(true);
-        Config.get().options().copyHeader(true);
-        Config.save();
+        config.get().options().copyDefaults(true);
+        config.get().options().copyHeader(true);
+        config.save();
 
         /*
 
@@ -202,14 +201,27 @@ public class Main extends JavaPlugin {
          */
 
 
-        Warps.setup();
-        Warps.get().options().header(header);
-        Warps.get().addDefault("Spawn.Coords", "");
-        Warps.get().addDefault("Warps", "");
-        Warps.get().addDefault("Homes", "");
-        Warps.get().options().copyDefaults(true);
-        Warps.get().options().copyHeader(true);
-        Warps.save();
+        warps = new Warps();
+        warps.get().options().header(header);
+        warps.get().addDefault("Spawn.Coords", "");
+        warps.get().addDefault("Warps", "");
+        warps.get().addDefault("Homes", "");
+        warps.get().options().copyDefaults(true);
+        warps.get().options().copyHeader(true);
+        warps.save();
+
+        /*
+
+        shopkeeper.yml
+
+         */
+
+        npcInventory = new NpcInventory();
+        npcInventory.get().options().header(header + "\n\ncheck https://github.com/Ekinn7188/Dirtlands/blob/master/src/main/resources/shopkeeper.yml for an example shopkeeper setup");
+        npcInventory.get().options().copyHeader(true);
+        npcInventory.get().options().copyDefaults(false);
+        npcInventory.save();
+
 
         //if making another file, add it to /dirtlands reload
     }
