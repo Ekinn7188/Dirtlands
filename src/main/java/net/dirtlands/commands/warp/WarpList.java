@@ -1,7 +1,7 @@
 package net.dirtlands.commands.warp;
 
+import net.dirtlands.Main;
 import net.dirtlands.commands.PluginCommand;
-import net.dirtlands.files.Warps;
 import net.dirtlands.tools.ConfigTools;
 import net.kyori.adventure.text.minimessage.Template;
 import org.bukkit.command.CommandSender;
@@ -25,7 +25,7 @@ public class WarpList extends PluginCommand {
     @Override
     public void execute(CommandSender sender, String[] args) {
 
-        ConfigurationSection warpsFromConfig = Warps.get().getConfigurationSection("Warps");
+        ConfigurationSection warpsFromConfig = Main.getPlugin().warps().get().getConfigurationSection("Warps");
         if (warpsFromConfig != null){
             List<String> warps = new ArrayList<>(warpsFromConfig.getKeys(false));
             String commaSeperatedWarps = String.join(", ", warps);

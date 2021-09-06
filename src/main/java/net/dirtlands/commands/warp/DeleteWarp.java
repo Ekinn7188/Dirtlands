@@ -1,5 +1,6 @@
 package net.dirtlands.commands.warp;
 
+import net.dirtlands.Main;
 import net.dirtlands.commands.Permission;
 import net.dirtlands.commands.PluginCommand;
 import net.dirtlands.files.Warps;
@@ -11,6 +12,7 @@ import java.util.Objects;
 import java.util.Set;
 
 public class DeleteWarp extends PluginCommand {
+    Warps warps = Main.getPlugin().warps();
 
     @Override
     public String getName() {
@@ -31,16 +33,16 @@ public class DeleteWarp extends PluginCommand {
     public void execute(CommandSender sender, String[] args) {
         if (args.length > 0){
 
-            Set<String> warpNames = Objects.requireNonNull(Warps.get().getConfigurationSection("Warps")).getKeys(false);
+            Set<String> warpNames = Objects.requireNonNull(warps.get().getConfigurationSection("Warps")).getKeys(false);
 
             if (!warpNames.contains(args[0])){
                 sender.sendMessage(ConfigTools.parseFromPath("Warp Doesn't Exist", Template.of("Name", args[0])));
                 return;
             }
 
-            Warps.get().set("Warps."+ args[0], null);
-            Warps.save();
-            Warps.reload();
+            warps.get().set("Warps."+ args[0], null);
+            warps.save();
+            warps.reload();
 
             sender.sendMessage(ConfigTools.parseFromPath("Warp Deleted", Template.of("Name", args[0])));
 

@@ -1,7 +1,7 @@
 package net.dirtlands.commands.warp;
 
+import net.dirtlands.Main;
 import net.dirtlands.commands.PluginCommand;
-import net.dirtlands.files.Warps;
 import net.dirtlands.tools.ConfigTools;
 import net.kyori.adventure.text.minimessage.Template;
 import org.bukkit.configuration.ConfigurationSection;
@@ -20,7 +20,7 @@ public class HomeList extends PluginCommand {
     @Override
     public void execute(Player player, String[] args) {
         super.execute(player, args);
-        ConfigurationSection homesFromConfig = Warps.get().getConfigurationSection("Homes." + player.getUniqueId());
+        ConfigurationSection homesFromConfig = Main.getPlugin().warps().get().getConfigurationSection("Homes." + player.getUniqueId());
         if (homesFromConfig != null){
             List<String> homes = new ArrayList<>(homesFromConfig.getKeys(false));
             String commaSeperatedHomes = String.join(", ", homes);

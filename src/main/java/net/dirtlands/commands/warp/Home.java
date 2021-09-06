@@ -11,6 +11,7 @@ import org.bukkit.entity.Player;
 import java.util.Set;
 
 public class Home extends PluginCommand {
+    Warps warps = Main.getPlugin().warps();
 
     @Override
     public String getName() {
@@ -22,7 +23,7 @@ public class Home extends PluginCommand {
         if (args.length > 0){
 
             //noinspection ConstantConditions,DuplicatedCode
-            Set<String> uuids = Warps.get().getConfigurationSection("Homes").getKeys(false);
+            Set<String> uuids = warps.get().getConfigurationSection("Homes").getKeys(false);
 
             if (!uuids.contains(player.getUniqueId().toString())){
                 player.sendMessage(ConfigTools.parseFromPath("Home Doesn't Exist", Template.of("Name", args[0])));
@@ -30,7 +31,7 @@ public class Home extends PluginCommand {
             }
 
             //noinspection ConstantConditions
-            Set<String> homes = Warps.get().getConfigurationSection("Homes." + player.getUniqueId()).getKeys(false);
+            Set<String> homes = warps.get().getConfigurationSection("Homes." + player.getUniqueId()).getKeys(false);
 
             if (homes.size() > 0){
                 if (homes.contains(args[0])){
@@ -42,7 +43,7 @@ public class Home extends PluginCommand {
                 player.sendMessage(ConfigTools.parseFromPath("Home Doesn't Exist", Template.of("Name", args[0])));
             }
         } else {
-            if (Warps.get().getString("Homes." + player.getUniqueId() + ".home") != null){
+            if (warps.get().getString("Homes." + player.getUniqueId() + ".home") != null){
                 Countdown.startCountdown(player, "Homes." + player.getUniqueId() + ".home", "home", Main.getPlugin());
             } else {
                 player.sendMessage(ConfigTools.parseFromPath("Home Doesn't Exist", Template.of("Name", "home")));

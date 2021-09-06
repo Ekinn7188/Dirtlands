@@ -1,5 +1,6 @@
 package net.dirtlands.commands.warp;
 
+import net.dirtlands.Main;
 import net.dirtlands.commands.Permission;
 import net.dirtlands.commands.PluginCommand;
 import net.dirtlands.files.Warps;
@@ -10,6 +11,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 public class SetWarp extends PluginCommand {
+    Warps warps = Main.getPlugin().warps();
 
     @Override
     public String getName() {
@@ -26,9 +28,9 @@ public class SetWarp extends PluginCommand {
         if (args.length > 0){
             Location loc = player.getLocation();
 
-            Warps.get().set("Warps."+ args[0] + ".Coords", LocationTools.locationToString(loc));
-            Warps.save();
-            Warps.reload();
+            warps.get().set("Warps."+ args[0] + ".Coords", LocationTools.locationToString(loc));
+            warps.save();
+            warps.reload();
 
             player.sendMessage(ConfigTools.parseFromPath("Warp Created", Template.of("Name", args[0])));
 

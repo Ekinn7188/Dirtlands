@@ -1,6 +1,6 @@
 package net.dirtlands.commands.tab;
 
-import net.dirtlands.files.Warps;
+import net.dirtlands.Main;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -18,7 +18,7 @@ public class HomeTabCompleter extends PluginTabCompleter {
     @Override
     public List<String> tabCompleter(Player player, @NotNull String[] args) {
 
-        ConfigurationSection homesFromConfig = Warps.get().getConfigurationSection("Homes." + player.getUniqueId());
+        ConfigurationSection homesFromConfig = Main.getPlugin().warps().get().getConfigurationSection("Homes." + player.getUniqueId());
         if (homesFromConfig != null){
             return new ArrayList<>(homesFromConfig.getKeys(false));
         }

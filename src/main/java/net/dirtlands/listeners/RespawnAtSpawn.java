@@ -1,6 +1,6 @@
 package net.dirtlands.listeners;
 
-import net.dirtlands.files.Warps;
+import net.dirtlands.Main;
 import net.dirtlands.tools.LocationTools;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -13,7 +13,7 @@ public class RespawnAtSpawn implements Listener {
     public void onRespawn(PlayerRespawnEvent e) {
         e.getPlayer().spigot().respawn();
         try {
-            e.setRespawnLocation(LocationTools.stringToLocation(Warps.get().getString("Spawn.Coords")));
+            e.setRespawnLocation(LocationTools.stringToLocation(Main.getPlugin().warps().get().getString("Spawn.Coords")));
         } catch (AssertionError exception) {
             //do nothing, there's no spawn location set
         }
@@ -25,7 +25,7 @@ public class RespawnAtSpawn implements Listener {
             return;
         }
         try {
-            e.getPlayer().teleport(LocationTools.stringToLocation(Warps.get().getString("Spawn.Coords")));
+            e.getPlayer().teleport(LocationTools.stringToLocation(Main.getPlugin().warps().get().getString("Spawn.Coords")));
         } catch (AssertionError exception) {
             //do nothing, there's no spawn location set
         }

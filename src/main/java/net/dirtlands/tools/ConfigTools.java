@@ -1,6 +1,6 @@
 package net.dirtlands.tools;
 
-import net.dirtlands.files.Config;
+import net.dirtlands.Main;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -14,7 +14,10 @@ public class ConfigTools {
 
     public static Component parseFromPath(@NotNull String path, @NotNull Template... placeholders){
         String message = getString(path);
+        return parseText(message, placeholders);
+    }
 
+    public static Component parseText(@NotNull String message, @NotNull Template... placeholders){
         message = message.replaceAll("&a", "<green>")
                 .replaceAll("&b", "<aqua>")
                 .replaceAll("&c", "<red>")
@@ -41,15 +44,14 @@ public class ConfigTools {
         return MiniMessage.get().parse(message, placeholders);
     }
 
-
-
     public static String getString(@NotNull String path){
         try{
-            return Objects.requireNonNull(Config.get().getString(path));
+            return Objects.requireNonNull(Main.getPlugin().config().get().getString(path));
         } catch (NullPointerException e){
             Bukkit.broadcast(Component.text()
                     .content("Config \"" + path + "\" does not exist. Check logs for details")
                     .color(NamedTextColor.RED).build());
+            e.printStackTrace();
             return "";
         }
 

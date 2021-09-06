@@ -1,5 +1,6 @@
 package net.dirtlands.commands.warp;
 
+import net.dirtlands.Main;
 import net.dirtlands.commands.Permission;
 import net.dirtlands.commands.PluginCommand;
 import net.dirtlands.files.Warps;
@@ -15,8 +16,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class SetHome extends PluginCommand {
-
-
+    Warps warps = Main.getPlugin().warps();
     @Override
     public String getName() {
         return "sethome";
@@ -37,13 +37,13 @@ public class SetHome extends PluginCommand {
         }
 
 
-        ConfigurationSection playersInConfigSection = Warps.get().getConfigurationSection("Homes");
+        ConfigurationSection playersInConfigSection = warps.get().getConfigurationSection("Homes");
         if (playersInConfigSection == null || !playersInConfigSection.getKeys(false).contains(player.getUniqueId().toString())) {
-            Warps.get().set("Homes." + player.getUniqueId(), "");
-            Warps.save();
-            Warps.reload();
+            warps.get().set("Homes." + player.getUniqueId(), "");
+            warps.save();
+            warps.reload();
         }
-        ConfigurationSection homes = Warps.get().getConfigurationSection("Homes." + player.getUniqueId());
+        ConfigurationSection homes = warps.get().getConfigurationSection("Homes." + player.getUniqueId());
         Set<String> homeNames = new HashSet<>();
 
         if (homes != null) {
@@ -59,9 +59,9 @@ public class SetHome extends PluginCommand {
         }
 
         if (homeNames.size() < largestSetHomeSize || homeNames.contains(newArgs[0])) {
-            Warps.get().set("Homes." + player.getUniqueId() + "." + newArgs[0], LocationTools.roundedLocationToString(loc));
-            Warps.save();
-            Warps.reload();
+            warps.get().set("Homes." + player.getUniqueId() + "." + newArgs[0], LocationTools.roundedLocationToString(loc));
+            warps.save();
+            warps.reload();
             player.sendMessage(ConfigTools.parseFromPath("Home Created", Template.of("Name", newArgs[0])));
         } else {
             player.sendMessage(ConfigTools.parseFromPath("Too Many Homes", Template.of("Number", String.valueOf(largestSetHomeSize))));

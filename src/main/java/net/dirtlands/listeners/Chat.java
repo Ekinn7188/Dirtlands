@@ -5,7 +5,6 @@ import net.dirtlands.commands.Permission;
 import net.dirtlands.commands.admin.MuteChat;
 import net.dirtlands.tools.ConfigTools;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.Template;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import net.luckperms.api.LuckPermsProvider;
@@ -39,11 +38,11 @@ public class Chat implements Listener {
 
         Component message = e.message();
         if (player.hasPermission("dirtlands.chat.color")){
-            message = MiniMessage.get().parse(PlainTextComponentSerializer.plainText().serialize(e.message()));
+            message = ConfigTools.parseText(PlainTextComponentSerializer.plainText().serialize(e.message()));
         }
 
-        Component replacedText = ConfigTools.parseFromPath("Chat Style", Template.of("Prefix", MiniMessage.get().parse(prefix == null ? "" : prefix)),
-                Template.of("Player", e.getPlayer().displayName()), Template.of("Suffix", MiniMessage.get().parse(suffix == null ? "" : suffix)),
+        Component replacedText = ConfigTools.parseFromPath("Chat Style", Template.of("Prefix", ConfigTools.parseText(prefix == null ? "" : prefix)),
+                Template.of("Player", e.getPlayer().displayName()), Template.of("Suffix", ConfigTools.parseText(suffix == null ? "" : suffix)),
                 Template.of("Message", message));
 
         Bukkit.broadcast(replacedText);

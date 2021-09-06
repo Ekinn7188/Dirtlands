@@ -1,7 +1,6 @@
 package net.dirtlands.tools;
 
 import net.dirtlands.Main;
-import net.dirtlands.files.Warps;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.Template;
 import net.kyori.adventure.title.Title;
@@ -34,7 +33,7 @@ public class Countdown {
                     player.sendMessage(ConfigTools.parseFromPath("Dont Move Message"));
                 }
                 if (time == 0){
-                    player.teleport(LocationTools.stringToLocation(Warps.get().getString(coordsLocation)));
+                    player.teleport(LocationTools.stringToLocation(Main.getPlugin().warps().get().getString(coordsLocation)));
                     player.sendMessage(ConfigTools.parseFromPath("Teleport Success", Template.of("Location", destination)));
                     Bukkit.getScheduler().cancelTask(tasks.get(player.getUniqueId()));
                     tasks.remove(player.getUniqueId());

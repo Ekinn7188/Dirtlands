@@ -12,11 +12,11 @@ import java.util.Objects;
 
 public class Config {
 
-    private static File file;
-    private static FileConfiguration config;
+    private File file;
+    private FileConfiguration config;
 
     //finds or generates custom config
-    public static void setup(){
+    public Config(){
         file = new File(Objects.requireNonNull(Bukkit.getServer().getPluginManager().getPlugin("Dirtlands")).getDataFolder(), "config.yml");
 
         if (!file.exists()){
@@ -36,11 +36,11 @@ public class Config {
         config = YamlConfiguration.loadConfiguration(file);
     }
 
-    public static FileConfiguration get(){
+    public FileConfiguration get(){
         return config;
     }
 
-    public static void save(){
+    public void save(){
         try{
             config.save(file);
         } catch (IOException e) {
@@ -51,7 +51,7 @@ public class Config {
         }
     }
 
-    public static void reload(){
+    public void reload(){
         config = YamlConfiguration.loadConfiguration(file);
     }
 

@@ -12,11 +12,11 @@ import java.util.Objects;
 
 public class Warps {
 
-    private static File file;
-    private static FileConfiguration warpFile;
+    private File file;
+    private FileConfiguration warpFile;
 
     //finds or generates warps file
-    public static void setup(){
+    public Warps() {
         file = new File(Objects.requireNonNull(Bukkit.getServer().getPluginManager().getPlugin("Dirtlands")).getDataFolder(), "warps.yml");
 
         if (!file.exists()){
@@ -36,11 +36,11 @@ public class Warps {
         warpFile = YamlConfiguration.loadConfiguration(file);
     }
 
-    public static FileConfiguration get(){
+    public FileConfiguration get(){
         return warpFile;
     }
 
-    public static void save(){
+    public void save(){
         try{
             warpFile.save(file);
         } catch (IOException e) {
@@ -51,7 +51,7 @@ public class Warps {
         }
     }
 
-    public static void reload(){
+    public void reload(){
         warpFile = YamlConfiguration.loadConfiguration(file);
     }
 

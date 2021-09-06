@@ -2,7 +2,6 @@ package net.dirtlands.commands.warp;
 
 import net.dirtlands.Main;
 import net.dirtlands.commands.PluginCommand;
-import net.dirtlands.files.Warps;
 import net.dirtlands.tools.Countdown;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.entity.Player;
@@ -18,7 +17,7 @@ public class Spawn extends PluginCommand {
 
     @Override
     public void execute(Player player, String[] args) {
-        if (Objects.equals(Warps.get().getString("Spawn.Coords"), "")){
+        if (Objects.equals(Main.getPlugin().warps().get().getString("Spawn.Coords"), "")){
             player.sendMessage(MiniMessage.get().parse("<red>Spawn doesn't exist yet! Make sure to set it with <dark_red>/setspawn</dark_red>!</red>"));
             return;
         }

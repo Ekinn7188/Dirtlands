@@ -1,6 +1,6 @@
 package net.dirtlands.commands.tab;
 
-import net.dirtlands.files.Warps;
+import net.dirtlands.Main;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -17,7 +17,7 @@ public class WarpTabCompleter extends PluginTabCompleter {
 
     @Override
     public List<String> tabCompleter(Player player, @NotNull String[] args) {
-        ConfigurationSection warpsFromConfig = Warps.get().getConfigurationSection("Warps");
+        ConfigurationSection warpsFromConfig = Main.getPlugin().warps().get().getConfigurationSection("Warps");
         if (warpsFromConfig != null){
             return new ArrayList<>(warpsFromConfig.getKeys(false));
         }
