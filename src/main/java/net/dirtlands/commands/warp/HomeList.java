@@ -2,7 +2,7 @@ package net.dirtlands.commands.warp;
 
 import net.dirtlands.Main;
 import net.dirtlands.commands.PluginCommand;
-import net.dirtlands.tools.ConfigTools;
+import net.dirtlands.tools.MessageTools;
 import net.kyori.adventure.text.minimessage.Template;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
@@ -24,9 +24,9 @@ public class HomeList extends PluginCommand {
         if (homesFromConfig != null){
             List<String> homes = new ArrayList<>(homesFromConfig.getKeys(false));
             String commaSeperatedHomes = String.join(", ", homes);
-            player.sendMessage(ConfigTools.parseFromPath("Home List", Template.of("Homes", commaSeperatedHomes)));
+            player.sendMessage(MessageTools.parseFromPath("Home List", Template.of("Homes", commaSeperatedHomes)));
         } else {
-            player.sendMessage(ConfigTools.parseFromPath("No Homes"));
+            player.sendMessage(MessageTools.parseFromPath("No Homes"));
         }
     }
 

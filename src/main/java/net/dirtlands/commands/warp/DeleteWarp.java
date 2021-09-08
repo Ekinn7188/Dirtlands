@@ -4,7 +4,7 @@ import net.dirtlands.Main;
 import net.dirtlands.commands.Permission;
 import net.dirtlands.commands.PluginCommand;
 import net.dirtlands.files.Warps;
-import net.dirtlands.tools.ConfigTools;
+import net.dirtlands.tools.MessageTools;
 import net.kyori.adventure.text.minimessage.Template;
 import org.bukkit.command.CommandSender;
 
@@ -36,7 +36,7 @@ public class DeleteWarp extends PluginCommand {
             Set<String> warpNames = Objects.requireNonNull(warps.get().getConfigurationSection("Warps")).getKeys(false);
 
             if (!warpNames.contains(args[0])){
-                sender.sendMessage(ConfigTools.parseFromPath("Warp Doesn't Exist", Template.of("Name", args[0])));
+                sender.sendMessage(MessageTools.parseFromPath("Warp Doesn't Exist", Template.of("Name", args[0])));
                 return;
             }
 
@@ -44,7 +44,7 @@ public class DeleteWarp extends PluginCommand {
             warps.save();
             warps.reload();
 
-            sender.sendMessage(ConfigTools.parseFromPath("Warp Deleted", Template.of("Name", args[0])));
+            sender.sendMessage(MessageTools.parseFromPath("Warp Deleted", Template.of("Name", args[0])));
 
         }
     }

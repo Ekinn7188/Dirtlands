@@ -2,8 +2,8 @@ package net.dirtlands.commands.warp;
 
 import net.dirtlands.Main;
 import net.dirtlands.commands.PluginCommand;
-import net.dirtlands.tools.ConfigTools;
 import net.dirtlands.tools.Countdown;
+import net.dirtlands.tools.MessageTools;
 import net.kyori.adventure.text.minimessage.Template;
 import org.bukkit.entity.Player;
 
@@ -24,7 +24,7 @@ public class Warp extends PluginCommand {
             if (warpNames.contains(args[0])){
                 Countdown.startCountdown(player, "Warps." + args[0] + ".Coords", args[0], Main.getPlugin());
             } else{
-                player.sendMessage(ConfigTools.parseFromPath("Warp Doesn't Exist", Template.of("Name", args[0])));
+                player.sendMessage(MessageTools.parseFromPath("Warp Doesn't Exist", Template.of("Name", args[0])));
             }
         }
     }

@@ -5,8 +5,11 @@ import net.dirtlands.commands.PluginCommand;
 import net.dirtlands.commands.tab.PluginTabCompleter;
 import net.dirtlands.files.Config;
 import net.dirtlands.files.NpcInventory;
+import net.dirtlands.files.Playerdata;
 import net.dirtlands.files.Warps;
 import net.dirtlands.handler.CombatSafezoneHandler;
+import net.dirtlands.tabscoreboard.TabMenu;
+import org.bukkit.Bukkit;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.reflections.Reflections;
@@ -22,6 +25,7 @@ public class Main extends JavaPlugin {
     private NpcInventory npcInventory;
     private Warps warps;
     private Config config;
+    private Playerdata playerData;
 
     @Override
     public void onEnable(){
@@ -30,8 +34,10 @@ public class Main extends JavaPlugin {
         checkForPluginDependencies(List.of("Citizens", "WorldGuard", "LuckPerms", "ProtocolLib"));
 
         startFileSetup();
-
         Main.initializeClasses();
+
+        TabMenu.updateTabLoop();
+
 
         var sessionManager = WorldGuard.getInstance().getPlatform().getSessionManager();
         sessionManager.registerHandler(CombatSafezoneHandler.FACTORY,null);
@@ -84,6 +90,23 @@ public class Main extends JavaPlugin {
 
     }
 
+    /*private boolean setupNMS() { //nms with interfaces
+        String version;
+
+        try {
+            version = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
+        } catch (ArrayIndexOutOfBoundsException e) {
+            e.printStackTrace();//weird version
+            return false;
+        }
+        if (version.equals("v1_17_R1")) {
+            className = new ClassName_1_17_R1();
+
+        }
+
+        return className != null;
+    }*/
+
     public static Main getPlugin(){
         return plugin;
     }
@@ -91,11 +114,12 @@ public class Main extends JavaPlugin {
     public NpcInventory npcInventory() {
         return npcInventory;
     }
-    
+    public Playerdata playerdata() {
+        return playerData;
+    }
     public Warps warps() {
         return warps;
     }
-    
     public Config config() {
         return config;
     }
@@ -179,7 +203,7 @@ public class Main extends JavaPlugin {
         config.get().addDefault("Broadcast Prefix", "&a[<#893900>Dirtlands</#893900>&a] ");
         config.get().addDefault("No Command Permission", "&cYou dont have permission to use this command!");
         config.get().addDefault("Player Only Command", "&cYou must be a player to execute this command!");
-        config.get().addDefault("Player Death", "&c\u2620 {Message}");
+        config.get().addDefault("Player Death", "&c\u2620 <Message>");
         config.get().addDefault("Chat Cleared By Message", "&c&lChat cleared by <Player>!");
         config.get().addDefault("Chat Muted By Message", "&c&lChat muted by <Player>!");
         config.get().addDefault("Chat Unmuted By Message", "&c&lChat unmuted by <Player>!");
@@ -187,6 +211,10 @@ public class Main extends JavaPlugin {
         config.get().addDefault("Npc Selected", "<Name>&a has been selected!");
         config.get().addDefault("No Npcs", "&cYou need to create an npc first!");
         config.get().addDefault("Player Doesnt Exist", "&4<Player>&c doesn't exist!");
+        config.get().addDefault("Tablist Header", List.of("<#D1C59F>-----------------<#893900>Dirtlands<#D1C59F>-----------------", "").toArray());
+        config.get().addDefault("Tablist Footer", List.of(" ", "<#D1C59F> <OnlinePlayers>/" + Bukkit.getServer().getMaxPlayers() + " Online").toArray());
+        config.get().addDefault("Chat Color Set", "&aDefault chat color set");
+        config.get().addDefault("Invalid Chat Color", "&cThat is not a valid chat color!");
 
         config.get().options().copyDefaults(true);
         config.get().options().copyHeader(true);
@@ -222,6 +250,16 @@ public class Main extends JavaPlugin {
         npcInventory.get().options().copyDefaults(false);
         npcInventory.save();
 
+        /*
+
+        playerdata.yml
+
+         */
+
+        playerData = new Playerdata();
+        playerData.get().options().copyHeader(false);
+        playerData.get().options().copyDefaults(false);
+        playerData.save();
 
         //if making another file, add it to /dirtlands reload
     }

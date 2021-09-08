@@ -4,8 +4,8 @@ import net.dirtlands.Main;
 import net.dirtlands.commands.Permission;
 import net.dirtlands.commands.PluginCommand;
 import net.dirtlands.files.Warps;
-import net.dirtlands.tools.ConfigTools;
 import net.dirtlands.tools.LocationTools;
+import net.dirtlands.tools.MessageTools;
 import net.dirtlands.tools.NumberAfterPermission;
 import net.kyori.adventure.text.minimessage.Template;
 import org.bukkit.Location;
@@ -62,9 +62,9 @@ public class SetHome extends PluginCommand {
             warps.get().set("Homes." + player.getUniqueId() + "." + newArgs[0], LocationTools.roundedLocationToString(loc));
             warps.save();
             warps.reload();
-            player.sendMessage(ConfigTools.parseFromPath("Home Created", Template.of("Name", newArgs[0])));
+            player.sendMessage(MessageTools.parseFromPath("Home Created", Template.of("Name", newArgs[0])));
         } else {
-            player.sendMessage(ConfigTools.parseFromPath("Too Many Homes", Template.of("Number", String.valueOf(largestSetHomeSize))));
+            player.sendMessage(MessageTools.parseFromPath("Too Many Homes", Template.of("Number", String.valueOf(largestSetHomeSize))));
         }
     }
 }

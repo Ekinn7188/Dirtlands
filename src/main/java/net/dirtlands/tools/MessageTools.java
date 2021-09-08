@@ -8,9 +8,15 @@ import net.kyori.adventure.text.minimessage.Template;
 import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-public class ConfigTools {
+public class MessageTools {
+
+    public static Pattern urlPattern = Pattern.compile("^(https?|ftp|file)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]", Pattern.CASE_INSENSITIVE);
 
     public static Component parseFromPath(@NotNull String path, @NotNull Template... placeholders){
         String message = getString(path);
@@ -56,5 +62,19 @@ public class ConfigTools {
         }
 
     }
+
+    public static List<String> fetchURLs(String input) {
+
+        Matcher urlMatcher = urlPattern.matcher(input);
+        List<String> urls = new ArrayList<>();
+
+        while (urlMatcher.find()) {
+            urls.add(urlMatcher.group());
+        }
+
+        return urls;
+
+    }
+
 
 }

@@ -3,7 +3,8 @@ package net.dirtlands.commands.admin;
 import net.dirtlands.Main;
 import net.dirtlands.commands.Permission;
 import net.dirtlands.commands.PluginCommand;
-import net.dirtlands.tools.ConfigTools;
+import net.dirtlands.tabscoreboard.TabMenu;
+import net.dirtlands.tools.MessageTools;
 import org.bukkit.command.CommandSender;
 
 public class Dirtlands extends PluginCommand {
@@ -29,7 +30,9 @@ public class Dirtlands extends PluginCommand {
                 Main.getPlugin().config().reload();
                 Main.getPlugin().warps().reload();
                 Main.getPlugin().npcInventory().reload();
-                sender.sendMessage(ConfigTools.parseFromPath("Dirtlands Reloaded"));
+                TabMenu.updateTab();
+
+                sender.sendMessage(MessageTools.parseFromPath("Dirtlands Reloaded"));
             }
         }
     }

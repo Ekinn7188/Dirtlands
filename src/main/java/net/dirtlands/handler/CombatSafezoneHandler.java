@@ -11,7 +11,7 @@ import com.sk89q.worldguard.session.Session;
 import com.sk89q.worldguard.session.handler.FlagValueChangeHandler;
 import com.sk89q.worldguard.session.handler.Handler;
 import net.dirtlands.listeners.CombatTag;
-import net.dirtlands.tools.ConfigTools;
+import net.dirtlands.tools.MessageTools;
 import net.kyori.adventure.title.Title;
 import org.bukkit.Bukkit;
 
@@ -52,8 +52,8 @@ public class CombatSafezoneHandler extends FlagValueChangeHandler<StateFlag.Stat
 
         if (flagDisabled && CombatTag.getTasks().containsKey(player.getUniqueId())){//if the flag is off and the player is in combat
 
-            Title title = Title.title(ConfigTools.parseFromPath("Enter Safezone In Combat Title"),
-                    ConfigTools.parseFromPath("Enter Safezone In Combat Subtitle"));
+            Title title = Title.title(MessageTools.parseFromPath("Enter Safezone In Combat Title"),
+                    MessageTools.parseFromPath("Enter Safezone In Combat Subtitle"));
 
             Objects.requireNonNull(Bukkit.getPlayer(player.getUniqueId())).showTitle(title);
             return false;

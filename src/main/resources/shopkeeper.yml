@@ -38,6 +38,7 @@ Inventories:
         block: DIRT
         name: "<#692C00>&lDirt"
         lore: "<#893900>It's about as dirty as dirt gets ||&eBuy: &610 |&eSell: &65"
+        amount: 5
         buy: 10
         sell: 5
       '5':

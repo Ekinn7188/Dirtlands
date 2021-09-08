@@ -4,7 +4,7 @@ import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import net.dirtlands.Main;
 import net.dirtlands.files.NpcInventory;
-import net.dirtlands.tools.ConfigTools;
+import net.dirtlands.tools.MessageTools;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
 
 public class Shopkeeper implements Listener {
     
-    NpcInventory npcInventory;
+    NpcInventory npcInventory = Main.getPlugin().npcInventory();
     
     @EventHandler
     public void playerInteractWithEntity(PlayerInteractEntityEvent e) {
@@ -43,9 +43,11 @@ public class Shopkeeper implements Listener {
 
         Player player = e.getPlayer();
 
+        String npcIdAsString = npcInventory.get().getString("Npc Ids." + npc.getId() + ".inventory");
 
-        npcInventory = Main.getPlugin().npcInventory();
-        player.openInventory(configParser(player, npcInventory.get().getInt("Npc Ids." + npc.getId() + ".inventory")));
+        if (npcIdAsString != null){
+            player.openInventory(configParser(player, Integer.parseInt(npcIdAsString)));
+        }
     }
 
     protected Inventory configParser(Player player, int inventoryNumber) {
@@ -53,49 +55,64 @@ public class Shopkeeper implements Listener {
 
         String inventoryPrefix = "Inventories." + inventoryNumber;
 
+        //open the inventory with slots and name to the player
         inventory = Bukkit.createInventory(player, npcInventory.get().getInt(inventoryPrefix + ".inventory size"),
-                ConfigTools.parseText(npcInventory.get().getString(inventoryPrefix + ".inventory name")));
+                MessageTools.parseText(npcInventory.get().getString(inventoryPrefix + ".inventory name")));
 
         ConfigurationSection slots = npcInventory.get().getConfigurationSection(inventoryPrefix + ".slots");
-
+        //if no items have been defined for the inventory, just stop parsing
         if (slots == null) {
             return inventory;
         }
 
-        List<String> itemSlotsWithDefault = new ArrayList<>(slots.getKeys(false).stream().toList());
 
+        //all the item slots ids written in config
+        List<String> itemSlotsWithDefault = new ArrayList<>(slots.getKeys(false).stream().toList());
+        //make it so "default" is on top of the list of ids
         Collections.sort(itemSlotsWithDefault, Collections.reverseOrder());
 
-
+        //loop through every id
         for (String slotName : itemSlotsWithDefault) {
+            //get the item material to put in slot
             Material material = Material.matchMaterial(npcInventory.get().getString(inventoryPrefix + ".slots." + slotName + ".block"));
+
+            //get name of item
             String name = npcInventory.get().getString(inventoryPrefix + ".slots." + slotName + ".name");
             if (name == null) {
                 name = "";
             }
 
+            //get lore to put and seperate it into a list
             String loreString = npcInventory.get().getString(inventoryPrefix + ".slots." + slotName + ".lore");
             List<Component> lore = new ArrayList<Component>();
             boolean hasLore = false;
             if (loreString != null){
-                lore = Arrays.stream(loreString.split("\\|")).map(s -> ConfigTools.parseText(s)).collect(Collectors.toList());
+                lore = Arrays.stream(loreString.split("\\|")).map(s -> MessageTools.parseText(s)).collect(Collectors.toList());
                 hasLore = true;
             }
 
+            //find how many items to put in the spot. If not set, default is 1
+            int amountDisplay = 1;
+            String amountInConfig = npcInventory.get().getString(inventoryPrefix + ".slots." + slotName + ".amount");
+            if (amountInConfig != null){
+                amountDisplay = Integer.valueOf(amountInConfig);
+            }
+
+            //if the name is default, loop through all the chest slots and create its defined item
             if (slotName.equals("default")){
                 for (int j = npcInventory.get().getInt(inventoryPrefix + ".inventory size")-1; 0 <= j; j--) {
                     if (hasLore){
-                        inventory.setItem(j, createGuiItem(material, name, lore.toArray(new Component[lore.size()])));
+                        inventory.setItem(j, createGuiItem(material, name, amountDisplay, lore.toArray(new Component[lore.size()])));
                     } else {
-                        inventory.setItem(j, createGuiItem(material, name));
+                        inventory.setItem(j, createGuiItem(material, name, amountDisplay));
                     }
 
                 }
-            } else {
+            } else { //if it's not deafult, just put an item in its slot
                 if (hasLore){
-                    inventory.setItem(Integer.valueOf(slotName), createGuiItem(material, name, lore.toArray(new Component[lore.size()])));
+                    inventory.setItem(Integer.valueOf(slotName), createGuiItem(material, name, amountDisplay, lore.toArray(new Component[lore.size()])));
                 } else {
-                    inventory.setItem(Integer.valueOf(slotName), createGuiItem(material, name));
+                    inventory.setItem(Integer.valueOf(slotName), createGuiItem(material, name, amountDisplay));
                 }
 
             }
@@ -103,11 +120,11 @@ public class Shopkeeper implements Listener {
         return inventory;
     }
 
-    protected ItemStack createGuiItem(final Material material, final String name, final Component... lore) {
-        final ItemStack item = new ItemStack(material, 1);
+    protected ItemStack createGuiItem(final Material material, final String name, int amount, final Component... lore) {
+        final ItemStack item = new ItemStack(material, amount);
         final ItemMeta meta = item.getItemMeta();
 
-        meta.displayName(ConfigTools.parseText(name).decoration(TextDecoration.ITALIC, false));
+        meta.displayName(MessageTools.parseText(name).decoration(TextDecoration.ITALIC, false));
 
         if (lore.length > 0){
             meta.lore(Arrays.stream(lore).map(c -> c.decoration(TextDecoration.ITALIC, false)).toList());
@@ -126,49 +143,59 @@ public class Shopkeeper implements Listener {
             return;
         }
 
+        //get all the inventory ids
         inventories.getKeys(false).forEach(key -> {
 
-            if (e.getView().title().equals(ConfigTools.parseText(
+            //if titles match an inventory, move on
+            if (e.getView().title().equals(MessageTools.parseText(
                     npcInventory.get().getString("Inventories." + key + ".inventory name")))) {
 
-
+                //loop through all of the item slots of the menu
                 npcInventory.get().getConfigurationSection("Inventories." + key + ".slots").getKeys(false).forEach(index -> {
 
+                    //if there is nothing clicked on, return
                     ItemStack clickedStack = e.getCurrentItem();
                     if (clickedStack == null) {
                         return;
                     }
                     ItemMeta clickedMeta = clickedStack.getItemMeta();
 
-                    Bukkit.getLogger().warning(clickedStack.toString());
-
+                    //if materials are the same in config and clicked, continue
                     if (clickedStack.getType() != Material.matchMaterial(npcInventory.get().getString("Inventories." + key + ".slots." + index + ".block"))){
                         return;
                     }
 
-                    //if (clickedStack.getAmount() == /*numberAmount*/)
 
+                    //if amount is the same
+                    int amountDisplay = 1;
+                    String amountInConfig = npcInventory.get().getString("Inventories." + key + ".slots." + index + ".amount");
+                    if (amountInConfig != null){
+                        amountDisplay = Integer.valueOf(amountInConfig);
+                    }
+                    if (clickedStack.getAmount() != amountDisplay){
+                        return;
+                    }
+
+                    //if name is the same
                     String name = npcInventory.get().getString("Inventories." + key + ".slots." + index + ".name");
                     if (name == null) {
                         name = "";
                     }
-
-                    if (!clickedMeta.displayName().equals(ConfigTools.parseText(name).decoration(TextDecoration.ITALIC, false))) {
+                    if (!clickedMeta.displayName().equals(MessageTools.parseText(name).decoration(TextDecoration.ITALIC, false))) {
                         return;
                     }
 
-
+                    //if lore is the same
                     String loreString = npcInventory.get().getString("Inventories." + key + ".slots." + index + ".lore");
                     List<Component> lore = new ArrayList<Component>();
                     boolean hasLore = false;
-
-                    if (loreString != null){
-                        lore = Arrays.stream(loreString.split("\\|")).map(s -> ConfigTools.parseText(s)).collect(Collectors.toList());
+                    if (loreString != null) {
+                        lore = Arrays.stream(loreString.split("\\|")).map(s -> MessageTools.parseText(s)).collect(Collectors.toList());
                         lore = lore.stream().map(c -> c.decoration(TextDecoration.ITALIC, false)).toList();
                         hasLore = true;
                     }
-
                     if (!clickedMeta.hasLore() && !hasLore || clickedMeta.lore().equals(lore)){
+                        //if there's an inventory option, set on an item, bring the player to the new inventory
                         String inventoryChange = npcInventory.get().getString("Inventories." + key + ".slots." + index + ".inventory");
                         if (inventoryChange != null) {
                             e.getView().getPlayer().openInventory(configParser((Player) e.getView().getPlayer(), Integer.valueOf(inventoryChange)));

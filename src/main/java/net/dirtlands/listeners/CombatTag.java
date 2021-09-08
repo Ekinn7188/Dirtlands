@@ -10,7 +10,7 @@ import com.sk89q.worldguard.protection.flags.Flags;
 import com.sk89q.worldguard.protection.regions.RegionContainer;
 import com.sk89q.worldguard.protection.regions.RegionQuery;
 import net.dirtlands.Main;
-import net.dirtlands.tools.ConfigTools;
+import net.dirtlands.tools.MessageTools;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.Template;
 import org.bukkit.Bukkit;
@@ -32,7 +32,6 @@ public class CombatTag implements Listener {
     @EventHandler
     public void onAttack(EntityDamageByEntityEvent e){
         if (e.getDamager() instanceof Player && e.getEntity() instanceof Player){
-
             RegionContainer container = WorldGuard.getInstance().getPlatform().getRegionContainer();
             RegionQuery query = container.createQuery();
 
@@ -62,7 +61,7 @@ public class CombatTag implements Listener {
         if (tasks.containsKey(player.getUniqueId())){
 
             e.setCancelled(true);
-            player.sendMessage(ConfigTools.parseFromPath("Command In Combat"));
+            player.sendMessage(MessageTools.parseFromPath("Command In Combat"));
         }
     }
 
@@ -92,18 +91,18 @@ public class CombatTag implements Listener {
         }
 
         tasks.put(player.getUniqueId(), Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
-            final int configTime = Integer.parseInt(ConfigTools.getString("Combat Time In Seconds"));
+            final int configTime = Integer.parseInt(MessageTools.getString("Combat Time In Seconds"));
             int time = configTime;
 
             @Override
             public void run() {
                 if (time == 0){
-                    player.sendMessage(ConfigTools.parseFromPath("Not Combat Tagged"));
+                    player.sendMessage(MessageTools.parseFromPath("Not Combat Tagged"));
                     player.sendActionBar(Component.empty());
                     Bukkit.getScheduler().cancelTask(tasks.get(player.getUniqueId()));
                     tasks.remove(player.getUniqueId());
                 } else{
-                    final Component message = ConfigTools.parseFromPath("Combat Timer", Template.of("Time", String.valueOf(time)));
+                    final Component message = MessageTools.parseFromPath("Combat Timer", Template.of("Time", String.valueOf(time)));
                     player.sendActionBar(message);
                     time--;
                 }

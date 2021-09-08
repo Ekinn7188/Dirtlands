@@ -4,8 +4,8 @@ import net.dirtlands.Main;
 import net.dirtlands.commands.Permission;
 import net.dirtlands.commands.PluginCommand;
 import net.dirtlands.files.Warps;
-import net.dirtlands.tools.ConfigTools;
 import net.dirtlands.tools.LocationTools;
+import net.dirtlands.tools.MessageTools;
 import net.kyori.adventure.text.minimessage.Template;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -32,7 +32,7 @@ public class SetWarp extends PluginCommand {
             warps.save();
             warps.reload();
 
-            player.sendMessage(ConfigTools.parseFromPath("Warp Created", Template.of("Name", args[0])));
+            player.sendMessage(MessageTools.parseFromPath("Warp Created", Template.of("Name", args[0])));
 
         }
     }

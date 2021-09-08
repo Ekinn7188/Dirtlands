@@ -2,7 +2,7 @@ package net.dirtlands.commands.warp;
 
 import net.dirtlands.Main;
 import net.dirtlands.commands.PluginCommand;
-import net.dirtlands.tools.ConfigTools;
+import net.dirtlands.tools.MessageTools;
 import net.kyori.adventure.text.minimessage.Template;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
@@ -29,9 +29,9 @@ public class WarpList extends PluginCommand {
         if (warpsFromConfig != null){
             List<String> warps = new ArrayList<>(warpsFromConfig.getKeys(false));
             String commaSeperatedWarps = String.join(", ", warps);
-            sender.sendMessage(ConfigTools.parseFromPath("Warp List", Template.of("Warps", commaSeperatedWarps)));
+            sender.sendMessage(MessageTools.parseFromPath("Warp List", Template.of("Warps", commaSeperatedWarps)));
         } else {
-            sender.sendMessage(ConfigTools.parseFromPath("No Warps"));
+            sender.sendMessage(MessageTools.parseFromPath("No Warps"));
         }
     }
 

@@ -12,7 +12,7 @@ import java.util.Objects;
 
 public class Config {
 
-    private File file;
+    private final File file;
     private FileConfiguration config;
 
     //finds or generates custom config

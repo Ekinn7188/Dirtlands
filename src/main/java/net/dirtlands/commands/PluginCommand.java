@@ -1,6 +1,6 @@
 package net.dirtlands.commands;
 
-import net.dirtlands.tools.ConfigTools;
+import net.dirtlands.tools.MessageTools;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -29,7 +29,7 @@ public abstract class PluginCommand implements CommandExecutor {
         if (getPermission()
                 .map(permission -> !sender.hasPermission(permission.getName()))
                 .orElse(false)) {
-            sender.sendMessage(ConfigTools.parseFromPath("No Command Permission"));
+            sender.sendMessage(MessageTools.parseFromPath("No Command Permission"));
             return true;
         }
 
@@ -38,7 +38,7 @@ public abstract class PluginCommand implements CommandExecutor {
                 execute((Player) sender, args);
                 return true;
             }
-            sender.sendMessage(ConfigTools.parseFromPath("Player Only Command"));
+            sender.sendMessage(MessageTools.parseFromPath("Player Only Command"));
             return true;
         }
 

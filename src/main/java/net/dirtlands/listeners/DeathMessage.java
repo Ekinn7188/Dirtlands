@@ -1,6 +1,6 @@
 package net.dirtlands.listeners;
 
-import net.dirtlands.tools.ConfigTools;
+import net.dirtlands.tools.MessageTools;
 import net.kyori.adventure.text.minimessage.Template;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -14,7 +14,7 @@ public class DeathMessage implements Listener {
     @EventHandler
     public void onDeath(PlayerDeathEvent e){
         Player player = e.getEntity();
-        e.deathMessage(ConfigTools.parseFromPath("Player Death", Template.of("Message", Objects.requireNonNull(e.deathMessage()))));
+        e.deathMessage(MessageTools.parseFromPath("Player Death", Template.of("Message", Objects.requireNonNull(e.deathMessage()))));
     }
 
 }

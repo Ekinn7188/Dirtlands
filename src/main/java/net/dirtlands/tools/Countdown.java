@@ -30,17 +30,17 @@ public class Countdown {
             @Override
             public void run() {
                 if(time == 5){
-                    player.sendMessage(ConfigTools.parseFromPath("Dont Move Message"));
+                    player.sendMessage(MessageTools.parseFromPath("Dont Move Message"));
                 }
                 if (time == 0){
                     player.teleport(LocationTools.stringToLocation(Main.getPlugin().warps().get().getString(coordsLocation)));
-                    player.sendMessage(ConfigTools.parseFromPath("Teleport Success", Template.of("Location", destination)));
+                    player.sendMessage(MessageTools.parseFromPath("Teleport Success", Template.of("Location", destination)));
                     Bukkit.getScheduler().cancelTask(tasks.get(player.getUniqueId()));
                     tasks.remove(player.getUniqueId());
                 }
                 else{
                     final Title.Times times = Title.Times.of(Duration.ofMillis(500), Duration.ofMillis(500), Duration.ofMillis(500));
-                    final Title title = Title.title(ConfigTools.parseFromPath("Teleport Countdown", Template.of("Time", String.valueOf(time)),
+                    final Title title = Title.title(MessageTools.parseFromPath("Teleport Countdown", Template.of("Time", String.valueOf(time)),
                             Template.of("Location", destination)), Component.empty(), times);
                     player.showTitle(title);
                     time--;

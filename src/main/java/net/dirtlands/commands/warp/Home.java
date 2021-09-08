@@ -3,8 +3,8 @@ package net.dirtlands.commands.warp;
 import net.dirtlands.Main;
 import net.dirtlands.commands.PluginCommand;
 import net.dirtlands.files.Warps;
-import net.dirtlands.tools.ConfigTools;
 import net.dirtlands.tools.Countdown;
+import net.dirtlands.tools.MessageTools;
 import net.kyori.adventure.text.minimessage.Template;
 import org.bukkit.entity.Player;
 
@@ -26,7 +26,7 @@ public class Home extends PluginCommand {
             Set<String> uuids = warps.get().getConfigurationSection("Homes").getKeys(false);
 
             if (!uuids.contains(player.getUniqueId().toString())){
-                player.sendMessage(ConfigTools.parseFromPath("Home Doesn't Exist", Template.of("Name", args[0])));
+                player.sendMessage(MessageTools.parseFromPath("Home Doesn't Exist", Template.of("Name", args[0])));
                 return;
             }
 
@@ -37,16 +37,16 @@ public class Home extends PluginCommand {
                 if (homes.contains(args[0])){
                     Countdown.startCountdown(player, "Homes." + player.getUniqueId() + "." + args[0], args[0], Main.getPlugin());
                 } else {
-                    player.sendMessage(ConfigTools.parseFromPath("Home Doesn't Exist", Template.of("Name", args[0])));
+                    player.sendMessage(MessageTools.parseFromPath("Home Doesn't Exist", Template.of("Name", args[0])));
                 }
             } else {
-                player.sendMessage(ConfigTools.parseFromPath("Home Doesn't Exist", Template.of("Name", args[0])));
+                player.sendMessage(MessageTools.parseFromPath("Home Doesn't Exist", Template.of("Name", args[0])));
             }
         } else {
             if (warps.get().getString("Homes." + player.getUniqueId() + ".home") != null){
                 Countdown.startCountdown(player, "Homes." + player.getUniqueId() + ".home", "home", Main.getPlugin());
             } else {
-                player.sendMessage(ConfigTools.parseFromPath("Home Doesn't Exist", Template.of("Name", "home")));
+                player.sendMessage(MessageTools.parseFromPath("Home Doesn't Exist", Template.of("Name", "home")));
             }
         }
     }

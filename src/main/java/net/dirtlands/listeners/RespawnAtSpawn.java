@@ -11,7 +11,7 @@ public class RespawnAtSpawn implements Listener {
 
     @EventHandler
     public void onRespawn(PlayerRespawnEvent e) {
-        e.getPlayer().spigot().respawn();
+        //e.getPlayer().spigot().respawn();
         try {
             e.setRespawnLocation(LocationTools.stringToLocation(Main.getPlugin().warps().get().getString("Spawn.Coords")));
         } catch (AssertionError exception) {

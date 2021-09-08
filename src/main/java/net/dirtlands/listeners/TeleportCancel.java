@@ -1,7 +1,7 @@
 package net.dirtlands.listeners;
 
-import net.dirtlands.tools.ConfigTools;
 import net.dirtlands.tools.Countdown;
+import net.dirtlands.tools.MessageTools;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.event.EventHandler;
@@ -19,7 +19,7 @@ public class TeleportCancel implements Listener {
         Location from = e.getFrom();
 
         if (Countdown.getTasks().containsKey(uuid) && (to.getX() != from.getX() || to.getY() != from.getY() || to.getZ() != from.getZ()) && (!e.getPlayer().isFlying() && e.getPlayer().isOp())){
-            e.getPlayer().sendMessage(ConfigTools.parseFromPath("Teleport Canceled"));
+            e.getPlayer().sendMessage(MessageTools.parseFromPath("Teleport Canceled"));
             Bukkit.getScheduler().cancelTask(Countdown.getTasks().get(uuid));
             Countdown.getTasks().remove(uuid);
         }

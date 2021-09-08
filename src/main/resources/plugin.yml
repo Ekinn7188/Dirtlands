@@ -38,6 +38,9 @@ commands:
     aliases: cc
   mutechat:
     description: Mutes the chat!
+  chatcolor:
+    description: sets the default color of the player's chat!
+    aliases: color
 permissions:
   dirtlands.setspawn:
     description: allows use of the setspawn command

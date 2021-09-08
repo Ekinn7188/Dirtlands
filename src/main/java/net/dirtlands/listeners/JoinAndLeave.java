@@ -1,7 +1,8 @@
 package net.dirtlands.listeners;
 
 import net.dirtlands.Main;
-import net.dirtlands.tools.ConfigTools;
+import net.dirtlands.tabscoreboard.TabMenu;
+import net.dirtlands.tools.MessageTools;
 import net.kyori.adventure.text.minimessage.Template;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
@@ -15,23 +16,26 @@ public class JoinAndLeave implements Listener {
 
     @EventHandler
     public void onJoin(PlayerJoinEvent e){
+        //update tab menu
+        TabMenu.updateTab();
+        //update player display name (it doesn't save when the server restarts!)
+        String nickname = Main.getPlugin().playerdata().get().getString(e.getPlayer().getUniqueId() + ".nickname");
+        if (nickname != null){
+            e.getPlayer().displayName(MessageTools.parseText(nickname));
+        }
         if (!e.getPlayer().hasPlayedBefore()){
             long uniqueJoins = new File(Bukkit.getWorlds().get(0).getWorldFolder() + File.separator + "playerdata").length();
 
-            e.joinMessage(ConfigTools.parseFromPath("First Join Message", Template.of("Player", e.getPlayer().displayName()),
+            e.joinMessage(MessageTools.parseFromPath("First Join Message", Template.of("Player", e.getPlayer().displayName()),
                     Template.of("Number", String.valueOf(uniqueJoins))));
         } else {
-            e.joinMessage(ConfigTools.parseFromPath("Join Message", Template.of("Player", e.getPlayer().displayName())));
+            e.joinMessage(MessageTools.parseFromPath("Join Message", Template.of("Player", e.getPlayer().displayName())));
         }
-
-        Main main = Main.getPlugin();
     }
 
     @EventHandler
     public void onLeave(PlayerQuitEvent e){
-        e.quitMessage(ConfigTools.parseFromPath("Leave Message", Template.of("Player", e.getPlayer().displayName())));
-
-        Main main = Main.getPlugin();
+        e.quitMessage(MessageTools.parseFromPath("Leave Message", Template.of("Player", e.getPlayer().displayName())));
     }
 
 }

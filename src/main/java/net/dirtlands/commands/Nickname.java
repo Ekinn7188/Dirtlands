@@ -1,10 +1,15 @@
 package net.dirtlands.commands;
 
-import net.dirtlands.tools.ConfigTools;
+import net.dirtlands.Main;
+import net.dirtlands.files.Playerdata;
+import net.dirtlands.tabscoreboard.TabMenu;
+import net.dirtlands.tools.MessageTools;
 import net.kyori.adventure.text.minimessage.Template;
 import org.bukkit.entity.Player;
 
 public class Nickname extends PluginCommand {
+    Playerdata playerdata = Main.getPlugin().playerdata();
+
     @Override
     public String getName() {
         return "nickname";
@@ -19,12 +24,20 @@ public class Nickname extends PluginCommand {
     public void execute(Player player, String[] args) {
         if (args.length > 0){
             if (args[0].equals("reset")){
-                player.displayName(ConfigTools.parseText(player.getName()));
-                player.sendMessage(ConfigTools.parseFromPath("Nickname Change", Template.of("Name", player.getName())));
+                player.displayName(MessageTools.parseText(player.getName()));
+                playerdata.get().set(player.getUniqueId() + ".nickname", null);
+                playerdata.save();
+                playerdata.reload();
+                TabMenu.updateTab();
+                player.sendMessage(MessageTools.parseFromPath("Nickname Change", Template.of("Name", player.getName())));
                 return;
             }
-            player.displayName(ConfigTools.parseText(args[0]));
-            player.sendMessage(ConfigTools.parseFromPath("Nickname Change", Template.of("Name", player.displayName())));
+            player.displayName(MessageTools.parseText(args[0]));
+            playerdata.get().set(player.getUniqueId() + ".nickname", args[0]);
+            playerdata.save();
+            playerdata.reload();
+            TabMenu.updateTab();
+            player.sendMessage(MessageTools.parseFromPath("Nickname Change", Template.of("Name", player.displayName())));
         }
     }
 }

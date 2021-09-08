@@ -3,7 +3,7 @@ package net.dirtlands.commands.warp;
 import net.dirtlands.Main;
 import net.dirtlands.commands.PluginCommand;
 import net.dirtlands.files.Warps;
-import net.dirtlands.tools.ConfigTools;
+import net.dirtlands.tools.MessageTools;
 import net.kyori.adventure.text.minimessage.Template;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -28,7 +28,7 @@ public class DeleteHome extends PluginCommand {
             Set<String> uuids = Objects.requireNonNull(warps.get().getConfigurationSection("Homes")).getKeys(false);
 
             if (!uuids.contains(player.getUniqueId().toString())){
-                player.sendMessage(ConfigTools.parseFromPath("Home Doesn't Exist", Template.of("Name", args[0])));
+                player.sendMessage(MessageTools.parseFromPath("Home Doesn't Exist", Template.of("Name", args[0])));
                 return;
             }
 
@@ -39,15 +39,15 @@ public class DeleteHome extends PluginCommand {
                 warps.save();
                 warps.reload();
 
-                player.sendMessage(ConfigTools.parseFromPath("Home Deleted", Template.of("Name", args[0])));
+                player.sendMessage(MessageTools.parseFromPath("Home Deleted", Template.of("Name", args[0])));
             } else {
-                player.sendMessage(ConfigTools.parseFromPath("Home Doesn't Exist", Template.of("Name", args[0])));
+                player.sendMessage(MessageTools.parseFromPath("Home Doesn't Exist", Template.of("Name", args[0])));
             }
         } else {
             warps.get().set("Homes."+ player.getUniqueId() + ".home", null);
             warps.save();
             warps.reload();
-            player.sendMessage(ConfigTools.parseFromPath("Home Deleted", Template.of("Name", "home")));
+            player.sendMessage(MessageTools.parseFromPath("Home Deleted", Template.of("Name", "home")));
         }
     }
 }

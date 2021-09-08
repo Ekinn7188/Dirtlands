@@ -2,7 +2,7 @@ package net.dirtlands.commands.admin;
 
 import net.dirtlands.commands.Permission;
 import net.dirtlands.commands.PluginCommand;
-import net.dirtlands.tools.ConfigTools;
+import net.dirtlands.tools.MessageTools;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.Template;
 import org.bukkit.Bukkit;
@@ -32,9 +32,9 @@ public class ClearChat extends PluginCommand {
             Bukkit.broadcast(Component.text(""));
         }
         if (sender instanceof Player){
-            Bukkit.broadcast(ConfigTools.parseFromPath("Chat Cleared By Message", Template.of("Player", ((Player) sender).displayName())));
+            Bukkit.broadcast(MessageTools.parseFromPath("Chat Cleared By Message", Template.of("Player", ((Player) sender).displayName())));
         } else {
-            Bukkit.broadcast(ConfigTools.parseFromPath("Chat Cleared By Message", Template.of("Player", "console")));
+            Bukkit.broadcast(MessageTools.parseFromPath("Chat Cleared By Message", Template.of("Player", "console")));
         }
     }
 }

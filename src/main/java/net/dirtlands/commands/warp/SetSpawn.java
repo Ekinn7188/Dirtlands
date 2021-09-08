@@ -4,8 +4,8 @@ import net.dirtlands.Main;
 import net.dirtlands.commands.Permission;
 import net.dirtlands.commands.PluginCommand;
 import net.dirtlands.files.Warps;
-import net.dirtlands.tools.ConfigTools;
 import net.dirtlands.tools.LocationTools;
+import net.dirtlands.tools.MessageTools;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -30,6 +30,6 @@ public class SetSpawn extends PluginCommand {
         warps.save();
         warps.reload();
 
-        player.sendMessage(ConfigTools.parseFromPath("Spawn Set"));
+        player.sendMessage(MessageTools.parseFromPath("Spawn Set"));
     }
 }
