@@ -41,6 +41,9 @@ commands:
   chatcolor:
     description: sets the default color of the player's chat!
     aliases: color
+  economy:
+    description: used for giving, removing, and setting money
+    aliases: [econ, eco]
 permissions:
   dirtlands.setspawn:
     description: allows use of the setspawn command
@@ -74,5 +77,8 @@ permissions:
     default: op
   dirtlands.chat.bypass:
     description: bypasses muted chat!
+    default: op
+  dirtlands.economy:
+    description: gives access to the /economy command!
     default: op
 

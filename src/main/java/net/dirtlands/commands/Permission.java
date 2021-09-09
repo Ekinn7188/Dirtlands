@@ -12,7 +12,8 @@ public enum Permission {
     MUTECHAT("dirtlands.chat.mute"),
     BYPASSCHAT("dirtlands.chat.bypass"),
     NPC("dirtlands.npc"),
-    CHATCOLOR("dirtlands.chat.color");
+    CHATCOLOR("dirtlands.chat.color"),
+    ECONOMY("dirtlands.economy");
 
     private final String name;
 

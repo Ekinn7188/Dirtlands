@@ -16,10 +16,10 @@ public class JoinAndLeave implements Listener {
 
     @EventHandler
     public void onJoin(PlayerJoinEvent e){
-        //update tab menu
-        TabMenu.updateTab();
         //update player display name (it doesn't save when the server restarts!)
         String nickname = Main.getPlugin().playerdata().get().getString(e.getPlayer().getUniqueId() + ".nickname");
+        //update tab menu
+        TabMenu.updateTab();
         if (nickname != null){
             e.getPlayer().displayName(MessageTools.parseText(nickname));
         }

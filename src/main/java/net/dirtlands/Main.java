@@ -215,6 +215,13 @@ public class Main extends JavaPlugin {
         config.get().addDefault("Tablist Footer", List.of(" ", "<#D1C59F> <OnlinePlayers>/" + Bukkit.getServer().getMaxPlayers() + " Online").toArray());
         config.get().addDefault("Chat Color Set", "&aDefault chat color set");
         config.get().addDefault("Invalid Chat Color", "&cThat is not a valid chat color!");
+        config.get().addDefault("Money Gained Actionbar", "&3+<money> &bExpensive Diamonds &o(You Have &3<balance>&b)");
+        config.get().addDefault("Money Set Actionbar", "&bYour Balance Has Been Set To &3<money>");
+        config.get().addDefault("Money Lost Actionbar", "&3-<money> &bExpensive Diamonds &o(You Have &3<balance>&b)");
+        config.get().addDefault("Cant Afford Message", "&cYou can't afford this!");
+        config.get().addDefault("Player Doesnt Have Enough Money", "&c<player> doesn't have enough money for this action");
+        config.get().addDefault("Player Balance", "&3<player>&b has &3<balance> expensive diamonds");
+
 
         config.get().options().copyDefaults(true);
         config.get().options().copyHeader(true);
