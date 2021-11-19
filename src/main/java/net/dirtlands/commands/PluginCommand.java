@@ -1,6 +1,8 @@
 package net.dirtlands.commands;
 
-import net.dirtlands.tools.MessageTools;
+import jeeper.utils.MessageTools;
+import jeeper.utils.config.ConfigSetup;
+import net.dirtlands.Main;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -11,6 +13,7 @@ import java.util.Optional;
 
 public abstract class PluginCommand implements CommandExecutor {
     abstract public String getName();
+    private static ConfigSetup config = Main.getPlugin().config();
 
     final public Optional<Permission> getPermission() {
         return Optional.ofNullable(getPermissionType());
@@ -29,7 +32,7 @@ public abstract class PluginCommand implements CommandExecutor {
         if (getPermission()
                 .map(permission -> !sender.hasPermission(permission.getName()))
                 .orElse(false)) {
-            sender.sendMessage(MessageTools.parseFromPath("No Command Permission"));
+            sender.sendMessage(MessageTools.parseFromPath(config, "No Command Permission"));
             return true;
         }
 
@@ -38,7 +41,7 @@ public abstract class PluginCommand implements CommandExecutor {
                 execute((Player) sender, args);
                 return true;
             }
-            sender.sendMessage(MessageTools.parseFromPath("Player Only Command"));
+            sender.sendMessage(MessageTools.parseFromPath(config, "Player Only Command"));
             return true;
         }
 

@@ -1,7 +1,7 @@
 package net.dirtlands.tabscoreboard;
 
+import jeeper.utils.MessageTools;
 import net.dirtlands.Main;
-import net.dirtlands.tools.MessageTools;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.Template;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
@@ -55,7 +55,7 @@ public class TabMenu {
             for (String line : text) {
                 builder.append(line).append("\n");
             }
-            return MessageTools.parseText(builder.toString(), Template.of("OnlinePlayers", String.valueOf(Bukkit.getOnlinePlayers().size())));
+            return MessageTools.parseText(builder.toString(), Template.template("OnlinePlayers", String.valueOf(Bukkit.getOnlinePlayers().size())));
         }
         return Component.empty();
     }

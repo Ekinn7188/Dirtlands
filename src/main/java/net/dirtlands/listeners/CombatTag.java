@@ -9,8 +9,9 @@ import com.sk89q.worldguard.protection.ApplicableRegionSet;
 import com.sk89q.worldguard.protection.flags.Flags;
 import com.sk89q.worldguard.protection.regions.RegionContainer;
 import com.sk89q.worldguard.protection.regions.RegionQuery;
+import jeeper.utils.MessageTools;
+import jeeper.utils.config.ConfigSetup;
 import net.dirtlands.Main;
-import net.dirtlands.tools.MessageTools;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.Template;
 import org.bukkit.Bukkit;
@@ -28,6 +29,7 @@ import java.util.UUID;
 
 public class CombatTag implements Listener {
     private static final Map<UUID, Integer> tasks = new HashMap<>();
+    private static ConfigSetup config = Main.getPlugin().config();
 
     @EventHandler
     public void onAttack(EntityDamageByEntityEvent e){
@@ -61,7 +63,7 @@ public class CombatTag implements Listener {
         if (tasks.containsKey(player.getUniqueId())){
 
             e.setCancelled(true);
-            player.sendMessage(MessageTools.parseFromPath("Command In Combat"));
+            player.sendMessage(MessageTools.parseFromPath(config, "Command In Combat"));
         }
     }
 
@@ -91,18 +93,18 @@ public class CombatTag implements Listener {
         }
 
         tasks.put(player.getUniqueId(), Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
-            final int configTime = Integer.parseInt(MessageTools.getString("Combat Time In Seconds"));
+            final int configTime = Integer.parseInt(MessageTools.getString(config, "Combat Time In Seconds"));
             int time = configTime;
 
             @Override
             public void run() {
                 if (time == 0){
-                    player.sendMessage(MessageTools.parseFromPath("Not Combat Tagged"));
+                    player.sendMessage(MessageTools.parseFromPath(config, "Not Combat Tagged"));
                     player.sendActionBar(Component.empty());
                     Bukkit.getScheduler().cancelTask(tasks.get(player.getUniqueId()));
                     tasks.remove(player.getUniqueId());
                 } else{
-                    final Component message = MessageTools.parseFromPath("Combat Timer", Template.of("Time", String.valueOf(time)));
+                    final Component message = MessageTools.parseFromPath(config, "Combat Timer", Template.template("Time", String.valueOf(time)));
                     player.sendActionBar(message);
                     time--;
                 }

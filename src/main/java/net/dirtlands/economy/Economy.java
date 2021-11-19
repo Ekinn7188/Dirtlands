@@ -1,14 +1,16 @@
 package net.dirtlands.economy;
 
+import jeeper.utils.MessageTools;
+import jeeper.utils.config.ConfigSetup;
 import net.dirtlands.Main;
 import net.dirtlands.files.Playerdata;
-import net.dirtlands.tools.MessageTools;
 import net.kyori.adventure.text.minimessage.Template;
 import org.bukkit.entity.Player;
 
 public class Economy {
 
     public static Playerdata playerdata = Main.getPlugin().playerdata();
+    private static ConfigSetup config = Main.getPlugin().config();
 
     /**
      *
@@ -24,8 +26,8 @@ public class Economy {
         playerdata.get().set(player.getUniqueId() + ".balance", balance);
         playerdata.save();
         playerdata.reload();
-        player.sendActionBar(MessageTools.parseFromPath("Money Gained Actionbar",
-                Template.of("money", String.valueOf(amount)), Template.of("balance", String.valueOf(balance))));
+        player.sendActionBar(MessageTools.parseFromPath(config, "Money Gained Actionbar",
+                Template.template("money", String.valueOf(amount)), Template.template("balance", String.valueOf(balance))));
     }
 
     /**
@@ -45,8 +47,8 @@ public class Economy {
         playerdata.get().set(player.getUniqueId() + ".balance", balance);
         playerdata.save();
         playerdata.reload();
-        player.sendActionBar(MessageTools.parseFromPath("Money Lost Actionbar",
-                Template.of("money", String.valueOf(amount)), Template.of("balance", String.valueOf(balance))));
+        player.sendActionBar(MessageTools.parseFromPath(config, "Money Lost Actionbar",
+                Template.template("money", String.valueOf(amount)), Template.template("balance", String.valueOf(balance))));
         return true;
     }
 
@@ -63,8 +65,8 @@ public class Economy {
         playerdata.get().set(player.getUniqueId() + ".balance", balance);
         playerdata.save();
         playerdata.reload();
-        player.sendActionBar(MessageTools.parseFromPath("Money Lost Actionbar",
-                Template.of("money", String.valueOf(amount)), Template.of("balance", String.valueOf(balance))));
+        player.sendActionBar(MessageTools.parseFromPath(config, "Money Lost Actionbar",
+                Template.template("money", String.valueOf(amount)), Template.template("balance", String.valueOf(balance))));
     }
 
     /**
@@ -79,8 +81,8 @@ public class Economy {
         playerdata.save();
         playerdata.reload();
 
-        player.sendActionBar(MessageTools.parseFromPath("Money Set Actionbar",
-                Template.of("money", String.valueOf(amount))));
+        player.sendActionBar(MessageTools.parseFromPath(config,"Money Set Actionbar",
+                Template.template("money", String.valueOf(amount))));
     }
 
     /**

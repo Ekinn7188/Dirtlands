@@ -1,11 +1,13 @@
 package net.dirtlands.listeners;
 
+import jeeper.utils.LocationParser;
 import net.dirtlands.Main;
-import net.dirtlands.tools.LocationTools;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
+
+import java.util.Objects;
 
 public class RespawnAtSpawn implements Listener {
 
@@ -13,7 +15,7 @@ public class RespawnAtSpawn implements Listener {
     public void onRespawn(PlayerRespawnEvent e) {
         //e.getPlayer().spigot().respawn();
         try {
-            e.setRespawnLocation(LocationTools.stringToLocation(Main.getPlugin().warps().get().getString("Spawn.Coords")));
+            e.setRespawnLocation(LocationParser.stringToLocation(Objects.requireNonNull(Main.getPlugin().warps().get().getString("Spawn.Coords"))));
         } catch (AssertionError exception) {
             //do nothing, there's no spawn location set
         }
@@ -25,7 +27,7 @@ public class RespawnAtSpawn implements Listener {
             return;
         }
         try {
-            e.getPlayer().teleport(LocationTools.stringToLocation(Main.getPlugin().warps().get().getString("Spawn.Coords")));
+            e.getPlayer().teleport(LocationParser.stringToLocation(Objects.requireNonNull(Main.getPlugin().warps().get().getString("Spawn.Coords"))));
         } catch (AssertionError exception) {
             //do nothing, there's no spawn location set
         }

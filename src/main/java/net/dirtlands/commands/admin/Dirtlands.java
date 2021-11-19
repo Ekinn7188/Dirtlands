@@ -1,13 +1,15 @@
 package net.dirtlands.commands.admin;
 
+import jeeper.utils.MessageTools;
+import jeeper.utils.config.ConfigSetup;
 import net.dirtlands.Main;
 import net.dirtlands.commands.Permission;
 import net.dirtlands.commands.PluginCommand;
 import net.dirtlands.tabscoreboard.TabMenu;
-import net.dirtlands.tools.MessageTools;
 import org.bukkit.command.CommandSender;
 
 public class Dirtlands extends PluginCommand {
+    private static ConfigSetup config = Main.getPlugin().config();
     @Override
     public String getName() {
         return "dirtlands";
@@ -32,7 +34,7 @@ public class Dirtlands extends PluginCommand {
                 Main.getPlugin().npcInventory().reload();
                 TabMenu.updateTab();
 
-                sender.sendMessage(MessageTools.parseFromPath("Dirtlands Reloaded"));
+                sender.sendMessage(MessageTools.parseFromPath(config, "Dirtlands Reloaded"));
             }
         }
     }

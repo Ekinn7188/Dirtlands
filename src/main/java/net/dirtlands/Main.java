@@ -1,9 +1,10 @@
 package net.dirtlands;
 
 import com.sk89q.worldguard.WorldGuard;
+import jeeper.utils.PluginEnable;
+import jeeper.utils.config.ConfigSetup;
 import net.dirtlands.commands.PluginCommand;
 import net.dirtlands.commands.tab.PluginTabCompleter;
-import net.dirtlands.files.Config;
 import net.dirtlands.files.NpcInventory;
 import net.dirtlands.files.Playerdata;
 import net.dirtlands.files.Warps;
@@ -12,27 +13,29 @@ import net.dirtlands.tabscoreboard.TabMenu;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jooq.DSLContext;
 import org.reflections.Reflections;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Objects;
-import java.util.logging.Level;
 
 public class Main extends JavaPlugin {
 
     private static Main plugin;
     private NpcInventory npcInventory;
     private Warps warps;
-    private Config config;
+    private ConfigSetup config;
     private Playerdata playerData;
+    private DSLContext dslContext;
 
     @Override
     public void onEnable(){
         plugin = this;
 
-        checkForPluginDependencies(List.of("Citizens", "WorldGuard", "LuckPerms", "ProtocolLib"));
+        PluginEnable.checkForPluginDependencies(List.of("Citizens", "WorldGuard", "LuckPerms", "ProtocolLib"), "dirtlands");
 
+        dslContext = SQLite.databaseSetup();
         startFileSetup();
         Main.initializeClasses();
 
@@ -91,14 +94,12 @@ public class Main extends JavaPlugin {
     }
 
     /*private boolean setupNMS() { //nms with interfaces
-        String version;
+        String version = PluginEnable.getServerVersion();
 
-        try {
-            version = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
-        } catch (ArrayIndexOutOfBoundsException e) {
-            e.printStackTrace();//weird version
+        if (version.equals("")) {
             return false;
         }
+
         if (version.equals("v1_17_R1")) {
             className = new ClassName_1_17_R1();
 
@@ -110,7 +111,12 @@ public class Main extends JavaPlugin {
     public static Main getPlugin(){
         return plugin;
     }
-
+    /**
+     * @return the DSLContext, used to contact the SQLite database
+     */
+    public DSLContext getDslContext(){
+        return dslContext;
+    }
     public NpcInventory npcInventory() {
         return npcInventory;
     }
@@ -120,19 +126,8 @@ public class Main extends JavaPlugin {
     public Warps warps() {
         return warps;
     }
-    public Config config() {
+    public ConfigSetup config() {
         return config;
-    }
-
-    @SuppressWarnings("ConstantConditions")
-    public void checkForPluginDependencies(List<String> pluginNames) {
-        for (String plugin : pluginNames){
-            if (getServer().getPluginManager().getPlugin(plugin) == null || !getServer().getPluginManager().getPlugin(plugin).isEnabled()) {
-                getLogger().log(Level.SEVERE, plugin + " not found or not enabled");
-                getServer().getPluginManager().disablePlugin(this);
-                return;
-            }
-        }
     }
 
 
@@ -170,7 +165,7 @@ public class Main extends JavaPlugin {
 
         */
 
-        config = new Config();
+        config = new ConfigSetup("config", "dirtlands");
         config.get().options().header(header);
         config.get().addDefault("Chat Style", "<Prefix><#893900><Player></#893900><Suffix> &a\u00BB &7<Message>");
         config.get().addDefault("Dont Move Message", "&cDont move or teleportation is &4canceled");
@@ -221,6 +216,7 @@ public class Main extends JavaPlugin {
         config.get().addDefault("Cant Afford Message", "&cYou can't afford this!");
         config.get().addDefault("Player Doesnt Have Enough Money", "&c<player> doesn't have enough money for this action");
         config.get().addDefault("Player Balance", "&3<player>&b has &3<balance> expensive diamonds");
+        config.get().addDefault("Metadata Message", "&aYour metadata has been generated in shopkeeper.yml, index <index>!");
 
 
         config.get().options().copyDefaults(true);

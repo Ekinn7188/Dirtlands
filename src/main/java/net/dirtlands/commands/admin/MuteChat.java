@@ -1,8 +1,10 @@
 package net.dirtlands.commands.admin;
 
+import jeeper.utils.MessageTools;
+import jeeper.utils.config.ConfigSetup;
+import net.dirtlands.Main;
 import net.dirtlands.commands.Permission;
 import net.dirtlands.commands.PluginCommand;
-import net.dirtlands.tools.MessageTools;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.Template;
 import org.bukkit.Bukkit;
@@ -12,6 +14,7 @@ import org.bukkit.entity.Player;
 public class MuteChat extends PluginCommand {
 
     public static boolean chatMuted = false;
+    private static ConfigSetup config = Main.getPlugin().config();
 
     @Override
     public String getName() {
@@ -34,9 +37,9 @@ public class MuteChat extends PluginCommand {
         Component commandSender = (sender instanceof Player) ? ((Player) sender).displayName() : Component.text("console");
 
         if (chatMuted){
-            Bukkit.broadcast(MessageTools.parseFromPath("Chat Muted By Message", Template.of("Player", commandSender)));
+            Bukkit.broadcast(MessageTools.parseFromPath(config,"Chat Muted By Message", Template.template("Player", commandSender)));
         } else {
-            Bukkit.broadcast(MessageTools.parseFromPath("Chat Unmuted By Message", Template.of("Player", commandSender)));
+            Bukkit.broadcast(MessageTools.parseFromPath(config, "Chat Unmuted By Message", Template.template("Player", commandSender)));
         }
     }
 }

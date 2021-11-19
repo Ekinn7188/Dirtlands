@@ -1,14 +1,16 @@
 package net.dirtlands.commands;
 
+import jeeper.utils.MessageTools;
+import jeeper.utils.config.ConfigSetup;
 import net.dirtlands.Main;
 import net.dirtlands.files.Playerdata;
 import net.dirtlands.tabscoreboard.TabMenu;
-import net.dirtlands.tools.MessageTools;
 import net.kyori.adventure.text.minimessage.Template;
 import org.bukkit.entity.Player;
 
 public class Nickname extends PluginCommand {
     Playerdata playerdata = Main.getPlugin().playerdata();
+    private static ConfigSetup config = Main.getPlugin().config();
 
     @Override
     public String getName() {
@@ -29,7 +31,7 @@ public class Nickname extends PluginCommand {
                 playerdata.save();
                 playerdata.reload();
                 TabMenu.updateTab();
-                player.sendMessage(MessageTools.parseFromPath("Nickname Change", Template.of("Name", player.getName())));
+                player.sendMessage(MessageTools.parseFromPath(config, "Nickname Change", Template.template("Name", player.getName())));
                 return;
             }
             player.displayName(MessageTools.parseText(args[0]));
@@ -37,7 +39,7 @@ public class Nickname extends PluginCommand {
             playerdata.save();
             playerdata.reload();
             TabMenu.updateTab();
-            player.sendMessage(MessageTools.parseFromPath("Nickname Change", Template.of("Name", player.displayName())));
+            player.sendMessage(MessageTools.parseFromPath(config,"Nickname Change", Template.template("Name", player.displayName())));
         }
     }
 }

@@ -1,5 +1,8 @@
 package net.dirtlands.tools;
 
+import jeeper.utils.LocationParser;
+import jeeper.utils.MessageTools;
+import jeeper.utils.config.ConfigSetup;
 import net.dirtlands.Main;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.Template;
@@ -9,9 +12,11 @@ import org.bukkit.entity.Player;
 
 import java.time.Duration;
 import java.util.HashMap;
+import java.util.Objects;
 import java.util.UUID;
 
 public class Countdown {
+    private static ConfigSetup config = Main.getPlugin().config();
 
     private static final HashMap<UUID, Integer> tasks = new HashMap<>();
 
@@ -30,18 +35,18 @@ public class Countdown {
             @Override
             public void run() {
                 if(time == 5){
-                    player.sendMessage(MessageTools.parseFromPath("Dont Move Message"));
+                    player.sendMessage(MessageTools.parseFromPath(config, "Dont Move Message"));
                 }
                 if (time == 0){
-                    player.teleport(LocationTools.stringToLocation(Main.getPlugin().warps().get().getString(coordsLocation)));
-                    player.sendMessage(MessageTools.parseFromPath("Teleport Success", Template.of("Location", destination)));
+                    player.teleport(LocationParser.stringToLocation(Objects.requireNonNull(Main.getPlugin().warps().get().getString(coordsLocation))));
+                    player.sendMessage(MessageTools.parseFromPath(config, "Teleport Success", Template.template("Location", destination)));
                     Bukkit.getScheduler().cancelTask(tasks.get(player.getUniqueId()));
                     tasks.remove(player.getUniqueId());
                 }
                 else{
                     final Title.Times times = Title.Times.of(Duration.ofMillis(500), Duration.ofMillis(500), Duration.ofMillis(500));
-                    final Title title = Title.title(MessageTools.parseFromPath("Teleport Countdown", Template.of("Time", String.valueOf(time)),
-                            Template.of("Location", destination)), Component.empty(), times);
+                    final Title title = Title.title(MessageTools.parseFromPath(config, "Teleport Countdown", Template.template("Time", String.valueOf(time)),
+                            Template.template("Location", destination)), Component.empty(), times);
                     player.showTitle(title);
                     time--;
                 }

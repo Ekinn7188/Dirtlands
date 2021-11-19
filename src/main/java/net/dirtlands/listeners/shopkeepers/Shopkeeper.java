@@ -1,10 +1,11 @@
 package net.dirtlands.listeners.shopkeepers;
 
+import jeeper.utils.MessageTools;
+import jeeper.utils.config.ConfigSetup;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import net.dirtlands.Main;
 import net.dirtlands.files.NpcInventory;
-import net.dirtlands.tools.MessageTools;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
@@ -19,6 +20,7 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -29,6 +31,7 @@ import java.util.stream.Collectors;
 public class Shopkeeper implements Listener {
     
     NpcInventory npcInventory = Main.getPlugin().npcInventory();
+    private static ConfigSetup config = Main.getPlugin().config();
     
     @EventHandler
     public void playerInteractWithEntity(PlayerInteractEntityEvent e) {
@@ -65,7 +68,6 @@ public class Shopkeeper implements Listener {
             return inventory;
         }
 
-
         //all the item slots ids written in config
         List<String> itemSlotsWithDefault = new ArrayList<>(slots.getKeys(false).stream().toList());
         //make it so "default" is on top of the list of ids
@@ -73,14 +75,26 @@ public class Shopkeeper implements Listener {
 
         //loop through every id
         for (String slotName : itemSlotsWithDefault) {
+
+            //get the metadata option if set
+            String metadataIndexAsString = npcInventory.get().getString(inventoryPrefix + ".slots." + slotName + ".metadata");
+            ItemStack itemStack = null;
+            if (metadataIndexAsString != null) {
+                int metadataIndex = npcInventory.get().getInt(inventoryPrefix + ".slots." + slotName + ".metadata");
+                itemStack = npcInventory.get().getItemStack("Metadata." + metadataIndex);
+                Bukkit.broadcast(npcInventory.get().getItemStack("Metadata." + metadataIndex).displayName());
+            }
+
+
+
             //get the item material to put in slot
             Material material = Material.matchMaterial(npcInventory.get().getString(inventoryPrefix + ".slots." + slotName + ".block"));
 
             //get name of item
-            String name = npcInventory.get().getString(inventoryPrefix + ".slots." + slotName + ".name");
-            if (name == null) {
-                name = "";
-            }
+            String name = "test";//npcInventory.get().getString(inventoryPrefix + ".slots." + slotName + ".name");
+//            if (name == null) {
+//                name = "";
+//            }
 
             //get lore to put and seperate it into a list
             String loreString = npcInventory.get().getString(inventoryPrefix + ".slots." + slotName + ".lore");
@@ -92,7 +106,7 @@ public class Shopkeeper implements Listener {
             }
 
             //find how many items to put in the spot. If not set, default is 1
-            int amountDisplay = 1;
+            int amountDisplay = -1;
             String amountInConfig = npcInventory.get().getString(inventoryPrefix + ".slots." + slotName + ".amount");
             if (amountInConfig != null){
                 amountDisplay = Integer.valueOf(amountInConfig);
@@ -102,25 +116,44 @@ public class Shopkeeper implements Listener {
             if (slotName.equals("default")){
                 for (int j = npcInventory.get().getInt(inventoryPrefix + ".inventory size")-1; 0 <= j; j--) {
                     if (hasLore){
-                        inventory.setItem(j, createGuiItem(material, name, amountDisplay, lore.toArray(new Component[lore.size()])));
+                        if (itemStack != null) {
+                            inventory.setItem(j, createGuiItem(itemStack, material, name, amountDisplay, lore.toArray(new Component[lore.size()])));
+                        } else {
+                            inventory.setItem(j, createGuiItem(material, name, amountDisplay, lore.toArray(new Component[lore.size()])));
+                        }
                     } else {
-                        inventory.setItem(j, createGuiItem(material, name, amountDisplay));
+                        if (itemStack != null) {
+                            inventory.setItem(j, createGuiItem(itemStack, material, name, amountDisplay));
+                        } else {
+                            inventory.setItem(j, createGuiItem(material, name, amountDisplay));
+                        }
                     }
 
                 }
             } else { //if it's not deafult, just put an item in its slot
                 if (hasLore){
-                    inventory.setItem(Integer.valueOf(slotName), createGuiItem(material, name, amountDisplay, lore.toArray(new Component[lore.size()])));
-                } else {
-                    inventory.setItem(Integer.valueOf(slotName), createGuiItem(material, name, amountDisplay));
-                }
+                    if (itemStack != null) {
+                        inventory.setItem(Integer.valueOf(slotName), createGuiItem(itemStack, material, name, amountDisplay, lore.toArray(new Component[lore.size()])));
+                    } else {
+                        inventory.setItem(Integer.valueOf(slotName), createGuiItem(material, name, amountDisplay, lore.toArray(new Component[lore.size()])));
+                    }
 
+                } else {
+                    if (itemStack != null) {
+                        inventory.setItem(Integer.valueOf(slotName), createGuiItem(itemStack, material, name, amountDisplay));
+                    } else {
+                        inventory.setItem(Integer.valueOf(slotName), createGuiItem(material, name, amountDisplay));
+                    }
+                }
             }
         }
         return inventory;
     }
 
     protected ItemStack createGuiItem(final Material material, final String name, int amount, final Component... lore) {
+        if (amount == -1) {
+            amount = 1;
+        }
         final ItemStack item = new ItemStack(material, amount);
         final ItemMeta meta = item.getItemMeta();
 
@@ -135,6 +168,26 @@ public class Shopkeeper implements Listener {
         return item;
     }
 
+    protected ItemStack createGuiItem(@NotNull final ItemStack item, final Material material, final String name, int amount, final Component... lore) {
+        final ItemMeta meta = item.getItemMeta();
+
+        if (material != null) {
+            item.setType(material);
+        }
+        if (!name.equals("")){
+            meta.displayName(MessageTools.parseText(name).decoration(TextDecoration.ITALIC, false));
+        }
+        if (amount == -1){
+            item.setAmount(amount);
+        }
+        if (lore.length > 0){
+            meta.lore(Arrays.stream(lore).map(c -> c.decoration(TextDecoration.ITALIC, false)).toList());
+        }
+
+        item.setItemMeta(meta);
+
+        return item;
+    }
 
     @EventHandler
     public void onInventoryClick(InventoryClickEvent e){

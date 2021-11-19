@@ -1,8 +1,9 @@
 package net.dirtlands.commands.warp;
 
+import jeeper.utils.MessageTools;
+import jeeper.utils.config.ConfigSetup;
 import net.dirtlands.Main;
 import net.dirtlands.commands.PluginCommand;
-import net.dirtlands.tools.MessageTools;
 import net.kyori.adventure.text.minimessage.Template;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
@@ -11,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class HomeList extends PluginCommand {
+    private static ConfigSetup config = Main.getPlugin().config();
 
     @Override
     public String getName() {
@@ -24,9 +26,9 @@ public class HomeList extends PluginCommand {
         if (homesFromConfig != null){
             List<String> homes = new ArrayList<>(homesFromConfig.getKeys(false));
             String commaSeperatedHomes = String.join(", ", homes);
-            player.sendMessage(MessageTools.parseFromPath("Home List", Template.of("Homes", commaSeperatedHomes)));
+            player.sendMessage(MessageTools.parseFromPath(config, "Home List", Template.template("Homes", commaSeperatedHomes)));
         } else {
-            player.sendMessage(MessageTools.parseFromPath("No Homes"));
+            player.sendMessage(MessageTools.parseFromPath(config, "No Homes"));
         }
     }
 

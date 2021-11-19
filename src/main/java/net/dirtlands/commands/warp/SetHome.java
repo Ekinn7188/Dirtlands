@@ -1,11 +1,12 @@
 package net.dirtlands.commands.warp;
 
+import jeeper.utils.LocationParser;
+import jeeper.utils.MessageTools;
+import jeeper.utils.config.ConfigSetup;
 import net.dirtlands.Main;
 import net.dirtlands.commands.Permission;
 import net.dirtlands.commands.PluginCommand;
 import net.dirtlands.files.Warps;
-import net.dirtlands.tools.LocationTools;
-import net.dirtlands.tools.MessageTools;
 import net.dirtlands.tools.NumberAfterPermission;
 import net.kyori.adventure.text.minimessage.Template;
 import org.bukkit.Location;
@@ -17,6 +18,8 @@ import java.util.Set;
 
 public class SetHome extends PluginCommand {
     Warps warps = Main.getPlugin().warps();
+    private static ConfigSetup config = Main.getPlugin().config();
+
     @Override
     public String getName() {
         return "sethome";
@@ -59,12 +62,12 @@ public class SetHome extends PluginCommand {
         }
 
         if (homeNames.size() < largestSetHomeSize || homeNames.contains(newArgs[0])) {
-            warps.get().set("Homes." + player.getUniqueId() + "." + newArgs[0], LocationTools.roundedLocationToString(loc));
+            warps.get().set("Homes." + player.getUniqueId() + "." + newArgs[0], LocationParser.roundedLocationToString(loc));
             warps.save();
             warps.reload();
-            player.sendMessage(MessageTools.parseFromPath("Home Created", Template.of("Name", newArgs[0])));
+            player.sendMessage(MessageTools.parseFromPath(config, "Home Created", Template.template("Name", newArgs[0])));
         } else {
-            player.sendMessage(MessageTools.parseFromPath("Too Many Homes", Template.of("Number", String.valueOf(largestSetHomeSize))));
+            player.sendMessage(MessageTools.parseFromPath(config, "Too Many Homes", Template.template("Number", String.valueOf(largestSetHomeSize))));
         }
     }
 }

@@ -44,6 +44,8 @@ commands:
   economy:
     description: used for giving, removing, and setting money
     aliases: [econ, eco]
+  metadata:
+    description: gives metadata of an item
 permissions:
   dirtlands.setspawn:
     description: allows use of the setspawn command
@@ -80,5 +82,8 @@ permissions:
     default: op
   dirtlands.economy:
     description: gives access to the /economy command!
+    default: op
+  dirtlands.metadata:
+    description: used to give access to the /metadata command
     default: op
 
