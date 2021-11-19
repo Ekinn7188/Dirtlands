@@ -26,7 +26,7 @@ public class Warp extends PluginCommand {
             if (warpNames.contains(args[0])){
                 Countdown.startCountdown(player, "Warps." + args[0] + ".Coords", args[0], Main.getPlugin());
             } else{
-                player.sendMessage(MessageTools.parseFromPath(config, "Warp Doesn't Exist", Template.of("Name", args[0])));
+                player.sendMessage(MessageTools.parseFromPath(config, "Warp Doesn't Exist", Template.template("Name", args[0])));
             }
         }
     }

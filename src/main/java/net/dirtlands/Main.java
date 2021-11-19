@@ -185,7 +185,7 @@ public class Main extends JavaPlugin {
         config.get().addDefault("Home Doesnt Exist", "&a/home <Name> does not exist!");
         config.get().addDefault("Too Many Homes", "&cYou've created too many homes! You can make up to &4<Number>");
         config.get().addDefault("Home List", "&aYour current homes: <Homes>");
-        config.get().addDefault("No Homes", "&cYou dont have any homes! Create one with /sethome {name}!"); //the brackets are intentional, there's no Template.of for it
+        config.get().addDefault("No Homes", "&cYou dont have any homes! Create one with /sethome {name}!"); //the brackets are intentional, there's no Template for it
         config.get().addDefault("Combat Time In Seconds", "10");
         config.get().addDefault("Combat Timer", "&cYou will untagged in &4<Time>&c seconds");
         config.get().addDefault("Not Combat Tagged", "&cYou're no longer combat tagged");
