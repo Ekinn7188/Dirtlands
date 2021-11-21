@@ -54,17 +54,17 @@ jooq {
         main {
             generationTool {
                 jdbc {
-                    driver = 'org.sqlite.JDBC'
-                    url = "jdbc:sqlite:${buildDir}/generate-source.db"
+                    driver = 'org.sqlite.JDBC' as Configuration
+                    url = "jdbc:sqlite:${buildDir}/generate-source.db" as Configuration
                 }
                 generator {
                     database {
-                        name = 'org.jooq.meta.sqlite.SQLiteDatabase'
-                        excludes = 'flyway_schema_history|sqlite_master|sqlite_sequence'
+                        name = 'org.jooq.meta.sqlite.SQLiteDatabase' as Configuration
+                        excludes = 'flyway_schema_history|sqlite_master|sqlite_sequence' as Configuration
                     }
                     //                generate {}
                     target {
-                        packageName = 'dirtlands.db'
+                        packageName = 'dirtlands.db' as Configuration
 //                        directory = '/database'
                     }
                 }
