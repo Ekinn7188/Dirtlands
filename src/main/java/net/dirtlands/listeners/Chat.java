@@ -1,12 +1,13 @@
 package net.dirtlands.listeners;
 
+import dirtlands.db.Tables;
 import io.papermc.paper.event.player.AsyncChatEvent;
 import jeeper.utils.MessageTools;
 import jeeper.utils.config.ConfigSetup;
 import net.dirtlands.Main;
 import net.dirtlands.commands.Permission;
 import net.dirtlands.commands.admin.MuteChat;
-import net.dirtlands.files.Playerdata;
+import net.dirtlands.database.DatabaseTools;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.minimessage.Template;
@@ -17,10 +18,11 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.jooq.DSLContext;
 
 public class Chat implements Listener {
 
-    Playerdata playerdata = Main.getPlugin().playerdata();
+    DSLContext dslContext = Main.getPlugin().getDslContext();
     private static ConfigSetup config = Main.getPlugin().config();
 
     @EventHandler
@@ -35,7 +37,7 @@ public class Chat implements Listener {
         }
 
 
-        String chatcolor = playerdata.get().getString(e.getPlayer().getUniqueId() + ".chatcolor");
+        String chatcolor = DatabaseTools.firstString(dslContext.select(Tables.USERS.CHATCOLOR).from(Tables.USERS).where(Tables.USERS.USERID.eq(DatabaseTools.getUserID(e.getPlayer().getUniqueId()))).fetchAny());
         String messageStyle = MessageTools.getString(config, "Chat Style");
         Player player = e.getPlayer();
         User user = LuckPermsProvider.get().getUserManager().getUser(player.getUniqueId());
@@ -47,24 +49,17 @@ public class Chat implements Listener {
 
         String messageString = PlainTextComponentSerializer.plainText().serialize(e.message());
         Component message = MessageTools.parseText(messageString);
-        if (player.hasPermission("dirtlands.chat.color")){
-            if (chatcolor == null){
-                message = MessageTools.parseText(messageString);
-            }
-            else {
-                message = MessageTools.parseText(chatcolor + messageString);
-            }
-
+        if (player.hasPermission("dirtlands.chat.color") && chatcolor != null ){
+            message = MessageTools.parseText(chatcolor + messageString);
         }
 
-        Component replacedText = MessageTools.parseFromPath(config, "Chat Style", Template.template("Prefix", MessageTools.parseText(prefix == null ? "" : prefix + " ")),
-                Template.template("Player", e.getPlayer().displayName()), Template.template("Suffix", MessageTools.parseText(suffix == null ? "" : " " + suffix)),
-                Template.template("Message", message));
+        Component replacedText = MessageTools.parseFromPath(config, "Chat Style", Template.template("prefix", MessageTools.parseText(prefix == null ? "" : prefix + " ")),
+                Template.template("player", e.getPlayer().displayName()), Template.template("suffix", MessageTools.parseText(suffix == null ? "" : " " + suffix)),
+                Template.template("message", message));
 
         for (String url : MessageTools.fetchURLs(messageString)) {
             replacedText = replacedText.clickEvent(ClickEvent.openUrl(url));
         }
-
 
         Bukkit.broadcast(replacedText);
     }

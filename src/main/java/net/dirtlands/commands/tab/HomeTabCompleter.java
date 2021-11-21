@@ -1,11 +1,11 @@
 package net.dirtlands.commands.tab;
 
+import dirtlands.db.Tables;
 import net.dirtlands.Main;
-import org.bukkit.configuration.ConfigurationSection;
+import net.dirtlands.database.DatabaseTools;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class HomeTabCompleter extends PluginTabCompleter {
@@ -17,14 +17,8 @@ public class HomeTabCompleter extends PluginTabCompleter {
 
     @Override
     public List<String> tabCompleter(Player player, @NotNull String[] args) {
-
-        ConfigurationSection homesFromConfig = Main.getPlugin().warps().get().getConfigurationSection("Homes." + player.getUniqueId());
-        if (homesFromConfig != null){
-            return new ArrayList<>(homesFromConfig.getKeys(false));
-        }
-
-        return null;
-
+        return Main.getPlugin().getDslContext().select(Tables.HOMES.HOMENAME).from(Tables.HOMES)
+                .where(Tables.HOMES.USERID.eq(DatabaseTools.getUserID(player.getUniqueId()))).fetch().getValues(Tables.HOMES.HOMENAME);
     }
 
 }

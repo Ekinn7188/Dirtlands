@@ -1,16 +1,21 @@
 package net.dirtlands.commands;
 
+import dirtlands.db.Tables;
 import jeeper.utils.MessageTools;
 import jeeper.utils.config.ConfigSetup;
 import net.dirtlands.Main;
-import net.dirtlands.files.Playerdata;
+import net.dirtlands.database.DatabaseTools;
 import net.dirtlands.tabscoreboard.TabMenu;
 import net.kyori.adventure.text.minimessage.Template;
 import org.bukkit.entity.Player;
+import org.jooq.DSLContext;
+
+import javax.annotation.Nullable;
+import java.util.UUID;
 
 public class Nickname extends PluginCommand {
-    Playerdata playerdata = Main.getPlugin().playerdata();
     private static ConfigSetup config = Main.getPlugin().config();
+    static DSLContext dslContext = Main.getPlugin().getDslContext();
 
     @Override
     public String getName() {
@@ -27,19 +32,25 @@ public class Nickname extends PluginCommand {
         if (args.length > 0){
             if (args[0].equals("reset")){
                 player.displayName(MessageTools.parseText(player.getName()));
-                playerdata.get().set(player.getUniqueId() + ".nickname", null);
-                playerdata.save();
-                playerdata.reload();
-                TabMenu.updateTab();
-                player.sendMessage(MessageTools.parseFromPath(config, "Nickname Change", Template.template("Name", player.getName())));
+                changeNickname(null, player.getUniqueId());
+                player.sendMessage(MessageTools.parseFromPath(config, "Nickname Change", Template.template("name", player.getName())));
                 return;
             }
-            player.displayName(MessageTools.parseText(args[0]));
-            playerdata.get().set(player.getUniqueId() + ".nickname", args[0]);
-            playerdata.save();
-            playerdata.reload();
-            TabMenu.updateTab();
-            player.sendMessage(MessageTools.parseFromPath(config,"Nickname Change", Template.template("Name", player.displayName())));
+            String nickname = String.join(" ", args);
+            player.displayName(MessageTools.parseText(nickname));
+            changeNickname(nickname, player.getUniqueId());
+            player.sendMessage(MessageTools.parseFromPath(config,"Nickname Change", Template.template("name", nickname)));
         }
+    }
+
+    private void changeNickname(@Nullable String name, UUID uuid) {
+        int id = DatabaseTools.getUserID(uuid);
+        if (id != -1) {
+            dslContext.update(Tables.USERS).set(Tables.USERS.USERNICKNAME, name).where(Tables.USERS.USERID.eq(id)).execute();
+        } else {
+            DatabaseTools.addUser(uuid);
+            dslContext.update(Tables.USERS).set(Tables.USERS.USERNICKNAME, name).where(Tables.USERS.USERID.eq(id)).execute();
+        }
+        TabMenu.updateTab();
     }
 }

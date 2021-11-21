@@ -1,24 +1,23 @@
 package net.dirtlands.commands.warp;
 
+import dirtlands.db.Tables;
 import jeeper.utils.LocationParser;
 import jeeper.utils.MessageTools;
 import jeeper.utils.config.ConfigSetup;
 import net.dirtlands.Main;
 import net.dirtlands.commands.Permission;
 import net.dirtlands.commands.PluginCommand;
-import net.dirtlands.files.Warps;
+import net.dirtlands.database.DatabaseTools;
 import net.dirtlands.tools.NumberAfterPermission;
 import net.kyori.adventure.text.minimessage.Template;
 import org.bukkit.Location;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
-
-import java.util.HashSet;
-import java.util.Set;
+import org.jooq.DSLContext;
 
 public class SetHome extends PluginCommand {
-    Warps warps = Main.getPlugin().warps();
+
     private static ConfigSetup config = Main.getPlugin().config();
+    DSLContext dslContext = Main.getPlugin().getDslContext();
 
     @Override
     public String getName() {
@@ -39,35 +38,31 @@ public class SetHome extends PluginCommand {
             largestSetHomeSize = 0;
         }
 
+        int userID = DatabaseTools.getUserID(player.getUniqueId());
 
-        ConfigurationSection playersInConfigSection = warps.get().getConfigurationSection("Homes");
-        if (playersInConfigSection == null || !playersInConfigSection.getKeys(false).contains(player.getUniqueId().toString())) {
-            warps.get().set("Homes." + player.getUniqueId(), "");
-            warps.save();
-            warps.reload();
-        }
-        ConfigurationSection homes = warps.get().getConfigurationSection("Homes." + player.getUniqueId());
-        Set<String> homeNames = new HashSet<>();
+        var homesForUser = dslContext.select(Tables.HOMES.HOMENAME).from(Tables.HOMES).where(Tables.HOMES.USERID.eq(userID));
 
-        if (homes != null) {
-            homeNames = homes.getKeys(false);
+        String homeName = "home";
+
+        if (args.length != 0) {
+            homeName = args[0];
         }
 
-        String[] newArgs = new String[1];
-
-        if (args.length == 0) {
-            newArgs[0] = "home";
-        } else {
-            newArgs[0] = args[0];
+        for (var record : homesForUser) {
+            if (record.value1().equals(args[0])) {
+                dslContext.update(Tables.HOMES).set(Tables.HOMES.HOMELOCATION, LocationParser.roundedLocationToString(loc))
+                        .where(Tables.HOMES.USERID.eq(userID).and(Tables.HOMES.HOMENAME.eq(record.value1()))).execute();
+                player.sendMessage(MessageTools.parseFromPath(config, "Home Created", Template.template("name", homeName)));
+                return;
+            }
         }
 
-        if (homeNames.size() < largestSetHomeSize || homeNames.contains(newArgs[0])) {
-            warps.get().set("Homes." + player.getUniqueId() + "." + newArgs[0], LocationParser.roundedLocationToString(loc));
-            warps.save();
-            warps.reload();
-            player.sendMessage(MessageTools.parseFromPath(config, "Home Created", Template.template("Name", newArgs[0])));
-        } else {
-            player.sendMessage(MessageTools.parseFromPath(config, "Too Many Homes", Template.template("Number", String.valueOf(largestSetHomeSize))));
+        if (homesForUser.execute() < largestSetHomeSize) {
+            dslContext.insertInto(Tables.HOMES).columns(Tables.HOMES.USERID, Tables.HOMES.HOMENAME, Tables.HOMES.HOMELOCATION)
+                    .values(userID, homeName, LocationParser.roundedLocationToString(loc)).execute();
+            player.sendMessage(MessageTools.parseFromPath(config, "Home Created", Template.template("name", homeName)));
+            return;
         }
+        player.sendMessage(MessageTools.parseFromPath(config, "Too Many Homes", Template.template("number", String.valueOf(largestSetHomeSize))));
     }
 }

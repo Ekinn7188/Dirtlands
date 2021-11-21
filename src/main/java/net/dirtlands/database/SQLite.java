@@ -1,6 +1,7 @@
-package net.dirtlands;
+package net.dirtlands.database;
 
 import org.flywaydb.core.Flyway;
+import org.flywaydb.core.api.FlywayException;
 import org.jooq.Configuration;
 import org.jooq.DSLContext;
 import org.jooq.SQLDialect;
@@ -11,13 +12,22 @@ import org.sqlite.SQLiteDataSource;
 
 public class SQLite {
 
-    protected static DSLContext databaseSetup() {
-        String dbUrl = "jdbc:sqlite:dirtlands.db";
+    public static DSLContext databaseSetup(String dirtlandsDbPath) {
+        String dbUrl = "jdbc:sqlite:"+dirtlandsDbPath+"/dirtlands.db";
+
         SQLiteDataSource ds = new SQLiteDataSource();
         ds.setUrl(dbUrl);
 
-        Flyway flyway = Flyway.configure().dataSource(ds).load();
-        flyway.migrate();
+        Flyway flyway = Flyway.configure(SQLite.class.getClassLoader())
+                .dataSource(ds)
+                .load();
+
+        try{
+            flyway.migrate();
+        } catch (FlywayException e) {
+            e.printStackTrace();
+        }
+
 
         Settings settings = new Settings()
                 .withExecuteLogging(false); // Defaults to true

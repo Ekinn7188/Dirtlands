@@ -1,14 +1,15 @@
 package net.dirtlands.commands;
 
+import dirtlands.db.Tables;
 import jeeper.utils.MessageTools;
 import jeeper.utils.config.ConfigSetup;
 import net.dirtlands.Main;
-import net.dirtlands.files.Playerdata;
 import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
+import org.jooq.DSLContext;
 
 public class ChatColor extends PluginCommand {
-    Playerdata playerdata = Main.getPlugin().playerdata();
+    DSLContext dslContext = Main.getPlugin().getDslContext();
     private static ConfigSetup config = Main.getPlugin().config();
 
     @Override
@@ -27,9 +28,7 @@ public class ChatColor extends PluginCommand {
         if (args.length > 0) {
 
             if (!MessageTools.parseText(args[0]).equals(Component.text(args[0]))) {
-                playerdata.get().set(player.getUniqueId() + ".chatcolor", args[0]);
-                playerdata.save();
-                playerdata.reload();
+                dslContext.update(Tables.USERS).set(Tables.USERS.CHATCOLOR, args[0]).execute();
                 player.sendMessage(MessageTools.parseFromPath(config, "Chat Color Set"));
 
             } else {

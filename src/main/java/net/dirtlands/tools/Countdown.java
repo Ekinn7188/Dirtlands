@@ -12,7 +12,6 @@ import org.bukkit.entity.Player;
 
 import java.time.Duration;
 import java.util.HashMap;
-import java.util.Objects;
 import java.util.UUID;
 
 public class Countdown {
@@ -38,15 +37,15 @@ public class Countdown {
                     player.sendMessage(MessageTools.parseFromPath(config, "Dont Move Message"));
                 }
                 if (time == 0){
-                    player.teleport(LocationParser.stringToLocation(Objects.requireNonNull(Main.getPlugin().warps().get().getString(coordsLocation))));
-                    player.sendMessage(MessageTools.parseFromPath(config, "Teleport Success", Template.template("Location", destination)));
+                    player.teleport(LocationParser.stringToLocation(coordsLocation));
+                    player.sendMessage(MessageTools.parseFromPath(config, "Teleport Success", Template.template("location", destination)));
                     Bukkit.getScheduler().cancelTask(tasks.get(player.getUniqueId()));
                     tasks.remove(player.getUniqueId());
                 }
                 else{
                     final Title.Times times = Title.Times.of(Duration.ofMillis(500), Duration.ofMillis(500), Duration.ofMillis(500));
-                    final Title title = Title.title(MessageTools.parseFromPath(config, "Teleport Countdown", Template.template("Time", String.valueOf(time)),
-                            Template.template("Location", destination)), Component.empty(), times);
+                    final Title title = Title.title(MessageTools.parseFromPath(config, "Teleport Countdown", Template.template("time", String.valueOf(time)),
+                            Template.template("location", destination)), Component.empty(), times);
                     player.showTitle(title);
                     time--;
                 }

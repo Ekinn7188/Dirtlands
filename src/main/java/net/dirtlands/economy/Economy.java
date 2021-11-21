@@ -1,16 +1,17 @@
 package net.dirtlands.economy;
 
+import dirtlands.db.Tables;
 import jeeper.utils.MessageTools;
 import jeeper.utils.config.ConfigSetup;
 import net.dirtlands.Main;
-import net.dirtlands.files.Playerdata;
+import net.dirtlands.database.DatabaseTools;
 import net.kyori.adventure.text.minimessage.Template;
 import org.bukkit.entity.Player;
+import org.jooq.DSLContext;
 
 public class Economy {
-
-    public static Playerdata playerdata = Main.getPlugin().playerdata();
     private static ConfigSetup config = Main.getPlugin().config();
+    static DSLContext dslContext = Main.getPlugin().getDslContext();
 
     /**
      *
@@ -20,12 +21,14 @@ public class Economy {
      * @param amount how much money to give
      */
     public static void addMoney(Player player, int amount) {
+        addPlayerToTableIfDoesntExist(player);
 
-        int balance = playerdata.get().getInt(player.getUniqueId() + ".balance");
-        balance += amount;
-        playerdata.get().set(player.getUniqueId() + ".balance", balance);
-        playerdata.save();
-        playerdata.reload();
+        int balance = dslContext.select(Tables.ECONOMY.BALANCE)
+                .from(Tables.ECONOMY).where(Tables.ECONOMY.USERID.eq(DatabaseTools.getUserID(player.getUniqueId()))).fetch().getValue(0, Tables.ECONOMY.BALANCE)
+                + amount;
+
+        dslContext.update(Tables.ECONOMY).set(Tables.ECONOMY.BALANCE, balance).execute();
+
         player.sendActionBar(MessageTools.parseFromPath(config, "Money Gained Actionbar",
                 Template.template("money", String.valueOf(amount)), Template.template("balance", String.valueOf(balance))));
     }
@@ -39,14 +42,17 @@ public class Economy {
      * @param amount how much money to remove
      */
     public static boolean removeMoney(Player player, int amount) {
-        int balance = playerdata.get().getInt(player.getUniqueId() + ".balance");
-        if (balance - amount < 0) {
+        addPlayerToTableIfDoesntExist(player);
+
+        int balance = dslContext.select(Tables.ECONOMY.BALANCE)
+                .from(Tables.ECONOMY).where(Tables.ECONOMY.USERID.eq(DatabaseTools.getUserID(player.getUniqueId()))).fetch().getValue(0, Tables.ECONOMY.BALANCE)
+                - amount;
+
+        if (balance < 0) {
             return false;
         }
-        balance -= amount;
-        playerdata.get().set(player.getUniqueId() + ".balance", balance);
-        playerdata.save();
-        playerdata.reload();
+
+        dslContext.update(Tables.ECONOMY).set(Tables.ECONOMY.BALANCE, balance).execute();
         player.sendActionBar(MessageTools.parseFromPath(config, "Money Lost Actionbar",
                 Template.template("money", String.valueOf(amount)), Template.template("balance", String.valueOf(balance))));
         return true;
@@ -60,11 +66,13 @@ public class Economy {
      * @param amount how much money to remove
      */
     public static void forceRemoveMoney(Player player, int amount) {
-        int balance = playerdata.get().getInt(player.getUniqueId() + ".balance");
-        balance -= amount;
-        playerdata.get().set(player.getUniqueId() + ".balance", balance);
-        playerdata.save();
-        playerdata.reload();
+        addPlayerToTableIfDoesntExist(player);
+
+        int balance = dslContext.select(Tables.ECONOMY.BALANCE)
+                .from(Tables.ECONOMY).where(Tables.ECONOMY.USERID.eq(DatabaseTools.getUserID(player.getUniqueId()))).fetch().getValue(0, Tables.ECONOMY.BALANCE)
+                - amount;
+
+        dslContext.update(Tables.ECONOMY).set(Tables.ECONOMY.BALANCE, balance).execute();
         player.sendActionBar(MessageTools.parseFromPath(config, "Money Lost Actionbar",
                 Template.template("money", String.valueOf(amount)), Template.template("balance", String.valueOf(balance))));
     }
@@ -77,9 +85,9 @@ public class Economy {
      * @param amount how much money to set
      */
     public static void setBalance(Player player, int amount) {
-        playerdata.get().set(player.getUniqueId() + ".balance", amount);
-        playerdata.save();
-        playerdata.reload();
+        addPlayerToTableIfDoesntExist(player);
+
+        dslContext.update(Tables.ECONOMY).set(Tables.ECONOMY.BALANCE, amount).execute();
 
         player.sendActionBar(MessageTools.parseFromPath(config,"Money Set Actionbar",
                 Template.template("money", String.valueOf(amount))));
@@ -92,7 +100,24 @@ public class Economy {
      * @param player player to remove money from
      */
     public static int getBalance(Player player) {
-        return playerdata.get().getInt(player.getUniqueId() + ".balance");
+        addPlayerToTableIfDoesntExist(player);
+
+        return dslContext.select(Tables.ECONOMY.BALANCE)
+                .from(Tables.ECONOMY).where(Tables.ECONOMY.USERID.eq(DatabaseTools.getUserID(player.getUniqueId()))).fetch().getValue(0, Tables.ECONOMY.BALANCE);
+    }
+
+    public static void addPlayerToTable(Player player) {
+        dslContext.insertInto(Tables.ECONOMY, Tables.ECONOMY.USERID, Tables.ECONOMY.BALANCE).values(DatabaseTools.getUserID(player.getUniqueId()), 0).execute();
+    }
+
+    private static void addPlayerToTableIfDoesntExist(Player player) {
+        if(dslContext.select(Tables.ECONOMY.USERID).from(Tables.ECONOMY)
+                .where(Tables.ECONOMY.USERID.eq(DatabaseTools.getUserID(player.getUniqueId())))
+                .fetch().getValues(Tables.ECONOMY.USERID).size() > 0) {
+            return;
+        }
+
+        addPlayerToTable(player);
     }
 
 

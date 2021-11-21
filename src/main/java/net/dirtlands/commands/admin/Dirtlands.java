@@ -30,7 +30,6 @@ public class Dirtlands extends PluginCommand {
         if (args.length > 0) {
             if (args[0].equalsIgnoreCase("reload")) {
                 Main.getPlugin().config().reload();
-                Main.getPlugin().warps().reload();
                 Main.getPlugin().npcInventory().reload();
                 TabMenu.updateTab();
 

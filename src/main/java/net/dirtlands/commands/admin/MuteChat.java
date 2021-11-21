@@ -37,9 +37,9 @@ public class MuteChat extends PluginCommand {
         Component commandSender = (sender instanceof Player) ? ((Player) sender).displayName() : Component.text("console");
 
         if (chatMuted){
-            Bukkit.broadcast(MessageTools.parseFromPath(config,"Chat Muted By Message", Template.template("Player", commandSender)));
+            Bukkit.broadcast(MessageTools.parseFromPath(config,"Chat Muted By Message", Template.template("player", commandSender)));
         } else {
-            Bukkit.broadcast(MessageTools.parseFromPath(config, "Chat Unmuted By Message", Template.template("Player", commandSender)));
+            Bukkit.broadcast(MessageTools.parseFromPath(config, "Chat Unmuted By Message", Template.template("player", commandSender)));
         }
     }
 }

@@ -17,7 +17,7 @@ public class DeathMessage implements Listener {
     @EventHandler
     public void onDeath(PlayerDeathEvent e){
         Player player = e.getEntity();
-        e.deathMessage(MessageTools.parseFromPath(config, "Player Death", Template.template("Message", Objects.requireNonNull(e.deathMessage()))));
+        e.deathMessage(MessageTools.parseFromPath(config, "Player Death", Template.template("message", Objects.requireNonNull(e.deathMessage()))));
     }
 
 }

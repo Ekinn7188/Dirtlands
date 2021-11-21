@@ -35,9 +35,9 @@ public class ClearChat extends PluginCommand {
             Bukkit.broadcast(Component.text(""));
         }
         if (sender instanceof Player){
-            Bukkit.broadcast(MessageTools.parseFromPath(config, "Chat Cleared By Message", Template.template("Player", ((Player) sender).displayName())));
+            Bukkit.broadcast(MessageTools.parseFromPath(config, "Chat Cleared By Message", Template.template("player", ((Player) sender).displayName())));
         } else {
-            Bukkit.broadcast(MessageTools.parseFromPath(config, "Chat Cleared By Message", Template.template("Player", "console")));
+            Bukkit.broadcast(MessageTools.parseFromPath(config, "Chat Cleared By Message", Template.template("player", "console")));
         }
     }
 }

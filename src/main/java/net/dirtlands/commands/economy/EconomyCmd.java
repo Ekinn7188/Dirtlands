@@ -35,7 +35,7 @@ public class EconomyCmd extends PluginCommand {
         if (args.length >= 2) {
             Player player = Bukkit.getPlayer(args[1]);
             if (player == null){
-                sender.sendMessage(MessageTools.parseFromPath(config,"Player Doesnt Exist", Template.template("Player", args[1])));
+                sender.sendMessage(MessageTools.parseFromPath(config,"Player Doesnt Exist", Template.template("player", args[1])));
                 return;
             }
 

@@ -2,7 +2,8 @@ plugins {
     id 'java'
     id "com.github.johnrengelman.shadow" version "7.0.0"
     id 'nu.studer.jooq' version '6.0.1'
-    id "org.flywaydb.flyway" version "8.0.3"
+    id "org.flywaydb.flyway" version "8.0.5"
+    id("xyz.jpenilla.run-paper") version "1.0.4"
 }
 
 group 'dirtlands.net'
@@ -29,16 +30,16 @@ dependencies {
     implementation "net.kyori:adventure-text-minimessage:4.2.0-SNAPSHOT"
     compileOnly 'net.luckperms:api:5.3'
     compileOnly 'com.sk89q.worldguard:worldguard-bukkit:7.0.5'
-    implementation 'org.reflections:reflections:0.9.12'
+    implementation 'org.reflections:reflections:0.10.2'
     compileOnly 'net.citizensnpcs:citizens-main:2.0.28-SNAPSHOT'
     compileOnly 'io.papermc.paper:paper-api:1.17.1-R0.1-SNAPSHOT'
-    implementation 'jeeper.utils:PaperPluginUtils:0.1.0'
+    implementation 'jeeper.utils:PaperPluginUtils:0.1.1'
     //compileOnly files('libs/Paper-Server-1.17.1-R01-reobf.jar')
 
     //database
     implementation 'org.jooq:jooq:3.15.4'
-    compileOnly 'org.xerial:sqlite-jdbc:3.36.0.3'
-    implementation 'org.flywaydb:flyway-core:8.0.3'
+    implementation 'org.xerial:sqlite-jdbc:3.36.0.3'
+    implementation 'org.flywaydb:flyway-core:8.0.5'
     implementation 'ch.qos.logback:logback-classic:1.2.7'
     jooqGenerator 'org.xerial:sqlite-jdbc:3.36.0.3'
 }
@@ -72,6 +73,15 @@ jooq {
     }
 }
 
+tasks {
+    runServer {
+        // Configure the Minecraft version for our task.
+        // This is the only required configuration besides applying the plugin.
+        // Your plugin's jar (or shadowJar if present) will be used automatically.
+        minecraftVersion("1.17.1")
+    }
+}
+
 task cleanGenerateSourceDB(type: Delete) {
     delete "${buildDir}/generate-source.db"
 }
@@ -79,3 +89,11 @@ task cleanGenerateSourceDB(type: Delete) {
 flywayMigrate.dependsOn(cleanGenerateSourceDB)
 generateJooq.dependsOn(flywayMigrate)
 classes.dependsOn(generateJooq)
+
+task cleanDb(type: Delete) {
+    delete "${projectDir}/dirtlands.db"
+    delete "${projectDir}/run/plugins/Dirtlands/dirtlands.db"
+    delete "${projectDir}/run/usercache.json"
+//    delete files("${projectDir}/run/world/playerdata") <- used to test first-time joins
+}
+

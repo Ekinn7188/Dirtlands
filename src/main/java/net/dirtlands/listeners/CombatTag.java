@@ -104,7 +104,7 @@ public class CombatTag implements Listener {
                     Bukkit.getScheduler().cancelTask(tasks.get(player.getUniqueId()));
                     tasks.remove(player.getUniqueId());
                 } else{
-                    final Component message = MessageTools.parseFromPath(config, "Combat Timer", Template.template("Time", String.valueOf(time)));
+                    final Component message = MessageTools.parseFromPath(config, "Combat Timer", Template.template("time", String.valueOf(time)));
                     player.sendActionBar(message);
                     time--;
                 }

@@ -55,7 +55,7 @@ public class TabMenu {
             for (String line : text) {
                 builder.append(line).append("\n");
             }
-            return MessageTools.parseText(builder.toString(), Template.template("OnlinePlayers", String.valueOf(Bukkit.getOnlinePlayers().size())));
+            return MessageTools.parseText(builder.toString(), Template.template("onlineplayers", String.valueOf(Bukkit.getOnlinePlayers().size())));
         }
         return Component.empty();
     }

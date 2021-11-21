@@ -1,22 +1,23 @@
 package net.dirtlands.listeners;
 
+import dirtlands.db.Tables;
 import jeeper.utils.LocationParser;
 import net.dirtlands.Main;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
-
-import java.util.Objects;
+import org.jooq.DSLContext;
 
 public class RespawnAtSpawn implements Listener {
-
+    DSLContext dslContext = Main.getPlugin().getDslContext();
     @EventHandler
     public void onRespawn(PlayerRespawnEvent e) {
         //e.getPlayer().spigot().respawn();
         try {
-            e.setRespawnLocation(LocationParser.stringToLocation(Objects.requireNonNull(Main.getPlugin().warps().get().getString("Spawn.Coords"))));
-        } catch (AssertionError exception) {
+            e.setRespawnLocation(LocationParser.stringToLocation(dslContext.select(Tables.WARPS.WARPLOCATION)
+                    .where(Tables.WARPS.WARPNAME.eq("Spawn")).fetch().getValue(0, Tables.WARPS.WARPLOCATION)));
+        } catch (IndexOutOfBoundsException exception) {
             //do nothing, there's no spawn location set
         }
     }
@@ -27,8 +28,9 @@ public class RespawnAtSpawn implements Listener {
             return;
         }
         try {
-            e.getPlayer().teleport(LocationParser.stringToLocation(Objects.requireNonNull(Main.getPlugin().warps().get().getString("Spawn.Coords"))));
-        } catch (AssertionError exception) {
+            e.getPlayer().teleport(LocationParser.stringToLocation(dslContext.select(Tables.WARPS.WARPLOCATION)
+                    .where(Tables.WARPS.WARPNAME.eq("Spawn")).fetch().getValue(0, Tables.WARPS.WARPLOCATION)));
+        } catch (IndexOutOfBoundsException exception) {
             //do nothing, there's no spawn location set
         }
 
