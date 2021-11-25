@@ -97,13 +97,22 @@ public class Economy {
      *
      * Gets a player's balance.
      *
-     * @param player player to remove money from
+     * @param player the player to get the balance from
      */
     public static int getBalance(Player player) {
         addPlayerToTableIfDoesntExist(player);
 
         return dslContext.select(Tables.ECONOMY.BALANCE)
                 .from(Tables.ECONOMY).where(Tables.ECONOMY.USERID.eq(DatabaseTools.getUserID(player.getUniqueId()))).fetch().getValue(0, Tables.ECONOMY.BALANCE);
+    }
+
+
+    /**
+     * Gets a player's balance with commas separating the place values
+     * @param player the player to get the balance from
+     */
+    public static String commaSeperatedBalance(Player player) {
+        return String.format("%,d", getBalance(player));
     }
 
     public static void addPlayerToTable(Player player) {
