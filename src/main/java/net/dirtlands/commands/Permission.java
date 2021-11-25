@@ -14,7 +14,8 @@ public enum Permission {
     NPC("dirtlands.npc"),
     CHATCOLOR("dirtlands.chat.color"),
     ECONOMY("dirtlands.economy"),
-    METADATA("dirtlands.metadata");
+    METADATA("dirtlands.metadata"),
+    AFK("dirtlands.afk");
 
     private final String name;
 
