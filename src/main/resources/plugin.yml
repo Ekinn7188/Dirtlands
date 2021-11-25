@@ -41,11 +41,15 @@ commands:
   chatcolor:
     description: sets the default color of the player's chat!
     aliases: color
+  afk:
+    description: puts a player in AFK mode
   economy:
     description: used for giving, removing, and setting money
     aliases: [econ, eco]
   metadata:
     description: gives metadata of an item
+  realname:
+    description: gets a player's real name
 permissions:
   dirtlands.setspawn:
     description: allows use of the setspawn command
@@ -86,4 +90,6 @@ permissions:
   dirtlands.metadata:
     description: used to give access to the /metadata command
     default: op
-
+  dirtlands.afk:
+    description: used to make a player go afk
+    default: op
