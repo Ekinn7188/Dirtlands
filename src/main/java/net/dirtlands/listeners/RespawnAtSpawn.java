@@ -13,10 +13,9 @@ public class RespawnAtSpawn implements Listener {
     DSLContext dslContext = Main.getPlugin().getDslContext();
     @EventHandler
     public void onRespawn(PlayerRespawnEvent e) {
-        //e.getPlayer().spigot().respawn();
         try {
-            e.setRespawnLocation(LocationParser.stringToLocation(dslContext.select(Tables.WARPS.WARPLOCATION)
-                    .where(Tables.WARPS.WARPNAME.eq("Spawn")).fetch().getValue(0, Tables.WARPS.WARPLOCATION)));
+            e.setRespawnLocation(LocationParser.stringToLocation(dslContext.select(Tables.WARPS.WARPLOCATION).from(Tables.WARPS)
+                    .where(Tables.WARPS.WARPNAME.equalIgnoreCase("spawn")).fetch().getValue(0, Tables.WARPS.WARPLOCATION)));
         } catch (IndexOutOfBoundsException exception) {
             //do nothing, there's no spawn location set
         }
@@ -28,8 +27,8 @@ public class RespawnAtSpawn implements Listener {
             return;
         }
         try {
-            e.getPlayer().teleport(LocationParser.stringToLocation(dslContext.select(Tables.WARPS.WARPLOCATION)
-                    .where(Tables.WARPS.WARPNAME.eq("Spawn")).fetch().getValue(0, Tables.WARPS.WARPLOCATION)));
+            e.getPlayer().teleport(LocationParser.stringToLocation(dslContext.select(Tables.WARPS.WARPLOCATION).from(Tables.WARPS)
+                    .where(Tables.WARPS.WARPNAME.equalIgnoreCase("spawn")).fetch().getValue(0, Tables.WARPS.WARPLOCATION)));
         } catch (IndexOutOfBoundsException exception) {
             //do nothing, there's no spawn location set
         }
