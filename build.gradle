@@ -38,7 +38,7 @@ dependencies {
 
     //database
     implementation 'org.jooq:jooq:3.15.4'
-    implementation 'org.xerial:sqlite-jdbc:3.36.0.3'
+    compileOnly 'org.xerial:sqlite-jdbc:3.36.0.3'
     implementation 'org.flywaydb:flyway-core:8.0.5'
     implementation 'ch.qos.logback:logback-classic:1.2.7'
     jooqGenerator 'org.xerial:sqlite-jdbc:3.36.0.3'
@@ -54,17 +54,17 @@ jooq {
         main {
             generationTool {
                 jdbc {
-                    driver = 'org.sqlite.JDBC' as Configuration
-                    url = "jdbc:sqlite:${buildDir}/generate-source.db" as Configuration
+                    driver = 'org.sqlite.JDBC'
+                    url = "jdbc:sqlite:${buildDir}/generate-source.db"
                 }
                 generator {
                     database {
-                        name = 'org.jooq.meta.sqlite.SQLiteDatabase' as Configuration
-                        excludes = 'flyway_schema_history|sqlite_master|sqlite_sequence' as Configuration
+                        name = 'org.jooq.meta.sqlite.SQLiteDatabase'
+                        excludes = 'flyway_schema_history|sqlite_master|sqlite_sequence'
                     }
                     //                generate {}
                     target {
-                        packageName = 'dirtlands.db' as Configuration
+                        packageName = 'dirtlands.db'
 //                        directory = '/database'
                     }
                 }
@@ -92,8 +92,12 @@ classes.dependsOn(generateJooq)
 
 task cleanDb(type: Delete) {
     delete "${projectDir}/dirtlands.db"
-    delete "${projectDir}/run/plugins/Dirtlands/dirtlands.db"
     delete "${projectDir}/run/usercache.json"
-//    delete files("${projectDir}/run/world/playerdata") <- used to test first-time joins
+    delete "${projectDir}/run/plugins/Dirtlands/config.yml"
+}
+
+task runServerWipeData(type: Delete) {
+    delete files("${projectDir}/run/world/playerdata")
+    delete "${projectDir}/run/plugins/Dirtlands/dirtlands.db"
 }
 
