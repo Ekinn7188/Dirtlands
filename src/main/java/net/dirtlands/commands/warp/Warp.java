@@ -23,14 +23,12 @@ public class Warp extends PluginCommand {
     @Override
     public void execute(Player player, String[] args) {
         if (args.length > 0){
-
             String warpLocation = DatabaseTools.firstString(dslContext.select(Tables.WARPS.WARPLOCATION).from(Tables.WARPS)
                     .where(Tables.WARPS.WARPNAME.equalIgnoreCase(args[0])).fetchAny());
 
             String warpPermission = DatabaseTools.firstString(dslContext.select(Tables.WARPS.WARPPERMISSION).from(Tables.WARPS)
                     .where(Tables.WARPS.WARPNAME.equalIgnoreCase(args[0])).fetchAny());
-
-            if (warpLocation == null || warpPermission == null || !player.hasPermission(warpPermission)) {
+            if (warpLocation == null || (warpPermission != null && !player.hasPermission(warpPermission))) {
                 player.sendMessage(MessageTools.parseFromPath(config, "Warp Doesnt Exist", Template.template("name", args[0])));
                 return;
             }

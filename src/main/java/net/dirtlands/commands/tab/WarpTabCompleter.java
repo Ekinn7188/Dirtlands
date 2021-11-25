@@ -17,13 +17,16 @@ public class WarpTabCompleter extends PluginTabCompleter {
 
     @Override
     public List<String> tabCompleter(Player player, @NotNull String[] args) {
-        var warps = Main.getPlugin().getDslContext().select(Tables.WARPS.WARPNAME, Tables.WARPS.WARPPERMISSION).from(Tables.HOMES)
+        var warps = Main.getPlugin().getDslContext().select(Tables.WARPS.WARPNAME, Tables.WARPS.WARPPERMISSION).from(Tables.WARPS)
                 .fetch().intoMap(Tables.WARPS.WARPNAME, Tables.WARPS.WARPPERMISSION);
 
         List<String> options = new ArrayList<>();
 
-        warps.forEach((key, value) -> {
-            if (player.hasPermission(value)) {
+        warps.entrySet().iterator().forEachRemaining((map) -> {
+            String key = map.getKey();
+            String value = map.getValue();
+
+            if (value == null || player.hasPermission(value)) {
                 options.add(key);
             }
         });
