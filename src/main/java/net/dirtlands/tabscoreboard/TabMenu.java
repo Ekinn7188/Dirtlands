@@ -1,6 +1,7 @@
 package net.dirtlands.tabscoreboard;
 
 import jeeper.utils.MessageTools;
+import jeeper.utils.config.ConfigSetup;
 import net.dirtlands.Main;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.Template;
@@ -8,11 +9,14 @@ import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import net.luckperms.api.LuckPermsProvider;
 import net.luckperms.api.model.user.User;
 import org.bukkit.Bukkit;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class TabMenu {
+    static ConfigSetup config = Main.getPlugin().config();
 
     public static void updateTabLoop() {
         Bukkit.getScheduler().scheduleSyncRepeatingTask(Main.getPlugin(), TabMenu::updateTab, 0L, 600L);
@@ -20,7 +24,10 @@ public class TabMenu {
 
     public static void updateTab(){
         for (Player player : Bukkit.getOnlinePlayers()){
-            player.sendPlayerListHeaderAndFooter(generateHeaderAndFooter("Header"), generateHeaderAndFooter("Footer"));
+            Component header = generateHeaderAndFooter("Header");
+            Component footer = generateHeaderAndFooter("Footer");
+
+            player.sendPlayerListHeaderAndFooter(header, footer);
 
             User user = LuckPermsProvider.get().getUserManager().getUser(player.getUniqueId());
             assert user != null;
@@ -34,11 +41,13 @@ public class TabMenu {
             String nameAsPlainText = PlainTextComponentSerializer.plainText().serialize(player.displayName());
 
             if (Component.text(nameAsPlainText).equals(player.displayName())){
-                player.playerListName((prefix == null ? Component.empty() : MessageTools.parseText(prefix))
-                        .append(MessageTools.parseText("<#893900>" + nameAsPlainText)).append(Component.text("  ")));
+                player.playerListName(MessageTools.parseFromPath(config, "Player Tab Style",
+                        Template.template("prefix", prefix == null ? Component.empty() : MessageTools.parseText(prefix)),
+                        Template.template("player", nameAsPlainText)));
             } else {
-                player.playerListName((prefix == null ? Component.empty() : MessageTools.parseText(prefix))
-                        .append(player.displayName()).append(Component.text("  ")));
+                player.playerListName(MessageTools.parseFromPath(config, "Player Tab Style",
+                        Template.template("prefix", prefix == null ? Component.empty() : MessageTools.parseText(prefix)),
+                        Template.template("player", player.displayName())));
             }
 
             //add prefix if one exists, then append the player name with some spaces for the network bars
@@ -47,16 +56,28 @@ public class TabMenu {
     }
 
     private static Component generateHeaderAndFooter(String headerOrFooter){
-        @SuppressWarnings("unchecked")
-        ArrayList<String> text = (ArrayList<String>) Main.getPlugin().config().get().getList("Tablist " + headerOrFooter);
-        Component withNewLine = Component.empty();
-        if (text != null){
-            StringBuilder builder = new StringBuilder();
-            for (String line : text) {
-                builder.append(line).append("\n");
-            }
-            return MessageTools.parseText(builder.toString(), Template.template("onlineplayers", String.valueOf(Bukkit.getOnlinePlayers().size())));
+        ConfigurationSection configurationSection = Main.getPlugin().config().get().getConfigurationSection("Tablist " + headerOrFooter);
+
+        if (configurationSection == null) {
+            return Component.empty();
         }
-        return Component.empty();
+
+        List<String> lines = configurationSection.getKeys(false).stream().toList();
+
+        List<String> text = new ArrayList<>();
+
+        lines.forEach(s -> text.add(MessageTools.getString(config, "Tablist " + headerOrFooter + "." + s)));
+
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < text.size(); i++) {
+            builder.append(text.get(i));
+            if (i != text.size() - 1) {
+                builder.append("\n");
+            }
+        }
+
+        return MessageTools.parseText(builder.toString(),
+                Template.template("onlineplayers", String.valueOf(Bukkit.getOnlinePlayers().size())),
+                Template.template("maxplayers", String.valueOf(Bukkit.getServer().getMaxPlayers())));
     }
 }
