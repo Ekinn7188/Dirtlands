@@ -7,6 +7,7 @@ import net.dirtlands.Main;
 import net.dirtlands.database.DatabaseTools;
 import net.dirtlands.tabscoreboard.TabMenu;
 import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.entity.Player;
 import org.jooq.DSLContext;
 
@@ -36,10 +37,15 @@ public class Nickname extends PluginCommand {
                 player.sendMessage(MessageTools.parseFromPath(config, "Nickname Change", Template.template("name", player.getName())));
                 return;
             }
+            if (PlainTextComponentSerializer.plainText().serialize(MessageTools.parseText(args[0])).equals("")) {
+                player.sendMessage(MessageTools.parseFromPath(config, "Invalid Nickname"));
+                return;
+            }
+
             String nickname = String.join(" ", args);
             player.displayName(MessageTools.parseText(nickname));
             changeNickname(nickname, player.getUniqueId());
-            player.sendMessage(MessageTools.parseFromPath(config,"Nickname Change", Template.template("name", nickname)));
+            player.sendMessage(MessageTools.parseFromPath(config,"Nickname Change", Template.template("name", MessageTools.parseText(nickname))));
         }
     }
 
