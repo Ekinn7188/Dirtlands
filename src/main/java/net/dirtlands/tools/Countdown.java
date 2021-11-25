@@ -8,6 +8,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.Template;
 import net.kyori.adventure.title.Title;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 
 import java.time.Duration;
@@ -24,6 +25,12 @@ public class Countdown {
     }
 
     public static void startCountdown(Player player, String coordsLocation, String destination, Main plugin){
+
+        if (player.getGameMode().equals(GameMode.CREATIVE)) {
+            player.teleport(LocationParser.stringToLocation(coordsLocation));
+            player.sendMessage(MessageTools.parseFromPath(config, "Teleport Success", Template.template("location", destination)));
+            return;
+        }
 
         if (tasks.containsKey(player.getUniqueId())){
             Bukkit.getScheduler().cancelTask(tasks.get(player.getUniqueId()));
