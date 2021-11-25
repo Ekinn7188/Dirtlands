@@ -34,7 +34,6 @@ dependencies {
     compileOnly 'net.citizensnpcs:citizens-main:2.0.28-SNAPSHOT'
     compileOnly 'io.papermc.paper:paper-api:1.17.1-R0.1-SNAPSHOT'
     implementation 'jeeper.utils:PaperPluginUtils:0.1.1'
-    //compileOnly files('libs/Paper-Server-1.17.1-R01-reobf.jar')
 
     //database
     implementation 'org.jooq:jooq:3.15.4'
@@ -90,14 +89,15 @@ flywayMigrate.dependsOn(cleanGenerateSourceDB)
 generateJooq.dependsOn(flywayMigrate)
 classes.dependsOn(generateJooq)
 
-task cleanDb(type: Delete) {
+task cleanServer(type: Delete) {
     delete "${projectDir}/dirtlands.db"
     delete "${projectDir}/run/usercache.json"
+    delete "${projectDir}/run/plugins/Dirtlands/dirtlands.db"
     delete "${projectDir}/run/plugins/Dirtlands/config.yml"
+    delete files("${projectDir}/run/world/playerdata")
 }
 
-task runServerWipeData(type: Delete) {
-    delete files("${projectDir}/run/world/playerdata")
-    delete "${projectDir}/run/plugins/Dirtlands/dirtlands.db"
+task emptyConfig(type: Delete) {
+    delete "${projectDir}/run/plugins/Dirtlands/config.yml"
 }
 
