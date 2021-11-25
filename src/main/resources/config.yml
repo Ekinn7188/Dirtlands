@@ -1,0 +1,83 @@
+#chat
+Chat Style: <prefix><#893900><player></#893900><suffix> &a» &7<message>
+Join Message: '&7[&2+&7] <player>'
+First Join Message: '&6<player> has joined for the first time! (#<number>)'
+Leave Message: '&7[&4-&7] <player>'
+Broadcast Prefix: '&a[<#893900>Dirtlands</#893900>&a] '
+Player Death: '&c☠ <message>'
+Chat Cleared By Message: '&c&lChat cleared by <player>!'
+Chat Muted By Message: '&c&lChat muted by <player>!'
+Chat Unmuted By Message: '&c&lChat unmuted by <player>!'
+Chat Is Muted: '&cThe chat is currently &4muted&c!'
+Chat Color Set: '&aDefault chat color set'
+Invalid Chat Color: '&cThat is not a valid chat color!'
+
+#teleporting
+Dont Move Message: '&cDont move or teleportation is &4canceled'
+Teleport Countdown: '&cTeleporting to <location> in: &4<time>'
+Teleport Canceled: '&cTeleport &4canceled&c!'
+Teleport Success: '&aSuccessfully teleported to <location>!'
+
+#combat
+Combat Time In Seconds: '10'
+Combat Timer: '&cYou will untagged in &4<time>&c seconds'
+Not Combat Tagged: '&cYou''re no longer combat tagged'
+Command In Combat: '&cYou cant send commands when you''re combat tagged!'
+Enter Safezone In Combat Title: '&4No Entry'
+Enter Safezone In Combat Subtitle: '&cYou cant enter safezones while in combat!'
+
+#spawn
+Spawn Set: '&aSpawn point set!'
+
+#warps
+Warp Created: '&a/warp <name> was successfully created!'
+Warp Deleted: '&a/warp <name> was successfully deleted!'
+Warp List: '&aYour current warps: <warps>'
+Warp Doesnt Exist: '&a/warp <name> does not exist!'
+No Warps: '&cThere are no warps!'
+
+#homes
+Home Created: '&a/home <name> was successfully created!'
+Home Deleted: '&a/home <name> was successfully deleted!'
+Home Doesnt Exist: '&a/home <name> does not exist!'
+Too Many Homes: '&cYou''ve created too many homes! You can make up to &4<number>'
+Home List: '&aYour current homes: <homes>'
+No Homes: '&cYou dont have any homes! Create one with /sethome {name}!'
+
+#config
+Dirtlands Reloaded: '&aDirtlands Reloaded!'
+
+#nickname
+Nickname Change: '&aYour nickname has been set to <#893900><name>&a!'
+Invalid Nickname: '&cThat is an invalid nickname!'
+
+#commands
+No Command Permission: '&cYou dont have permission to use this command!'
+Player Only Command: '&cYou must be a player to execute this command!'
+Player Doesnt Exist: '&4<player>&c doesn''t exist!'
+
+#npc
+Npc Selected: <name>&a has been selected!
+No Npcs: '&cYou need to create an npc first!'
+Metadata Message: '&aYour metadata has been generated in shopkeeper.yml, index <index>!'
+
+#tab
+Tablist Header:
+  First Line: <#b8a567>&l⛏ &r<#b8a567>[<#7c3e12>&lDirtlands&r<#b8a567>] &l■
+  Second Line: ''
+Tablist Footer:
+  First Line: ''
+  Second Line: <#d1c59f>⚔ <onlineplayers>/<maxplayers> Online ☠
+Player Tab Style: '<prefix><#893900><player> '
+
+#economy
+Money Gained Actionbar: '&3+<money> &bExpensive Diamonds &o(You Have &3<balance>&b)'
+Money Set Actionbar: '&bYour Balance Has Been Set To &3<money>'
+Money Lost Actionbar: '&3-<money> &bExpensive Diamonds &o(You Have &3<balance>&b)'
+Cant Afford Message: '&cYou can''t afford this!'
+Player Doesnt Have Enough Money: '&c<player> doesn''t have enough money for this action'
+Player Balance: '&3<player>&b has &3<balance> expensive diamonds'
+
+#afk
+Player AFK: '&3<player>&b is now AFK'
+Player Not AFK: '&3<player>&b is no longer AFK'

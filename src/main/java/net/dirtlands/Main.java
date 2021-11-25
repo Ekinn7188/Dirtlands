@@ -9,7 +9,6 @@ import net.dirtlands.database.SQLite;
 import net.dirtlands.files.NpcInventory;
 import net.dirtlands.handler.CombatSafezoneHandler;
 import net.dirtlands.tabscoreboard.TabMenu;
-import org.bukkit.Bukkit;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jooq.DSLContext;
@@ -51,14 +50,7 @@ public class Main extends JavaPlugin {
     protected static void initializeClasses(){
         String packageName = Main.getPlugin().getClass().getPackage().getName();
         //load Listeners in net.dirtlands.listeners
-        for(
-                Class<?> listenerClass :new
-
-                Reflections(packageName +".listeners").
-
-                getSubTypesOf(Listener.class))
-
-        {
+        for(Class<?> listenerClass :new Reflections(packageName +".listeners").getSubTypesOf(Listener.class)) {
             try {
                 Listener listener = (Listener) listenerClass.getDeclaredConstructor().newInstance(); //must have empty constructor
                 Main.getPlugin().getServer().getPluginManager().registerEvents(listener, Main.getPlugin());
@@ -69,9 +61,7 @@ public class Main extends JavaPlugin {
 
 
         //load PluginCommands in net.dirtlands.commands
-        for(Class<? extends PluginCommand> commandClass :new Reflections(packageName +".commands").getSubTypesOf(PluginCommand .class))
-
-        {
+        for(Class<? extends PluginCommand> commandClass :new Reflections(packageName +".commands").getSubTypesOf(PluginCommand.class)) {
             try {
                 PluginCommand pluginCommand = commandClass.getDeclaredConstructor().newInstance();
                 Objects.requireNonNull(Main.getPlugin().getCommand(pluginCommand.getName())).setExecutor(pluginCommand);
@@ -164,58 +154,7 @@ public class Main extends JavaPlugin {
 
         config = new ConfigSetup("config", "dirtlands");
         config.get().options().header(header);
-        config.get().addDefault("Chat Style", "<prefix><#893900><player></#893900><suffix> &a\u00BB &7<message>");
-        config.get().addDefault("Dont Move Message", "&cDont move or teleportation is &4canceled");
-        config.get().addDefault("Teleport Countdown", "&cTeleporting to <location> in: &4<time>");
-        config.get().addDefault("Spawn Set", "&aSpawn point set!");
-        config.get().addDefault("Teleport Canceled", "&cTeleport &4canceled&c!");
-        config.get().addDefault("Teleport Success", "&aSuccessfully teleported to <location>!");
-        config.get().addDefault("Dirtlands Reloaded", "&aDirtlands Reloaded!");
-        config.get().addDefault("Nickname Change", "&aYour nickname has been set to <name>!");
-        config.get().addDefault("Warp Created", "&a/warp <name> was successfully created!");
-        config.get().addDefault("Warp Deleted", "&a/warp <name> was successfully deleted!");
-        config.get().addDefault("Warp Doesnt Exist", "&a/warp <name> does not exist!");
-        config.get().addDefault("Warp List", "&aYour current warps: <warps>");
-        config.get().addDefault("No Warps", "&cThere are no warps!");
-        config.get().addDefault("Home Created", "&a/home <name> was successfully created!");
-        config.get().addDefault("Home Deleted", "&a/home <name> was successfully deleted!");
-        config.get().addDefault("Home Doesnt Exist", "&a/home <name> does not exist!");
-        config.get().addDefault("Too Many Homes", "&cYou've created too many homes! You can make up to &4<number>");
-        config.get().addDefault("Home List", "&aYour current homes: <homes>");
-        config.get().addDefault("No Homes", "&cYou dont have any homes! Create one with /sethome {name}!"); //the brackets are intentional, there's no Template for it
-        config.get().addDefault("Combat Time In Seconds", "10");
-        config.get().addDefault("Combat Timer", "&cYou will untagged in &4<time>&c seconds");
-        config.get().addDefault("Not Combat Tagged", "&cYou're no longer combat tagged");
-        config.get().addDefault("Command In Combat", "&cYou cant send commands when you're combat tagged!");
-        config.get().addDefault("Enter Safezone In Combat Title", "&4No Entry");
-        config.get().addDefault("Enter Safezone In Combat Subtitle", "&cYou cant enter safezones while in combat!");
-        config.get().addDefault("Join Message", "&7[&2+&7] <player>");
-        config.get().addDefault("First Join Message", "&6<player> has joined for the first time! (#<number>)");
-        config.get().addDefault("Leave Message", "&7[&4-&7] <player>");
-        config.get().addDefault("Broadcast Prefix", "&a[<#893900>Dirtlands</#893900>&a] ");
-        config.get().addDefault("No Command Permission", "&cYou dont have permission to use this command!");
-        config.get().addDefault("Player Only Command", "&cYou must be a player to execute this command!");
-        config.get().addDefault("Player Death", "&c\u2620 <message>");
-        config.get().addDefault("Chat Cleared By Message", "&c&lChat cleared by <player>!");
-        config.get().addDefault("Chat Muted By Message", "&c&lChat muted by <player>!");
-        config.get().addDefault("Chat Unmuted By Message", "&c&lChat unmuted by <player>!");
-        config.get().addDefault("Chat Is Muted", "&cThe chat is currently &4muted&c!");
-        config.get().addDefault("Npc Selected", "<name>&a has been selected!");
-        config.get().addDefault("No Npcs", "&cYou need to create an npc first!");
-        config.get().addDefault("Player Doesnt Exist", "&4<player>&c doesn't exist!");
-        config.get().addDefault("Tablist Header", List.of("<#D1C59F>-----------------<#893900>Dirtlands<#D1C59F>-----------------", "").toArray());
-        config.get().addDefault("Tablist Footer", List.of(" ", "<#D1C59F> <onlineplayers>/" + Bukkit.getServer().getMaxPlayers() + " Online").toArray());
-        config.get().addDefault("Chat Color Set", "&aDefault chat color set");
-        config.get().addDefault("Invalid Chat Color", "&cThat is not a valid chat color!");
-        config.get().addDefault("Money Gained Actionbar", "&3+<money> &bExpensive Diamonds &o(You Have &3<balance>&b)");
-        config.get().addDefault("Money Set Actionbar", "&bYour Balance Has Been Set To &3<money>");
-        config.get().addDefault("Money Lost Actionbar", "&3-<money> &bExpensive Diamonds &o(You Have &3<balance>&b)");
-        config.get().addDefault("Cant Afford Message", "&cYou can't afford this!");
-        config.get().addDefault("Player Doesnt Have Enough Money", "&c<player> doesn't have enough money for this action");
-        config.get().addDefault("Player Balance", "&3<player>&b has &3<balance> expensive diamonds");
-        config.get().addDefault("Metadata Message", "&aYour metadata has been generated in shopkeeper.yml, index <index>!");
-
-
+        config.readDefaults(this, "config.yml");
         config.get().options().copyDefaults(true);
         config.get().options().copyHeader(true);
         config.save();
