@@ -33,6 +33,7 @@ public class Main extends JavaPlugin {
         PluginEnable.checkForPluginDependencies(List.of("Citizens", "WorldGuard", "LuckPerms", "ProtocolLib"), "dirtlands");
 
         startFileSetup();
+
         try {
             dslContext = SQLite.databaseSetup(getPlugin().getDataFolder().getCanonicalPath());
         } catch (IOException e) {

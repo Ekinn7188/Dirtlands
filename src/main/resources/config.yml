@@ -81,3 +81,7 @@ Player Balance: '&3<player>&b has &3<balance> expensive diamonds'
 #afk
 Player AFK: '&3<player>&b is now AFK'
 Player Not AFK: '&3<player>&b is no longer AFK'
+
+#word filter
+Word Filter: ["Nigger", "Nigga", "Chink", "Coon", "Jap", "Kys", "Kill yourself", "Fag", "Faggot", "Retard", "Retarded"]
+Chat Blocked: "&c&lHey! &r&cYour message hasn't been sent due to a blocked word. &4(&c<word>&4)"
