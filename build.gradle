@@ -41,6 +41,9 @@ dependencies {
     implementation 'org.flywaydb:flyway-core:8.0.5'
     implementation 'ch.qos.logback:logback-classic:1.2.7'
     jooqGenerator 'org.xerial:sqlite-jdbc:3.36.0.3'
+
+    //other
+    implementation 'org.apache.directory.studio:org.apache.commons.io:2.4'
 }
 
 flyway {

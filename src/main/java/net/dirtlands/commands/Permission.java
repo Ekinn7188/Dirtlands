@@ -15,7 +15,9 @@ public enum Permission {
     CHATCOLOR("dirtlands.chat.color"),
     ECONOMY("dirtlands.economy"),
     METADATA("dirtlands.metadata"),
-    AFK("dirtlands.afk");
+    AFK("dirtlands.afk"),
+    COOLDOWN("dirtlands.cooldown"),
+    SUDO("dirtlands.sudo");
 
     private final String name;
 
