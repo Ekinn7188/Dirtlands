@@ -6,10 +6,14 @@ import net.dirtlands.Main;
 import net.dirtlands.commands.Permission;
 import net.dirtlands.commands.PluginCommand;
 import net.dirtlands.economy.Economy;
+import net.dirtlands.tools.UUIDTools;
 import net.kyori.adventure.text.minimessage.Template;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
+
+import java.util.Objects;
+import java.util.UUID;
 
 public class EconomyCmd extends PluginCommand {
 
@@ -33,15 +37,25 @@ public class EconomyCmd extends PluginCommand {
     @Override
     public void execute(CommandSender sender, String[] args) {
         if (args.length >= 2) {
-            Player player = Bukkit.getPlayer(args[1]);
-            if (player == null){
+
+            String uuid = UUIDTools.getUuid(args[1]);
+
+            if (uuid == null) {
                 sender.sendMessage(MessageTools.parseFromPath(config,"Player Doesnt Exist", Template.template("player", args[1])));
+                return;
+            }
+
+            OfflinePlayer player = Bukkit.getOfflinePlayer(UUID.fromString(uuid));
+
+            String name = Objects.requireNonNull(player).getName();
+            if (name == null) {
+                sender.sendMessage(MessageTools.parseFromPath(config,"Player Hasnt Logged In", Template.template("player", args[1])));
                 return;
             }
 
             if (args[0].equalsIgnoreCase("get")) {
                 sender.sendMessage(MessageTools.parseFromPath(config, "Player Balance",
-                        Template.template("player", player.displayName()), Template.template("balance", String.valueOf(Economy.getBalance(player)))));
+                        Template.template("player", name), Template.template("balance", Economy.commaSeperatedBalance(player))));
                 return;
             }
 
@@ -55,7 +69,7 @@ public class EconomyCmd extends PluginCommand {
                     try {
                         Economy.addMoney(player, Integer.parseInt(args[2]));
                         sender.sendMessage(MessageTools.parseFromPath(config, "Player Balance",
-                                Template.template("player", player.displayName()), Template.template("balance", String.valueOf(Economy.getBalance(player)))));
+                                Template.template("player", name), Template.template("balance", Economy.commaSeperatedBalance(player))));
                     } catch (NumberFormatException e) {
                         sender.sendMessage(MessageTools.parseText("&cCorrect Usage: /economy add <number> <player>"));
                     }
@@ -63,10 +77,10 @@ public class EconomyCmd extends PluginCommand {
                 case "remove":
                     try {
                         if (!Economy.removeMoney(player, Integer.parseInt(args[2]))) {
-                            sender.sendMessage(MessageTools.parseFromPath(config, "Player Doesnt Have Enough Money", Template.template("player", player.displayName())));
+                            sender.sendMessage(MessageTools.parseFromPath(config, "Player Doesnt Have Enough Money", Template.template("player", name)));
                         } else {
                             sender.sendMessage(MessageTools.parseFromPath(config, "Player Balance",
-                                    Template.template("player", player.displayName()), Template.template("balance", String.valueOf(Economy.getBalance(player)))));
+                                    Template.template("player", name), Template.template("balance", Economy.commaSeperatedBalance(player))));
                         }
 
                     } catch (NumberFormatException e) {
@@ -77,7 +91,7 @@ public class EconomyCmd extends PluginCommand {
                     try {
                         Economy.forceRemoveMoney(player, Integer.parseInt(args[2]));
                         sender.sendMessage(MessageTools.parseFromPath(config, "Player Balance",
-                                Template.template("player", player.displayName()), Template.template("balance", String.valueOf(Economy.getBalance(player)))));
+                                Template.template("player", name), Template.template("balance", Economy.commaSeperatedBalance(player))));
                     } catch (NumberFormatException e) {
                         sender.sendMessage(MessageTools.parseText("&cCorrect Usage: /economy forceremove <number> <player>"));
                     }
@@ -86,7 +100,7 @@ public class EconomyCmd extends PluginCommand {
                     try {
                         Economy.setBalance(player, Integer.parseInt(args[2]));
                         sender.sendMessage(MessageTools.parseFromPath(config, "Player Balance",
-                                Template.template("player", player.displayName()), Template.template("balance", String.valueOf(Economy.getBalance(player)))));
+                                Template.template("player", name), Template.template("balance", Economy.commaSeperatedBalance(player))));
                     } catch (NumberFormatException e) {
                         sender.sendMessage(MessageTools.parseText("&cCorrect Usage: /economy set <number> <player>"));
                     }
@@ -101,4 +115,8 @@ public class EconomyCmd extends PluginCommand {
                     .parseText("&cCorrect Usage: /economy <add/remove/forceremove/set/get> <player> <number(except for get command)>"));
         }
     }
+
+
+
+
 }
