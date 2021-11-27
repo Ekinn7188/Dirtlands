@@ -1,9 +1,9 @@
 #chat
-Chat Style: <prefix><#893900><player></#893900><suffix> &a» &7<message>
+Chat Style: <prefix><#7c3e12><player></#7c3e12><suffix> &a» &7<message>
 Join Message: '&7[&2+&7] <player>'
 First Join Message: '&6<player> has joined for the first time! (#<number>)'
 Leave Message: '&7[&4-&7] <player>'
-Broadcast Prefix: '&a[<#893900>Dirtlands</#893900>&a] '
+Broadcast Prefix: '&a[<#7c3e12>Dirtlands</#7c3e12>&a] '
 Player Death: '&c☠ <message>'
 Chat Cleared By Message: '&c&lChat cleared by <player>!'
 Chat Muted By Message: '&c&lChat muted by <player>!'
@@ -11,6 +11,7 @@ Chat Unmuted By Message: '&c&lChat unmuted by <player>!'
 Chat Is Muted: '&cThe chat is currently &4muted&c!'
 Chat Color Set: '&aDefault chat color set'
 Invalid Chat Color: '&cThat is not a valid chat color!'
+Sending Messages Too Fast: '&cYou are sending "<message>" too fast! Slow down!'
 
 #teleporting
 Dont Move Message: '&cDont move or teleportation is &4canceled'
@@ -48,13 +49,14 @@ No Homes: '&cYou dont have any homes! Create one with /sethome {name}!'
 Dirtlands Reloaded: '&aDirtlands Reloaded!'
 
 #nickname
-Nickname Change: '&aYour nickname has been set to <#893900><name>&a!'
+Nickname Change: '&aYour nickname has been set to <#7c3e12><name>&a!'
 Invalid Nickname: '&cThat is an invalid nickname!'
 
 #commands
 No Command Permission: '&cYou dont have permission to use this command!'
 Player Only Command: '&cYou must be a player to execute this command!'
 Player Doesnt Exist: '&4<player>&c doesn''t exist!'
+Player Hasnt Logged In: '&4<player>&c has never logged in before!'
 
 #npc
 Npc Selected: <name>&a has been selected!
@@ -68,7 +70,7 @@ Tablist Header:
 Tablist Footer:
   First Line: ''
   Second Line: <#d1c59f>⚔ <onlineplayers>/<maxplayers> Online ☠
-Player Tab Style: '<prefix><#893900><player> '
+Player Tab Style: '<prefix><#7c3e12><player> '
 
 #economy
 Money Gained Actionbar: '&3+<money> &bExpensive Diamonds &o(You Have &3<balance>&b)'
@@ -76,7 +78,11 @@ Money Set Actionbar: '&bYour Balance Has Been Set To &3<money>'
 Money Lost Actionbar: '&3-<money> &bExpensive Diamonds &o(You Have &3<balance>&b)'
 Cant Afford Message: '&cYou can''t afford this!'
 Player Doesnt Have Enough Money: '&c<player> doesn''t have enough money for this action'
-Player Balance: '&3<player>&b has &3<balance> expensive diamonds'
+Baltop Header: '<#b8a567>&m----------&r <#7c3e12>Baltop <#b8a567>&m-</#b8a567>&r <#7c3e12>Page</#7c3e12> <#856f2d><page><#7c3e12>/</#7c3e12><pages> <#b8a567>&m----------'
+Baltop Names: '<#b8a567>(#<position>) <#856f2d><name>: <#7c3e12><balance>'
+Player Balance: '&3<player>&b has &3<balance>&b expensive diamonds'
+Balance: '&3You&b have &3<balance>&b expensive diamonds'
+
 
 #afk
 Player AFK: '&3<player>&b is now AFK'
@@ -85,3 +91,9 @@ Player Not AFK: '&3<player>&b is no longer AFK'
 #word filter
 Word Filter: ["Nigger", "Nigga", "Chink", "Coon", "Jap", "Kys", "Kill yourself", "Fag", "Faggot", "Retard", "Retarded"]
 Chat Blocked: "&c&lHey! &r&cYour message hasn't been sent due to a blocked word. &4(&c<word>&4)"
+
+#rules
+Rules:
+  - "<#b8a567>&m-------------------&r <#7c3e12>Rules<#b8a567> &m-------------------"
+  - "1. test"
+  - "2. test"

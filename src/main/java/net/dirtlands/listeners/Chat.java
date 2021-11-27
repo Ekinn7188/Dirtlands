@@ -20,9 +20,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.jooq.DSLContext;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -32,11 +30,14 @@ public class Chat implements Listener {
     private static ConfigSetup config = Main.getPlugin().config();
     private static final ArrayList<Pattern> blockedPatterns =
             getBlockedRegex(Objects.requireNonNull(config.get().getStringList("Word Filter")));
+    private static HashMap<UUID, HashMap<String, Long>> cooldown = new HashMap<>();
 
     @EventHandler
     public void onChat(AsyncChatEvent e){
         e.setCancelled(true);
+        Player player = e.getPlayer();
 
+        //muted chat
         if (MuteChat.chatMuted){
             if (!e.getPlayer().hasPermission(Permission.BYPASSCHAT.getName())){
                 Bukkit.broadcast(MessageTools.parseFromPath(config, "Chat Is Muted"));
@@ -44,19 +45,23 @@ public class Chat implements Listener {
             }
         }
 
-
-        String chatcolor = DatabaseTools.firstString(dslContext.select(Tables.USERS.CHATCOLOR).from(Tables.USERS).where(Tables.USERS.USERID.eq(DatabaseTools.getUserID(e.getPlayer().getUniqueId()))).fetchAny());
-        String messageStyle = MessageTools.getString(config, "Chat Style");
-        Player player = e.getPlayer();
-        User user = LuckPermsProvider.get().getUserManager().getUser(player.getUniqueId());
-
-
-        assert user != null;
-        String prefix = user.getCachedData().getMetaData().getPrefix();
-        String suffix = user.getCachedData().getMetaData().getSuffix();
-
+        //chat cooldown
         String messageString = PlainTextComponentSerializer.plainText().serialize(e.message());
+        if (!player.hasPermission(Permission.COOLDOWN.getName())) {
+            if (cooldown.containsKey(player.getUniqueId()) && cooldown.get(player.getUniqueId()).containsKey(messageString)) {
+                long secondsLeft = ((cooldown.get(player.getUniqueId()).get(messageString) + 2500) - System.currentTimeMillis());
+                if (secondsLeft > 0) {
+                    player.sendMessage(MessageTools.parseFromPath(config, "Sending Messages Too Fast", Template.template("message", messageString)));
+                    return;
+                }
+            }
+            HashMap<String, Long> newCooldown = new HashMap<>();
+            newCooldown.put(messageString, System.currentTimeMillis());
+            cooldown.put(player.getUniqueId(), newCooldown);
+        }
 
+
+        //check for blocked words
         for (Pattern pattern : blockedPatterns){
             Matcher matcher = pattern.matcher(messageString);
             if (matcher.find()){
@@ -71,20 +76,32 @@ public class Chat implements Listener {
             }
         }
 
+        //if the player has permission to use a chat color and has one set, use it
         Component message = MessageTools.parseText(messageString);
-
+        String chatcolor = DatabaseTools.firstString(dslContext.select(Tables.USERS.CHATCOLOR)
+                .from(Tables.USERS).where(Tables.USERS.USERID.eq(DatabaseTools.getUserID(e.getPlayer().getUniqueId()))).fetchAny());
         if (player.hasPermission("dirtlands.chat.color") && chatcolor != null ){
             message = MessageTools.parseText(chatcolor + messageString);
         }
 
+        //get prefix and suffix
+        User user = LuckPermsProvider.get().getUserManager().getUser(player.getUniqueId());
+        assert user != null;
+        String prefix = user.getCachedData().getMetaData().getPrefix();
+        String suffix = user.getCachedData().getMetaData().getSuffix();
+
+        //compile everything into a message to send
         Component replacedText = MessageTools.parseFromPath(config, "Chat Style", Template.template("prefix", MessageTools.parseText(prefix == null ? "" : prefix + " ")),
                 Template.template("player", e.getPlayer().displayName()), Template.template("suffix", MessageTools.parseText(suffix == null ? "" : " " + suffix)),
                 Template.template("message", message));
 
+
+        //get any urls and make them clickable
         for (String url : MessageTools.fetchURLs(messageString)) {
             replacedText = replacedText.clickEvent(ClickEvent.openUrl(url));
         }
 
+        //send the message
         Bukkit.broadcast(replacedText);
     }
 
@@ -131,6 +148,23 @@ public class Chat implements Listener {
             patterns.add(Pattern.compile(patternBuilder.toString(), Pattern.CASE_INSENSITIVE));
         }
         return patterns;
+    }
+
+    /**
+     * return the first blocked word if detected, otherwise null
+     */
+    public static String isBlocked(String message) {
+        for (Pattern pattern : blockedPatterns) {
+            Matcher matcher = pattern.matcher(message);
+            if (matcher.find()) {
+                String blockedMessage = matcher.group();
+                if (matcher.group().charAt(0) == ' ') {
+                    blockedMessage = blockedMessage.substring(1);
+                }
+                return blockedMessage;
+            }
+        }
+        return null;
     }
 
 }
