@@ -43,7 +43,7 @@ Inventories:
       '3':
         block: DIRT
         name: <#692C00>&lDirt
-        lore: '<#893900>It''s about as dirty as dirt gets ||&eBuy: &610 |&eSell: &65'
+        lore: '<#7c3e12>It''s about as dirty as dirt gets ||&eBuy: &610 |&eSell: &65'
         amount: 64
         buy: 10
         sell: 5
@@ -67,7 +67,7 @@ Inventories:
       '3':
         block: PODZOL
         name: <#692C00>&lPodzol
-        lore: '<#893900>Leafy Dirt ||&eBuy: &6100 |&eSell: &650'
+        lore: '<#7c3e12>Leafy Dirt ||&eBuy: &6100 |&eSell: &650'
         buy: 100
         sell: 50
       '5':
