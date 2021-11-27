@@ -50,6 +50,14 @@ commands:
     description: gives metadata of an item
   realname:
     description: gets a player's real name
+  baltop:
+    description: gets the top richest players
+  bal:
+    description: gets the balance of a player
+  sudo:
+    description: allows the user to run commands as another player
+  rules:
+    description: shows the rules of the server
 permissions:
   dirtlands.setspawn:
     description: allows use of the setspawn command
@@ -92,4 +100,10 @@ permissions:
     default: op
   dirtlands.afk:
     description: used to make a player go afk
+    default: op
+  dirtlands.cooldown:
+    description: used to bypass the chat cooldown
+    default: op
+  dirtlands.sudo:
+    description: used to type commands as another player
     default: op

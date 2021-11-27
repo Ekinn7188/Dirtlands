@@ -34,6 +34,10 @@ public class CombatTag implements Listener {
     @EventHandler
     public void onAttack(EntityDamageByEntityEvent e){
         if (e.getDamager() instanceof Player && e.getEntity() instanceof Player){
+            if (e.getEntity().hasMetadata("NPC")) {
+                return;
+            }
+
             RegionContainer container = WorldGuard.getInstance().getPlatform().getRegionContainer();
             RegionQuery query = container.createQuery();
 
