@@ -7,14 +7,12 @@ import net.dirtlands.commands.PluginCommand;
 import net.dirtlands.economy.Economy;
 import net.dirtlands.tools.UUIDTools;
 import net.kyori.adventure.text.minimessage.Template;
-import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jooq.DSLContext;
 
 import java.util.Objects;
-import java.util.UUID;
 
 public class Bal extends PluginCommand {
     DSLContext dslContext = Main.getPlugin().getDslContext();
@@ -44,21 +42,18 @@ public class Bal extends PluginCommand {
 
         String uuid = UUIDTools.getUuid(args[0]);
 
-        if (uuid == null) {
-            sender.sendMessage(MessageTools.parseFromPath(config,"Player Doesnt Exist", Template.template("player", args[0])));
+        OfflinePlayer player = UUIDTools.checkNameAndUUID(sender, args[0]);
+        if (player == null) {
             return;
         }
 
-        OfflinePlayer player = Bukkit.getOfflinePlayer(UUID.fromString(uuid));
-
-        String name = player.getName();
-        if (name == null) {
+        if (player.getName() == null) {
             sender.sendMessage(MessageTools.parseFromPath(config,"Player Hasnt Logged In", Template.template("player", args[0])));
             return;
         }
 
         sender.sendMessage(MessageTools.parseFromPath(config, "Player Balance",
-                Template.template("player", Objects.requireNonNull(name)),
+                Template.template("player", Objects.requireNonNull(player.getName())),
                 Template.template("balance", Economy.commaSeperatedBalance(player))));
     }
 }

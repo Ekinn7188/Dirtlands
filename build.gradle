@@ -3,7 +3,7 @@ plugins {
     id "com.github.johnrengelman.shadow" version "7.0.0"
     id 'nu.studer.jooq' version '6.0.1'
     id "org.flywaydb.flyway" version "8.0.5"
-    id("xyz.jpenilla.run-paper") version "1.0.4"
+    id "xyz.jpenilla.run-paper" version "1.0.6"
 }
 
 group 'dirtlands.net'
@@ -22,6 +22,7 @@ repositories {
     maven { url "https://maven.enginehub.org/repo/" }
     maven { url "https://repo.dmulloy2.net/repository/public/" }
     maven { url "https://repo.citizensnpcs.co/" }
+    maven { url "https://repo.codemc.io/repository/maven-snapshots/" }
     mavenLocal()
 }
 
@@ -34,11 +35,12 @@ dependencies {
     compileOnly 'net.citizensnpcs:citizens-main:2.0.28-SNAPSHOT'
     compileOnly 'io.papermc.paper:paper-api:1.17.1-R0.1-SNAPSHOT'
     implementation 'jeeper.utils:PaperPluginUtils:0.1.1'
+    implementation 'net.wesjd:anvilgui:1.5.3-SNAPSHOT'
 
     //database
     implementation 'org.jooq:jooq:3.15.4'
     compileOnly 'org.xerial:sqlite-jdbc:3.36.0.3'
-    implementation 'org.flywaydb:flyway-core:8.0.5'
+    implementation 'org.flywaydb:flyway-core:8.1.0'
     implementation 'ch.qos.logback:logback-classic:1.2.7'
     jooqGenerator 'org.xerial:sqlite-jdbc:3.36.0.3'
 

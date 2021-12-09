@@ -58,6 +58,21 @@ commands:
     description: allows the user to run commands as another player
   rules:
     description: shows the rules of the server
+  ban:
+    description: bans a player
+  kick:
+    description: kicks a player
+  mute:
+    description: mutes a player
+  warn:
+    description: warns a player
+  memory:
+    description: shows the memory usage of the server
+  unban:
+    description: unbans a player
+    aliases: pardon
+  unmute:
+    description: unmutes a player
 permissions:
   dirtlands.setspawn:
     description: allows use of the setspawn command
@@ -106,4 +121,19 @@ permissions:
     default: op
   dirtlands.sudo:
     description: used to type commands as another player
+    default: op
+  dirtlands.ban:
+    description: used to ban a player
+    default: op
+  dirtlands.mute:
+    description: used to mute a player
+    default: op
+  dirtlands.warn:
+    description: used to warn a player
+    default: op
+  dirtlands.kick:
+    description: used to kick a player
+    default: op
+  dirtlands.memory:
+    description: used to view memory usage
     default: op

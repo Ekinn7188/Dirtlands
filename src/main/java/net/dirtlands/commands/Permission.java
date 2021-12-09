@@ -17,7 +17,12 @@ public enum Permission {
     METADATA("dirtlands.metadata"),
     AFK("dirtlands.afk"),
     COOLDOWN("dirtlands.cooldown"),
-    SUDO("dirtlands.sudo");
+    SUDO("dirtlands.sudo"),
+    BAN("dirtlands.ban"),
+    KICK("dirtlands.kick"),
+    MUTE("dirtlands.mute"),
+    WARN("dirtlands.warn"),
+    MEMORY("dirtlands.memory");
 
     private final String name;
 

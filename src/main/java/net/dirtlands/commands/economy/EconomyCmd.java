@@ -8,12 +8,8 @@ import net.dirtlands.commands.PluginCommand;
 import net.dirtlands.economy.Economy;
 import net.dirtlands.tools.UUIDTools;
 import net.kyori.adventure.text.minimessage.Template;
-import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
-
-import java.util.Objects;
-import java.util.UUID;
 
 public class EconomyCmd extends PluginCommand {
 
@@ -38,20 +34,13 @@ public class EconomyCmd extends PluginCommand {
     public void execute(CommandSender sender, String[] args) {
         if (args.length >= 2) {
 
-            String uuid = UUIDTools.getUuid(args[1]);
-
-            if (uuid == null) {
-                sender.sendMessage(MessageTools.parseFromPath(config,"Player Doesnt Exist", Template.template("player", args[1])));
+            OfflinePlayer player = UUIDTools.checkNameAndUUID(sender, args[0]);
+            if (player == null) {
                 return;
             }
 
-            OfflinePlayer player = Bukkit.getOfflinePlayer(UUID.fromString(uuid));
-
-            String name = Objects.requireNonNull(player).getName();
-            if (name == null) {
-                sender.sendMessage(MessageTools.parseFromPath(config,"Player Hasnt Logged In", Template.template("player", args[1])));
-                return;
-            }
+            String name = player.getName();
+            assert name != null;//checked in UUIDTools.checkNameAndUUID
 
             if (args[0].equalsIgnoreCase("get")) {
                 sender.sendMessage(MessageTools.parseFromPath(config, "Player Balance",

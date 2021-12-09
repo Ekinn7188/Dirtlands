@@ -8,6 +8,7 @@ import net.dirtlands.Main;
 import net.dirtlands.commands.Permission;
 import net.dirtlands.commands.admin.MuteChat;
 import net.dirtlands.database.DatabaseTools;
+import net.dirtlands.listeners.punishments.PunishmentTools;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.minimessage.Template;
@@ -28,8 +29,7 @@ public class Chat implements Listener {
 
     DSLContext dslContext = Main.getPlugin().getDslContext();
     private static ConfigSetup config = Main.getPlugin().config();
-    private static final ArrayList<Pattern> blockedPatterns =
-            getBlockedRegex(Objects.requireNonNull(config.get().getStringList("Word Filter")));
+    private static final ArrayList<Pattern> blockedPatterns = getBlockedRegex(Objects.requireNonNull(config.get().getStringList("Word Filter")));
     private static HashMap<UUID, HashMap<String, Long>> cooldown = new HashMap<>();
 
     @EventHandler
@@ -45,8 +45,14 @@ public class Chat implements Listener {
             }
         }
 
+        if (PunishmentTools.checkMuted(player)){
+            return;
+        }
+
+
         //chat cooldown
         String messageString = PlainTextComponentSerializer.plainText().serialize(e.message());
+
         if (!player.hasPermission(Permission.COOLDOWN.getName())) {
             if (cooldown.containsKey(player.getUniqueId()) && cooldown.get(player.getUniqueId()).containsKey(messageString)) {
                 long secondsLeft = ((cooldown.get(player.getUniqueId()).get(messageString) + 2500) - System.currentTimeMillis());

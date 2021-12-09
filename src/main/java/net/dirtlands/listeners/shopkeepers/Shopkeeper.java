@@ -6,6 +6,7 @@ import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import net.dirtlands.Main;
 import net.dirtlands.files.NpcInventory;
+import net.dirtlands.tools.ItemTools;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
@@ -20,7 +21,6 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -117,15 +117,15 @@ public class Shopkeeper implements Listener {
                 for (int j = npcInventory.get().getInt(inventoryPrefix + ".inventory size")-1; 0 <= j; j--) {
                     if (hasLore){
                         if (itemStack != null) {
-                            inventory.setItem(j, createGuiItem(itemStack, material, name, amountDisplay, lore.toArray(new Component[lore.size()])));
+                            inventory.setItem(j, ItemTools.createGuiItem(itemStack, material, MessageTools.parseText(name), amountDisplay, lore.toArray(new Component[lore.size()])));
                         } else {
-                            inventory.setItem(j, createGuiItem(material, name, amountDisplay, lore.toArray(new Component[lore.size()])));
+                            inventory.setItem(j, ItemTools.createGuiItem(material, MessageTools.parseText(name), amountDisplay, lore.toArray(new Component[lore.size()])));
                         }
                     } else {
                         if (itemStack != null) {
-                            inventory.setItem(j, createGuiItem(itemStack, material, name, amountDisplay));
+                            inventory.setItem(j, ItemTools.createGuiItem(itemStack, material, MessageTools.parseText(name), amountDisplay));
                         } else {
-                            inventory.setItem(j, createGuiItem(material, name, amountDisplay));
+                            inventory.setItem(j, ItemTools.createGuiItem(material, MessageTools.parseText(name), amountDisplay));
                         }
                     }
 
@@ -133,16 +133,16 @@ public class Shopkeeper implements Listener {
             } else { //if it's not deafult, just put an item in its slot
                 if (hasLore){
                     if (itemStack != null) {
-                        inventory.setItem(Integer.valueOf(slotName), createGuiItem(itemStack, material, name, amountDisplay, lore.toArray(new Component[lore.size()])));
+                        inventory.setItem(Integer.valueOf(slotName), ItemTools.createGuiItem(itemStack, material, MessageTools.parseText(name), amountDisplay, lore.toArray(new Component[lore.size()])));
                     } else {
-                        inventory.setItem(Integer.valueOf(slotName), createGuiItem(material, name, amountDisplay, lore.toArray(new Component[lore.size()])));
+                        inventory.setItem(Integer.valueOf(slotName), ItemTools.createGuiItem(material, MessageTools.parseText(name), amountDisplay, lore.toArray(new Component[lore.size()])));
                     }
 
                 } else {
                     if (itemStack != null) {
-                        inventory.setItem(Integer.valueOf(slotName), createGuiItem(itemStack, material, name, amountDisplay));
+                        inventory.setItem(Integer.valueOf(slotName), ItemTools.createGuiItem(itemStack, material, MessageTools.parseText(name), amountDisplay));
                     } else {
-                        inventory.setItem(Integer.valueOf(slotName), createGuiItem(material, name, amountDisplay));
+                        inventory.setItem(Integer.valueOf(slotName), ItemTools.createGuiItem(material, MessageTools.parseText(name), amountDisplay));
                     }
                 }
             }
@@ -150,44 +150,7 @@ public class Shopkeeper implements Listener {
         return inventory;
     }
 
-    protected ItemStack createGuiItem(final Material material, final String name, int amount, final Component... lore) {
-        if (amount == -1) {
-            amount = 1;
-        }
-        final ItemStack item = new ItemStack(material, amount);
-        final ItemMeta meta = item.getItemMeta();
 
-        meta.displayName(MessageTools.parseText(name).decoration(TextDecoration.ITALIC, false));
-
-        if (lore.length > 0){
-            meta.lore(Arrays.stream(lore).map(c -> c.decoration(TextDecoration.ITALIC, false)).toList());
-        }
-
-        item.setItemMeta(meta);
-
-        return item;
-    }
-
-    protected ItemStack createGuiItem(@NotNull final ItemStack item, final Material material, final String name, int amount, final Component... lore) {
-        final ItemMeta meta = item.getItemMeta();
-
-        if (material != null) {
-            item.setType(material);
-        }
-        if (!name.equals("")){
-            meta.displayName(MessageTools.parseText(name).decoration(TextDecoration.ITALIC, false));
-        }
-        if (amount == -1){
-            item.setAmount(amount);
-        }
-        if (lore.length > 0){
-            meta.lore(Arrays.stream(lore).map(c -> c.decoration(TextDecoration.ITALIC, false)).toList());
-        }
-
-        item.setItemMeta(meta);
-
-        return item;
-    }
 
     @EventHandler
     public void onInventoryClick(InventoryClickEvent e){

@@ -29,12 +29,14 @@ public class Main extends JavaPlugin {
     @Override
     public void onEnable(){
         plugin = this;
-
+        //makes sure the server has all the required plugins. if not, the plugin will disable
         PluginEnable.checkForPluginDependencies(List.of("Citizens", "WorldGuard", "LuckPerms", "ProtocolLib"), "dirtlands");
 
+        //set up config files
         startFileSetup();
 
         try {
+            //get
             dslContext = SQLite.databaseSetup(getPlugin().getDataFolder().getCanonicalPath());
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -48,6 +50,11 @@ public class Main extends JavaPlugin {
         sessionManager.registerHandler(CombatSafezoneHandler.FACTORY,null);
     }
 
+    /**
+     * Initializes all Commands in net.dirtlands.commands<br>
+     * Initializes all Listeners in net.dirtlands.listeners<br>
+     * Initializes all TabCompleters in net.dirtlands.commands.tab<br>
+     */
     protected static void initializeClasses(){
         String packageName = Main.getPlugin().getClass().getPackage().getName();
         //load Listeners in net.dirtlands.listeners
@@ -86,28 +93,9 @@ public class Main extends JavaPlugin {
 
     }
 
-    /*
-     private boolean setupNMS() { //nms with interfaces
-        String version = PluginEnable.getServerVersion();
-
-        if (version.equals("")) {
-            return false;
-        }
-
-        if (version.equals("v1_17_R1")) {
-            className = new ClassName_1_17_R1();
-
-        }
-
-        return className != null;
-    }*/
-
     public static Main getPlugin(){
         return plugin;
     }
-    /**
-     * @return the DSLContext, used to contact the SQLite database
-     */
     public DSLContext getDslContext(){
         return dslContext;
     }

@@ -1,3 +1,6 @@
+#discord
+Discord Link: https://discord.gg/wpMMgQhV4v
+
 #chat
 Chat Style: <prefix><#7c3e12><player></#7c3e12><suffix> &a» &7<message>
 Join Message: '&7[&2+&7] <player>'
@@ -57,6 +60,7 @@ No Command Permission: '&cYou dont have permission to use this command!'
 Player Only Command: '&cYou must be a player to execute this command!'
 Player Doesnt Exist: '&4<player>&c doesn''t exist!'
 Player Hasnt Logged In: '&4<player>&c has never logged in before!'
+Player Is Offline: '&4<player>&c is offline!'
 
 #npc
 Npc Selected: <name>&a has been selected!
@@ -65,7 +69,7 @@ Metadata Message: '&aYour metadata has been generated in shopkeeper.yml, index <
 
 #tab
 Tablist Header:
-  First Line: <#b8a567>&l⛏ &r<#b8a567>[<#7c3e12>&lDirtlands&r<#b8a567>] &l■
+  First Line: <#b8a567>&l⛏ &r<#b8a567>[&r<#7c3e12>&lDirtlands&r<#b8a567>] &l■
   Second Line: ''
 Tablist Footer:
   First Line: ''
@@ -95,5 +99,68 @@ Chat Blocked: "&c&lHey! &r&cYour message hasn't been sent due to a blocked word.
 #rules
 Rules:
   - "<#b8a567>&m-------------------&r <#7c3e12>Rules<#b8a567> &m-------------------"
-  - "1. test"
-  - "2. test"
+  - "<#856f2d>1.  <#b8a567>Racial slurs or any slur in general is NOT allowed, this includes the N-Word, death threats, or inducing self harm."
+  - "<#856f2d>2.  <#b8a567>Harassing other players is not tolerated."
+  - "<#856f2d>3.  <#b8a567>Hacking, duping, or any form of exploit that wasn't intended can result in severe punishment."
+  - "<#856f2d>4.  <#b8a567>Spamming or bypassing chat filters is not allowed."
+  - "<#856f2d>5.  <#b8a567>Joking about real world tragedies is not allowed."
+  - "<#856f2d>6.  <#b8a567>Offensive jokes are not allowed."
+  - "<#856f2d>7.  <#b8a567>Be respectful towards staff and other Dirtlads."
+  - "<#856f2d>8.  <#b8a567>Do not advertise other servers here, keep that to the Minehut lobby."
+  - "<#856f2d>9.  <#b8a567>Do not join just to say disrespectful things towards the server. Criticism is fine."
+  - "<#856f2d>10. <#b8a567>Do not ask for operator or staff positions. We will tell you if staff applications are open in our discord server."
+  - "<#856f2d>11. <#b8a567>Nothing too explicit, this includes NSFW skins, lewd builds, and links to explicit websites or images."
+  - "<#856f2d>12. <#b8a567>Do not evade a ban. Appeal on our discord server or wait for your punishment to end."
+  - "<#856f2d>13. <#b8a567>Whilst in Dirtlands, it is required you follow each of these rules. Failure to abide will result in punishment. Enjoy your time here!"
+
+#memory
+Memory Usage: '<#b8a567>Memory Usage: <#7c3e12><memory> mb'
+
+#punishments
+Punishment Header: '<#b8a567>[&r<#7c3e12>&lDirtlands&r<#b8a567>]'
+Ban Broadcast: '&4<player> &chas been banned for &4<reason>&c. (<time>)'
+Ban No Reason Broadcast: '&4<player> &chas been banned. (<time>)'
+Unban Not Banned: '&4<player> &cis not banned.'
+Player Unbanned: '&4<player> &chas been &4unbanned&c.'
+Unmute Not Muted: '&4<player> &cis not muted.'
+Player Unmuted: '&4<player> &chas been &4unmuted&c.'
+Ban Message: |
+  <#b8a567>You have been banned.
+
+  Time: &r<#856f2d><time>
+
+  &r<#b8a567>Appeal here: &r&n<#856f2d><discord>
+Ban With Reason: |
+  <#b8a567>You have been banned.
+
+
+  Reason: &r<#856f2d><reason>
+  &r<#b8a567>Time: &r<#856f2d><time>
+
+  &r<#b8a567>Appeal here: &r&n<#856f2d><discord>
+Perm Ban Message: |
+  <#b8a567>You have been banned <#856f2d>Permanently.
+
+
+  &r<#b8a567>Appeal here: &r&n<#856f2d><discord>
+Perm Ban With Reason: |
+  <#b8a567>You have been banned <#856f2d>Permanently.
+
+  <#b8a567>Reason: &r<#856f2d><reason>
+
+  &r<#b8a567>Appeal here: &r&n<#856f2d><discord>
+Punishment Time: '<#b8a567>Enter a time for the punishment. enter in format <#856f2d>0d 0h 0m<#b8a567>. Type "<#856f2d>Permanent<#b8a567>" for the punishment to last forever'
+Punishment Reason: '<#b8a567>Enter a reason for the punishment'
+Punishment Time Invalid: '<#b8a567>You entered an invalid time. Use the format <#856f2d>0d 0h 0m'
+Permanent Mute No Reason: <#b8a567>You are currently muted <#b8a567>permanently
+Permanent Mute With Reason: <#b8a567>You are currently muted for <#856f2d><reason><#b8a567>. You are muted <#856f2d>permanently<#b8a567>.
+Muted No Reason: <#b8a567>You are currently muted for <#856f2d><time>
+Muted With Reason: <#b8a567>You are currently muted for <#856f2d><reason><#b8a567>. (<#856f2d><time><#b8a567>)
+Mute Successful No Reason: <#856f2d><player> <#b8a567>successfully muted for <#856f2d><time>
+Mute Successful: <#856f2d><player> <#b8a567>successfully muted for <#856f2d><reason><#b8a567>. (<#856f2d><time><#b8a567>)
+Kick Message: '<#b8a567>You have been kicked.'
+Kick With Reason: |
+  <#b8a567>You have been kicked.
+
+
+  Reason: &r<#856f2d><reason>
