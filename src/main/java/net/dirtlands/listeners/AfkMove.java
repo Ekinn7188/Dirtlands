@@ -4,7 +4,7 @@ import dirtlands.db.Tables;
 import jeeper.utils.MessageTools;
 import jeeper.utils.config.ConfigSetup;
 import net.dirtlands.Main;
-import net.dirtlands.commands.AFK;
+import net.dirtlands.commands.essentials.AFK;
 import net.dirtlands.database.DatabaseTools;
 import net.dirtlands.tabscoreboard.TabMenu;
 import net.kyori.adventure.text.minimessage.Template;

@@ -6,7 +6,7 @@ import jeeper.utils.MessageTools;
 import jeeper.utils.config.ConfigSetup;
 import net.dirtlands.Main;
 import net.dirtlands.commands.Permission;
-import net.dirtlands.commands.admin.MuteChat;
+import net.dirtlands.commands.essentials.admin.MuteChat;
 import net.dirtlands.database.DatabaseTools;
 import net.dirtlands.listeners.punishments.PunishmentTools;
 import net.kyori.adventure.text.Component;
