@@ -98,20 +98,21 @@ Chat Blocked: "&c&lHey! &r&cYour message hasn't been sent due to a blocked word.
 
 #rules
 Rules:
-  - "<#b8a567>&m-------------------&r <#7c3e12>Rules<#b8a567> &m-------------------"
-  - "<#856f2d>1.  <#b8a567>Racial slurs or any slur in general is NOT allowed, this includes the N-Word, death threats, or inducing self harm."
+  - "<#169406>&m-----<#246b1a>--</#246b1a>-------<#47c945>-</#47c945>-----<#246b1a>--</#246b1a>&r <#7c3e12>Rules<#169406> &m-----<#47c945>---</#47c945>-------<#246b1a>--</#246b1a>----"
+  - "<#856f2d>1.  <#b8a567>Racial <#856f2d>slurs</#856f2d> or any slurs in general are NOT allowed."
   - "<#856f2d>2.  <#b8a567>Harassing other players is not tolerated."
-  - "<#856f2d>3.  <#b8a567>Hacking, duping, or any form of exploit that wasn't intended can result in severe punishment."
-  - "<#856f2d>4.  <#b8a567>Spamming or bypassing chat filters is not allowed."
+  - "<#856f2d>3.  <#b8a567>Any form of <#856f2d>exploit</#856f2d> will result in severe punishment."
+  - "<#856f2d>4.  <#b8a567><#856f2d>Spamming</#856f2d> or bypassing <#856f2d>chat filters</#856f2d> is not allowed."
   - "<#856f2d>5.  <#b8a567>Joking about real world tragedies is not allowed."
-  - "<#856f2d>6.  <#b8a567>Offensive jokes are not allowed."
-  - "<#856f2d>7.  <#b8a567>Be respectful towards staff and other Dirtlads."
-  - "<#856f2d>8.  <#b8a567>Do not advertise other servers here, keep that to the Minehut lobby."
-  - "<#856f2d>9.  <#b8a567>Do not join just to say disrespectful things towards the server. Criticism is fine."
-  - "<#856f2d>10. <#b8a567>Do not ask for operator or staff positions. We will tell you if staff applications are open in our discord server."
-  - "<#856f2d>11. <#b8a567>Nothing too explicit, this includes NSFW skins, lewd builds, and links to explicit websites or images."
-  - "<#856f2d>12. <#b8a567>Do not evade a ban. Appeal on our discord server or wait for your punishment to end."
-  - "<#856f2d>13. <#b8a567>Whilst in Dirtlands, it is required you follow each of these rules. Failure to abide will result in punishment. Enjoy your time here!"
+  - "<#856f2d>6.  <#b8a567>Offensive jokes are <#856f2d>not allowed</#856f2d>."
+  - "<#856f2d>7.  <#b8a567><#856f2d>Be respectful</#856f2d> towards staff and other Dirtlads."
+  - "<#856f2d>8.  <#b8a567><#856f2d>Do not advertise</#856f2d> other servers here."
+  - "<#856f2d>9.  <#b8a567>Do not join just to say <#856f2d>disrespectful</#856f2d> things."
+  - "<#856f2d>10. <#b8a567>Do not ask for operator or staff positions."
+  - "<#856f2d>11. <#b8a567>Nothing too explicit. (<#856f2d>NSFW</#856f2d> Skins, Builds, etc.)"
+  - "<#856f2d>12. <#b8a567>Do not <#856f2d>evade</#856f2d> a ban. This will result in an <#856f2d>IP Ban</#856f2d>."
+  - "<#856f2d>13. <#b8a567>Most importantly, <#856f2d>enjoy your time</#856f2d> here!"
+  - "<#856f2d>&m-------------------------------------------------"
 
 #memory
 Memory Usage: '<#b8a567>Memory Usage: <#7c3e12><memory> mb'
@@ -120,10 +121,21 @@ Memory Usage: '<#b8a567>Memory Usage: <#7c3e12><memory> mb'
 Punishment Header: '<#b8a567>[&r<#7c3e12>&lDirtlands&r<#b8a567>]'
 Ban Broadcast: '&4<player> &chas been banned for &4<reason>&c. (<time>)'
 Ban No Reason Broadcast: '&4<player> &chas been banned. (<time>)'
+IP Ban Broadcast: '&4<player> &chas been ip banned for &4<reason>&c.'
+IP Ban No Reason Broadcast: '&4<player> &chas been ip banned.'
 Unban Not Banned: '&4<player> &cis not banned.'
 Player Unbanned: '&4<player> &chas been &4unbanned&c.'
 Unmute Not Muted: '&4<player> &cis not muted.'
 Player Unmuted: '&4<player> &chas been &4unmuted&c.'
+Player Not IP Banned: '&4<player> &cis not ip unbanned&c.'
+Player Un IP Banned: '&4<player> &chas had their &4ip unbanned&c.'
+Player Warned: '&4<player> &chas been &4Warned&c.'
+Warn Message No Reason: |-
+  &cYou have been warned. (Offence &4#<offence>&c).
+  On your &43rd&c warning, you will be banned.
+Warn Message: |-
+  &cYou have been warned for &4<reason>&c. (Offence &4#<offence>&c).
+  On your &43rd&c warning, you will be banned.
 Ban Message: |
   <#b8a567>You have been banned.
 
@@ -132,6 +144,20 @@ Ban Message: |
   &r<#b8a567>Appeal here: &r&n<#856f2d><discord>
 Ban With Reason: |
   <#b8a567>You have been banned.
+
+
+  Reason: &r<#856f2d><reason>
+  &r<#b8a567>Time: &r<#856f2d><time>
+
+  &r<#b8a567>Appeal here: &r&n<#856f2d><discord>
+IP Ban Message: |
+  <#b8a567>You have been Ip banned.
+
+  Time: &r<#856f2d><time>
+
+  &r<#b8a567>Appeal here: &r&n<#856f2d><discord>
+IP Ban With Reason: |
+  <#b8a567>You have been Ip banned.
 
 
   Reason: &r<#856f2d><reason>
