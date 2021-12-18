@@ -8,7 +8,9 @@ import net.dirtlands.commands.tab.PluginTabCompleter;
 import net.dirtlands.database.SQLite;
 import net.dirtlands.files.NpcInventory;
 import net.dirtlands.handler.CombatSafezoneHandler;
+import net.dirtlands.log.LogFilter;
 import net.dirtlands.tabscoreboard.TabMenu;
+import org.apache.logging.log4j.LogManager;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jooq.DSLContext;
@@ -34,6 +36,9 @@ public class Main extends JavaPlugin {
 
         //set up config files
         startFileSetup();
+
+        org.apache.logging.log4j.core.Logger coreLogger = (org.apache.logging.log4j.core.Logger) LogManager.getRootLogger();
+        coreLogger.addFilter(new LogFilter());
 
         try {
             //get

@@ -22,6 +22,8 @@ public class SQLite {
                 .dataSource(ds)
                 .load();
 
+        flyway.repair();
+
         try{
             flyway.migrate();
         } catch (FlywayException e) {
@@ -36,6 +38,8 @@ public class SQLite {
                 .set(ds)
                 .set(SQLDialect.SQLITE)
                 .set(settings);
+
+        System.getProperties().setProperty("org.jooq.no-logo", "true");
 
         return DSL.using(configuration);
     }
