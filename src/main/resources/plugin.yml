@@ -82,6 +82,8 @@ commands:
   history:
     description: shows the punishment history of a player
     aliases: pisstory
+  garp:
+    description: warps to the shop
 permissions:
   dirtlands.setspawn:
     description: allows use of the setspawn command
