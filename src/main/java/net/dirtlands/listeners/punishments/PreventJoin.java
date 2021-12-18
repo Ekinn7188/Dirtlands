@@ -12,9 +12,10 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.jooq.DSLContext;
-import org.jooq.Record1;
+import org.jooq.impl.DSL;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 public class PreventJoin implements Listener {
 
@@ -26,64 +27,84 @@ public class PreventJoin implements Listener {
 
         int userId = DatabaseTools.getUserID(e.getUniqueId());
 
-        //Check if the user is banned
-        String punishmentType = DatabaseTools.firstString(dslContext.select(Tables.PUNISHMENTS.PUNISHMENTTYPE).from(Tables.PUNISHMENTS)
-                .where(Tables.PUNISHMENTS.USERID.eq(userId)
-                .and(Tables.PUNISHMENTS.PUNISHMENTTYPE.equalIgnoreCase(Punishment.BAN.getPunishment()))).fetchAny());
+        var ipBanRecord =
+                dslContext.select(Tables.PUNISHMENTS.IPADDRESS, Tables.PUNISHMENTS.PUNISHMENTREASON).from(Tables.PUNISHMENTS)
+                        .where(DSL.condition(dslContext.select(Tables.PUNISHMENTS.PUNISHMENTEND)
+                                        .from(Tables.PUNISHMENTS)
+                                        .where(Tables.PUNISHMENTS.PUNISHMENTTYPE.eq(Punishment.IP_BAN.getPunishment()))
+                                        .fetch(Tables.PUNISHMENTS.PUNISHMENTEND)
+                                        .stream().filter(Objects::nonNull).anyMatch(time -> time.isAfter(LocalDateTime.now())))
+                                .or(Tables.PUNISHMENTS.PUNISHMENTEND.isNull())
+                                .and(Tables.PUNISHMENTS.PUNISHMENTTYPE.equalIgnoreCase(Punishment.IP_BAN.getPunishment())))
+                        .orderBy(Tables.PUNISHMENTS.PUNISHMENTEND.desc().nullsFirst()).limit(1).fetchOne();
 
-        if (punishmentType == null) {
-            return; //not banned
-        }
+        if (ipBanRecord != null) {
 
-        //get if the time the ban ended. if null, permanent
-        var banEndRecord = dslContext.select(Tables.PUNISHMENTS.PUNISHMENTEND).from(Tables.PUNISHMENTS)
-                .where(Tables.PUNISHMENTS.USERID.eq(userId))
-                .orderBy(Tables.PUNISHMENTS.PUNISHMENTEND.desc().nullsFirst()).limit(1).fetch();
+            var address = e.getAddress().getHostAddress();
 
-
-        for (Record1<LocalDateTime> banEnd : banEndRecord) {
-            if (banEnd == null) {
-                continue;
-            }
-
-            //get the player's ban reason
-            String reason = DatabaseTools.firstString(dslContext.select(Tables.PUNISHMENTS.PUNISHMENTREASON)
-                    .from(Tables.PUNISHMENTS).where(Tables.PUNISHMENTS.USERID.eq(userId)
-                            .and(Tables.PUNISHMENTS.PUNISHMENTTYPE.equalIgnoreCase(Punishment.BAN.getPunishment()))).fetchAny());
-
-            LocalDateTime banEndTime = banEnd.value1();
-
-            //perm banned
-            if(banEndTime == null) {
+            if (address.equals(ipBanRecord.get(Tables.PUNISHMENTS.IPADDRESS))) {
+                String reason = ipBanRecord.get(Tables.PUNISHMENTS.PUNISHMENTREASON);
                 if (reason == null) {
                     e.kickMessage(permBanNoReasonMessage());
+                    e.disallow(AsyncPlayerPreLoginEvent.Result.KICK_BANNED, e.kickMessage());
                 } else {
                     e.kickMessage(permBanMessage(reason));
+                    e.disallow(AsyncPlayerPreLoginEvent.Result.KICK_BANNED, e.kickMessage());
                 }
-                e.disallow(AsyncPlayerPreLoginEvent.Result.KICK_BANNED, e.kickMessage());
-                return;
 
             }
 
-            if (reason == null) { //no reason, use other message
-                e.kickMessage(tempBanNoReasonMessage(banEndTime));
-                e.disallow(AsyncPlayerPreLoginEvent.Result.KICK_BANNED, e.kickMessage());
-                return;
+            return;
+        }
+
+
+
+        //get if the time the ban ended. if null, permanent
+        var banEndRecord = dslContext.select(Tables.PUNISHMENTS.PUNISHMENTEND, Tables.PUNISHMENTS.PUNISHMENTREASON)
+                .from(Tables.PUNISHMENTS)
+                .where(DSL.condition(dslContext.select(Tables.PUNISHMENTS.PUNISHMENTEND)
+                            .from(Tables.PUNISHMENTS)
+                            .where(Tables.PUNISHMENTS.PUNISHMENTTYPE.equalIgnoreCase(Punishment.BAN.getPunishment())
+                                    .and(Tables.PUNISHMENTS.USERID.eq(DatabaseTools.getUserID(e.getUniqueId()))))
+                            .fetch(Tables.PUNISHMENTS.PUNISHMENTEND)
+                            .stream().filter(Objects::nonNull).anyMatch(time -> time.isAfter(LocalDateTime.now()))))
+                        .or(Tables.PUNISHMENTS.PUNISHMENTEND.isNull())
+                        .and(Tables.PUNISHMENTS.PUNISHMENTTYPE.equalIgnoreCase(Punishment.BAN.getPunishment()))
+                        .and(Tables.PUNISHMENTS.USERID.eq(DatabaseTools.getUserID(e.getUniqueId())))
+                .orderBy(Tables.PUNISHMENTS.PUNISHMENTEND.desc().nullsFirst()).limit(1).fetchOne();
+
+
+        if (banEndRecord == null) {
+            return;
+        }
+        //perm banned
+        if(banEndRecord.value1() == null) {
+            if (banEndRecord.value2() == null) {
+                e.kickMessage(permBanNoReasonMessage());
+            } else {
+                e.kickMessage(permBanMessage(banEndRecord.value2()));
             }
+            e.disallow(AsyncPlayerPreLoginEvent.Result.KICK_BANNED, e.kickMessage());
+            return;
 
-            //if the ban time is passed, let the player join
-            if (banEndTime.isBefore(LocalDateTime.now())) {
-                return;
-            }
+        }
 
-
-            //send message with reason
-            e.kickMessage(tempBanReasonMessage(banEndTime, reason));
+        if (banEndRecord.value2() == null) { //no reason, use other message
+            e.kickMessage(tempBanNoReasonMessage(banEndRecord.value1()));
             e.disallow(AsyncPlayerPreLoginEvent.Result.KICK_BANNED, e.kickMessage());
             return;
         }
-    }
 
+        //if the ban time is passed, let the player join
+        if (banEndRecord.value1().isBefore(LocalDateTime.now())) {
+            return;
+        }
+
+
+        //send message with reason
+        e.kickMessage(tempBanReasonMessage(banEndRecord.value1(), banEndRecord.value2()));
+        e.disallow(AsyncPlayerPreLoginEvent.Result.KICK_BANNED, e.kickMessage());
+    }
     /**
      * @return the kick message for a permanent ban, with a reason
      */

@@ -22,7 +22,9 @@ public enum Permission {
     KICK("dirtlands.kick"),
     MUTE("dirtlands.mute"),
     WARN("dirtlands.warn"),
-    MEMORY("dirtlands.memory");
+    BAN_IP("dirtlands.ipban"),
+    MEMORY("dirtlands.memory"),
+    HISTORY("dirtlands.history");
 
     private final String name;
 

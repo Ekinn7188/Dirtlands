@@ -1,27 +1,20 @@
 package net.dirtlands.commands.essentials.admin.punishments.revoke;
 
 import jeeper.utils.MessageTools;
-import jeeper.utils.config.ConfigSetup;
-import net.dirtlands.Main;
 import net.dirtlands.commands.Permission;
 import net.dirtlands.commands.PluginCommand;
 import net.dirtlands.listeners.punishments.Punishment;
 import org.bukkit.command.CommandSender;
-import org.jooq.DSLContext;
 
-public class Unban extends PluginCommand {
-
-    DSLContext dslContext = Main.getPlugin().getDslContext();
-    ConfigSetup config = Main.getPlugin().config();
-
+public class UnIpBan extends PluginCommand {
     @Override
     public String getName() {
-        return "unban";
+        return "unban-ip";
     }
 
     @Override
     protected Permission getPermissionType() {
-        return Permission.BAN;
+        return Permission.BAN_IP;
     }
 
     @Override
@@ -32,9 +25,10 @@ public class Unban extends PluginCommand {
     @Override
     public void execute(CommandSender sender, String[] args) {
         if (args.length == 0) {
-            sender.sendMessage(MessageTools.parseText("&cUsage: /unban {player}"));
+            sender.sendMessage(MessageTools.parseText("&cUsage: /unban-ip {player}"));
             return;
         }
-        RevokePunishment.revoke(Punishment.BAN, sender, args[0]);
+
+        RevokePunishment.revoke(Punishment.IP_BAN, sender, args[0]);
     }
 }

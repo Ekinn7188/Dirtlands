@@ -35,6 +35,6 @@ public class Unmute extends PluginCommand {
             sender.sendMessage(MessageTools.parseText("&cUsage: /unmute {player}"));
             return;
         }
-        new RevokePunishment(Punishment.MUTE, sender, args);
+        RevokePunishment.revoke(Punishment.MUTE, sender, args[0]);
     }
 }

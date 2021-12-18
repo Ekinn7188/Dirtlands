@@ -25,6 +25,7 @@ CREATE TABLE economy (
 
 CREATE TABLE punishments (
                        UserID              INTEGER       NOT NULL, -- UserID of the person being punished
+                       IPAddress           VARCHAR(50)                  DEFAULT NULL, -- IP address for ip bans
                        PunisherID          INTEGER,                -- UserID of the punisher, null if console
                        PunishmentType      VARCHAR(50)   NOT NULL, -- Ban, Mute, Kick, Warn
                        PunishmentReason    VARCHAR(255),           -- Reason for the punishment

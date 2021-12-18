@@ -1,7 +1,10 @@
 package net.dirtlands.commands.essentials.admin.punishments;
 
 import jeeper.utils.MessageTools;
+import jeeper.utils.config.ConfigSetup;
+import net.dirtlands.Main;
 import net.dirtlands.listeners.punishments.Punishment;
+import net.dirtlands.listeners.punishments.PunishmentTools;
 import net.dirtlands.tools.ItemTools;
 import net.dirtlands.tools.UUIDTools;
 import net.kyori.adventure.text.Component;
@@ -9,14 +12,18 @@ import net.kyori.adventure.text.minimessage.Template;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import static java.lang.Integer.parseInt;
 
 public class Punishments {
 
@@ -32,7 +39,7 @@ public class Punishments {
         //key reason, value time in hours
         //-1 means permanent
         Map<String, Integer> reasons = new LinkedHashMap<>();
-        if (punishment.equals(Punishment.BAN)) {
+        if (punishment.equals(Punishment.BAN) || punishment.equals(Punishment.IP_BAN)) {
             reasons.put("Hacking / Exploiting", -1);//perm
             reasons.put("Explicit Content", 72);//3 days
             reasons.put("Duping", -1);//perm
@@ -149,5 +156,53 @@ public class Punishments {
         return message;
     }
 
+    static ConfigSetup config = Main.getPlugin().config();
+    static Pattern timePattern = Pattern.compile("([0-9])+d([0-9])+h([0-9])+m", Pattern.CASE_INSENSITIVE);
 
+    /**
+     * Allows players to get punished via the console
+     * @param punishment the punishment type
+     * @param sender the command sender
+     * @param args the command arguments
+     */
+    public static void consolePunishment(Punishment punishment, CommandSender sender, String[] args) {
+        OfflinePlayer punished = UUIDTools.checkNameAndUUID(sender, args[0]);
+        if (punished == null) {
+            return;
+        }
+        assert punished.getName() != null; //checked in checkNameAndUUID
+
+        Matcher matcher = timePattern.matcher(args[1]);
+        if (matcher.find() || punishment.equals(Punishment.WARN)) {
+            try {
+
+                LocalDateTime currentTime = LocalDateTime.now();
+                LocalDateTime endTime = null;
+                String[] reason;
+
+                if (!punishment.equals(Punishment.WARN)) {
+                    reason = Arrays.copyOfRange(args, 2, args.length);
+                    endTime = currentTime.plus(parseInt(matcher.group(1)), ChronoUnit.DAYS);
+                    endTime = endTime.plus(parseInt(matcher.group(2)), ChronoUnit.HOURS);
+                    endTime = endTime.plus(parseInt(matcher.group(3)), ChronoUnit.MINUTES);
+                } else {
+                    reason = Arrays.copyOfRange(args, 1, args.length);
+                }
+
+                if (reason.length == 0) {
+                    PunishmentTools.addPunishmentToDB(sender, punishment, "Console", "", punished, LocalDateTime.now(), endTime,
+                            String.join(" ", ""));
+                    return;
+                }
+                PunishmentTools.addPunishmentToDB(sender, punishment, "Console", "",punished, LocalDateTime.now(), endTime,
+                        String.join(" ", String.join(" ", reason)));
+            } catch (NumberFormatException e) {
+                sender.sendMessage(MessageTools.parseFromPath(config, "Punishment Time Invalid"));
+            }
+        } else {
+            String[] reason = Arrays.copyOfRange(args, 1, args.length);
+            PunishmentTools.addPunishmentToDB(sender, punishment,"Console", "", punished, LocalDateTime.now(), null,
+                    String.join(" ", String.join(" ", reason)));
+        }
+    }
 }
