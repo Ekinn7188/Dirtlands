@@ -26,8 +26,6 @@ public class DeleteHome extends PluginCommand {
 
         int userID = DatabaseTools.getUserID(player.getUniqueId());
 
-        System.out.println(dslContext.selectFrom(Tables.HOMES).fetch());
-
         if (args.length > 0){
             Location loc = player.getLocation();
 
@@ -44,7 +42,5 @@ public class DeleteHome extends PluginCommand {
             dslContext.delete(Tables.HOMES).where(Tables.HOMES.USERID.eq(userID).and(Tables.HOMES.HOMENAME.equalIgnoreCase("home"))).execute();
             player.sendMessage(MessageTools.parseFromPath(config,"Home Deleted", Template.template("name", "home")));
         }
-
-        System.out.println(dslContext.selectFrom(Tables.HOMES).fetch());
     }
 }

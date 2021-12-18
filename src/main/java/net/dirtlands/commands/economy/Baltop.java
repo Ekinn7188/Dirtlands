@@ -56,13 +56,8 @@ public class Baltop extends PluginCommand {
 
         var set = map.entrySet().iterator();
 
-        System.out.println(map);
-
         int position = (page*10)-9;
 
-        System.out.println(position);
-        System.out.println(offset);
-        System.out.println(page);
         while (set.hasNext()){
             var entry = set.next();
             int key = entry.getKey();

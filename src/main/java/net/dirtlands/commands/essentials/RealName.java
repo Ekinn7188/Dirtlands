@@ -31,8 +31,6 @@ public class RealName extends ChatColor {
         Map<String, String> results = Main.getPlugin().getDslContext().select(Tables.USERS.USERNICKNAME, Tables.USERS.USERUUID)
                 .from(Tables.USERS).fetch().intoMap(Tables.USERS.USERUUID, Tables.USERS.USERNICKNAME);
 
-        System.out.println(results);
-
         if (results.size() == 0) {
             sender.sendMessage(MessageTools.parseText("&bThere are no players with the nickname <nickname>",
                     Template.template("nickname", nickname)));
@@ -58,7 +56,6 @@ public class RealName extends ChatColor {
         List<Component> names = new ArrayList<>();
         List<String> uuids = results.keySet().stream().toList();
 
-        System.out.println(uuids.get(0));
 
         uuids.forEach(uuid -> names.add(Objects.requireNonNull(Bukkit.getPlayer(UUID.fromString(uuid))).name()));
 
