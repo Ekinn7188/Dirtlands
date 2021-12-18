@@ -1,6 +1,7 @@
 package net.dirtlands.listeners;
 
 
+import com.destroystokyo.paper.event.block.TNTPrimeEvent;
 import com.sk89q.worldedit.util.Location;
 import com.sk89q.worldguard.LocalPlayer;
 import com.sk89q.worldguard.WorldGuard;
@@ -16,13 +17,21 @@ import net.dirtlands.Main;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.Template;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
+import org.bukkit.World;
+import org.bukkit.block.data.type.Bed;
+import org.bukkit.entity.EnderCrystal;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.inventory.EquipmentSlot;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -30,7 +39,7 @@ import java.util.UUID;
 
 public class CombatTag implements Listener {
     private static final Map<UUID, Integer> tasks = new HashMap<>();
-    private static ConfigSetup config = Main.getPlugin().config();
+    private static final ConfigSetup config = Main.getPlugin().config();
 
     @EventHandler
     public void onAttack(EntityDamageByEntityEvent e){
@@ -56,7 +65,22 @@ public class CombatTag implements Listener {
                 combatCountdown((Player) e.getDamager(), Main.getPlugin());
                 combatCountdown((Player) e.getEntity(), Main.getPlugin());
             }
+        } else if ((e.getDamager() instanceof EnderCrystal || e.getEntity() instanceof EnderCrystal) && (e.getEntity() instanceof Player || e.getDamager() instanceof Player)){
+            combatCountdown(e.getDamager() instanceof Player ? (Player) e.getDamager() : (Player) e.getEntity(), Main.getPlugin());
         }
+        if (e.getEntity() instanceof Player) {
+            if (e.getCause().equals(EntityDamageEvent.DamageCause.BLOCK_EXPLOSION)) {
+                if (e.getEntity() instanceof Player) {
+                    combatCountdown((Player) e.getEntity(), Main.getPlugin());
+                }
+            }
+            else if (e.getCause().equals(EntityDamageEvent.DamageCause.ENTITY_EXPLOSION)) {
+                if (e.getDamager().getType().equals(EntityType.PRIMED_TNT)) {
+                    combatCountdown((Player) e.getEntity(), Main.getPlugin());
+                }
+            }
+        }
+
     }
 
     public static Map<UUID, Integer> getTasks(){
@@ -71,6 +95,33 @@ public class CombatTag implements Listener {
             e.setCancelled(true);
             player.sendMessage(MessageTools.parseFromPath(config, "Command In Combat"));
         }
+    }
+
+    @EventHandler
+    public void onPlayerInteract(PlayerInteractEvent e) {
+        if (e.getHand() == null || e.getHand().equals(EquipmentSlot.OFF_HAND) || e.getClickedBlock() == null) {
+            return;
+        }
+
+        World.Environment environment = e.getPlayer().getWorld().getEnvironment();
+        if (e.getClickedBlock().getType().equals(Material.RESPAWN_ANCHOR) && e.getClickedBlock().getBlockData().equals(Bukkit.createBlockData("minecraft:respawn_anchor[charges=4]"))) {
+            if (environment.equals(World.Environment.NORMAL) || environment.equals(World.Environment.CUSTOM)) {
+                combatCountdown(e.getPlayer(), Main.getPlugin());
+            }
+        }
+        else if (e.getClickedBlock().getBlockData() instanceof Bed) {
+            if ((environment.equals(World.Environment.NETHER) || environment.equals(World.Environment.THE_END))) {
+                combatCountdown(e.getPlayer(), Main.getPlugin());
+            }
+        }
+    }
+
+    @EventHandler
+    public void onTNTPrime(TNTPrimeEvent e) {
+        if (!(e.getPrimerEntity() instanceof Player)) {
+            return;
+        }
+        combatCountdown((Player) e.getPrimerEntity(), Main.getPlugin());
     }
 
     @EventHandler
