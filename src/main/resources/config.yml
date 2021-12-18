@@ -20,7 +20,7 @@ Sending Messages Too Fast: '&cYou are sending "<message>" too fast! Slow down!'
 Dont Move Message: '&cDont move or teleportation is &4canceled'
 Teleport Countdown: '&cTeleporting to <location> in: &4<time>'
 Teleport Canceled: '&cTeleport &4canceled&c!'
-Teleport Success: '&aSuccessfully teleported to <location>!'
+Teleport Success: '&aSuccessfully teleported to <dark_green><location></dark_green>!'
 
 #combat
 Combat Time In Seconds: '10'
