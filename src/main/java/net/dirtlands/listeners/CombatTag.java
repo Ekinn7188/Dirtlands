@@ -11,6 +11,7 @@ import com.sk89q.worldguard.protection.regions.RegionContainer;
 import com.sk89q.worldguard.protection.regions.RegionQuery;
 import jeeper.utils.MessageTools;
 import jeeper.utils.config.ConfigSetup;
+import net.citizensnpcs.api.CitizensAPI;
 import net.dirtlands.Main;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.Template;
@@ -33,7 +34,8 @@ public class CombatTag implements Listener {
 
     @EventHandler
     public void onAttack(EntityDamageByEntityEvent e){
-        if (e.getDamager() instanceof Player && e.getEntity() instanceof Player){
+        //only players attacking each other, no npcs
+        if (e.getDamager() instanceof Player && e.getEntity() instanceof Player && !(CitizensAPI.getNPCRegistry().isNPC(e.getDamager())) && !(CitizensAPI.getNPCRegistry().isNPC(e.getEntity()))){
             if (e.getEntity().hasMetadata("NPC")) {
                 return;
             }
@@ -50,8 +52,8 @@ public class CombatTag implements Listener {
             ApplicableRegionSet entityRegionSet = query.getApplicableRegions(EntityLocation);
 
             //only if player is in pvp region or player attacks someone in region
-            if (damagerRegionSet.testState(localDamager, Flags.PVP) && entityRegionSet.testState(localEntity, Flags.PVP)){
-                combatCountdown((Player)e.getDamager(), Main.getPlugin());
+            if (damagerRegionSet.testState(localDamager, Flags.PVP) && entityRegionSet.testState(localEntity, Flags.PVP)) {
+                combatCountdown((Player) e.getDamager(), Main.getPlugin());
                 combatCountdown((Player) e.getEntity(), Main.getPlugin());
             }
         }
