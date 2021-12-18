@@ -73,6 +73,15 @@ commands:
     aliases: pardon
   unmute:
     description: unmutes a player
+  ip-ban:
+    description: bans an IP address
+    aliases: [ipban, banip, ban-ip]
+  unban-ip:
+    description: unbans an IP address
+    aliases: [unbanip, ip-unban, un-ipban, pardon-ip, unipban]
+  history:
+    description: shows the punishment history of a player
+    aliases: pisstory
 permissions:
   dirtlands.setspawn:
     description: allows use of the setspawn command
@@ -136,4 +145,10 @@ permissions:
     default: op
   dirtlands.memory:
     description: used to view memory usage
+    default: op
+  dirtlands.ipban:
+    description: used to ban an IP address
+    default: op
+  dirtlands.history:
+    description: used to view punishment history
     default: op
