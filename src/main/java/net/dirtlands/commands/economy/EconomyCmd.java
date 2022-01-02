@@ -34,7 +34,7 @@ public class EconomyCmd extends PluginCommand {
     public void execute(CommandSender sender, String[] args) {
         if (args.length >= 2) {
 
-            OfflinePlayer player = UUIDTools.checkNameAndUUID(sender, args[0]);
+            OfflinePlayer player = UUIDTools.checkNameAndUUID(sender, args[1]);
             if (player == null) {
                 return;
             }

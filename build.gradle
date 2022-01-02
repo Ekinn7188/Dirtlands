@@ -7,7 +7,7 @@ plugins {
     id "xyz.jpenilla.run-paper" version "1.0.6"
 }
 
-group 'dirtlands.net'
+group 'net.dirtlands'
 
 shadowJar{
     archiveFileName = "${project.name}.jar"
@@ -44,9 +44,6 @@ dependencies {
     implementation 'org.flywaydb:flyway-core:8.3.0'
     implementation 'ch.qos.logback:logback-classic:1.2.10'
     jooqGenerator 'org.xerial:sqlite-jdbc:3.36.0.3'
-
-    //discord
-    implementation 'net.dv8tion:JDA:5.0.0-alpha.2'
 
     //other
     implementation 'org.apache.directory.studio:org.apache.commons.io:2.4'
