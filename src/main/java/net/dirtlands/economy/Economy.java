@@ -12,7 +12,7 @@ import org.jooq.DSLContext;
 import java.util.Objects;
 
 public class Economy {
-    private static ConfigSetup config = Main.getPlugin().config();
+    private static final ConfigSetup config = Main.getPlugin().config();
     static DSLContext dslContext = Main.getPlugin().getDslContext();
 
     /**

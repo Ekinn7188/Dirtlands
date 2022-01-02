@@ -6,24 +6,14 @@ import jeeper.utils.config.ConfigSetup;
 import net.dirtlands.commands.PluginCommand;
 import net.dirtlands.commands.tab.PluginTabCompleter;
 import net.dirtlands.database.SQLite;
-import net.dirtlands.files.NpcInventory;
 import net.dirtlands.handler.CombatSafezoneHandler;
-import net.dirtlands.log.LogColor;
 import net.dirtlands.log.LogFilter;
-import net.dirtlands.tabscoreboard.TabMenu;
-import net.dv8tion.jda.api.JDA;
-import net.dv8tion.jda.api.JDABuilder;
-import net.dv8tion.jda.api.requests.GatewayIntent;
-import net.dv8tion.jda.api.utils.ChunkingFilter;
-import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import org.apache.logging.log4j.LogManager;
-import org.bukkit.Bukkit;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jooq.DSLContext;
 import org.reflections.Reflections;
 
-import javax.security.auth.login.LoginException;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
@@ -32,60 +22,32 @@ import java.util.Objects;
 public class Main extends JavaPlugin {
 
     private static Main plugin;
-    private NpcInventory npcInventory;
     private ConfigSetup config;
     private DSLContext dslContext;
-    private JDA jda;
 
     @Override
     public void onEnable(){
-        plugin = this;
         //makes sure the server has all the required plugins. if not, the plugin will disable
-        PluginEnable.checkForPluginDependencies(List.of("Citizens", "WorldGuard", "LuckPerms", "ProtocolLib"), "dirtlands");
-
-        //set up config files
-        startFileSetup();
+        PluginEnable.checkForPluginDependencies(List.of("WorldGuard", "LuckPerms", "ProtocolLib", "Citizens", "Jeeper-Essentials"), "dirtlands");
 
         org.apache.logging.log4j.core.Logger coreLogger = (org.apache.logging.log4j.core.Logger) LogManager.getRootLogger();
         coreLogger.addFilter(new LogFilter());
 
+        Main.initializeClasses();
+
+        var sessionManager = WorldGuard.getInstance().getPlatform().getSessionManager();
+        sessionManager.registerHandler(CombatSafezoneHandler.FACTORY,null);
+    }
+
+    @Override
+    public void onLoad() {
+        plugin = this;
+        startFileSetup();
         try {
-            //get
             dslContext = SQLite.databaseSetup(getPlugin().getDataFolder().getCanonicalPath());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        Main.initializeClasses();
-
-
-        runBot();
-
-
-        TabMenu.updateTabLoop();
-
-
-        var sessionManager = WorldGuard.getInstance().getPlatform().getSessionManager();
-        sessionManager.registerHandler(CombatSafezoneHandler.FACTORY,null);
-
-
-
-
-    }
-
-    private void runBot() {
-        String token = config.get().getString("Discord Bot Token");
-
-        try{
-            jda = JDABuilder.createDefault(token)
-                    .setChunkingFilter(ChunkingFilter.ALL)
-                    .setMemberCachePolicy(MemberCachePolicy.ALL)
-                    .enableIntents(GatewayIntent.GUILD_MEMBERS)
-                    .build().awaitReady();
-        } catch (LoginException | InterruptedException e) {
-            e.printStackTrace();
-            Bukkit.getLogger().info(LogColor.RED + "Failed to connect to Discord. Try checking your bot token in config.yml" + LogColor.RESET);
-        }
-
     }
 
 
@@ -138,14 +100,8 @@ public class Main extends JavaPlugin {
     public DSLContext getDslContext(){
         return dslContext;
     }
-    public NpcInventory npcInventory() {
-        return npcInventory;
-    }
     public ConfigSetup config() {
         return config;
-    }
-    public JDA getJda() {
-        return jda;
     }
 
 
@@ -189,19 +145,6 @@ public class Main extends JavaPlugin {
         config.get().options().copyDefaults(true);
         config.get().options().copyHeader(true);
         config.save();
-
-
-        /*
-
-        shopkeeper.yml
-
-         */
-
-        npcInventory = new NpcInventory();
-        npcInventory.get().options().header(header + "\n\ncheck https://github.com/Ekinn7188/Dirtlands/blob/master/src/main/resources/shopkeeper.yml for an example shopkeeper setup");
-        npcInventory.get().options().copyHeader(true);
-        npcInventory.get().options().copyDefaults(false);
-        npcInventory.save();
 
 
         //if making another file, add it to /dirtlands reload

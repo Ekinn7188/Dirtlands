@@ -8,7 +8,6 @@ import net.dirtlands.Main;
 import net.dirtlands.commands.Permission;
 import net.dirtlands.database.DatabaseTools;
 import net.dirtlands.database.ItemSerialization;
-import net.dirtlands.files.NpcInventory;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
@@ -33,8 +32,7 @@ import java.util.Map;
 import java.util.UUID;
 
 public class Shopkeeper implements Listener {
-    
-    NpcInventory npcInventory = Main.getPlugin().npcInventory();
+
     private static ConfigSetup config = Main.getPlugin().config();
     static DSLContext dslContext = Main.getPlugin().getDslContext();
     //player uuid, open inventory

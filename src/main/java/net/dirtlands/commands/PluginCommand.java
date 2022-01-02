@@ -13,7 +13,7 @@ import java.util.Optional;
 
 public abstract class PluginCommand implements CommandExecutor {
     abstract public String getName();
-    private static ConfigSetup config = Main.getPlugin().config();
+    private static final ConfigSetup config = Main.getPlugin().config();
 
     final public Optional<Permission> getPermission() {
         return Optional.ofNullable(getPermissionType());

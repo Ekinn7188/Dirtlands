@@ -1,156 +1,29 @@
 name: Dirtlands
 version: 1.0
 api-version: 1.17
-description: Dirt (Requires WorldGuard and LuckPerms)
-depend: [WorldGuard, LuckPerms, ProtocolLib, Citizens]
+description: Dirt
+depend: [WorldGuard, LuckPerms, ProtocolLib, Citizens, Jeeper-Essentials]
 author: Jeeper_
 main: net.dirtlands.Main
 commands:
-  setspawn:
-    description: Set the world spawn!
-  spawn:
-    description: Teleports you to spawn!
   dirtlands:
     description: dirtlands command that branches out to other server-related commands
-  nickname:
-    description: gives the player a nickname!
-    aliases: nick
-  warp:
-    description: Teleports the player to a warp!
-  setwarp:
-    description: Create a warp!
-  delwarp:
-    description: Delete a warp!
-  warps:
-    description: List all the warps!
-  home:
-    description: Teleport to your home!
-  sethome:
-    description: Set a home!
-  delhome:
-    description: Delete your home!
-  homes:
-    description: List all your homes!
-  broadcast:
-    description: Lets the user broadcast a message!
-  clearchat:
-    description: Clears the chat!
-    aliases: cc
-  mutechat:
-    description: Mutes the chat!
-  chatcolor:
-    description: sets the default color of the player's chat!
-    aliases: color
-  afk:
-    description: puts a player in AFK mode
   economy:
     description: used for giving, removing, and setting money
     aliases: [econ, eco]
-  metadata:
-    description: gives metadata of an item
-  realname:
-    description: gets a player's real name
   baltop:
     description: gets the top richest players
   bal:
     description: gets the balance of a player
-  sudo:
-    description: allows the user to run commands as another player
-  rules:
-    description: shows the rules of the server
-  ban:
-    description: bans a player
-  kick:
-    description: kicks a player
-  mute:
-    description: mutes a player
-  warn:
-    description: warns a player
-  memory:
-    description: shows the memory usage of the server
-  unban:
-    description: unbans a player
-    aliases: pardon
-  unmute:
-    description: unmutes a player
-  ip-ban:
-    description: bans an IP address
-    aliases: [ipban, banip, ban-ip]
-  unban-ip:
-    description: unbans an IP address
-    aliases: [unbanip, ip-unban, un-ipban, pardon-ip, unipban]
-  history:
-    description: shows the punishment history of a player
-    aliases: pisstory
-  garp:
+  garp slap:
     description: warps to the shop
 permissions:
-  dirtlands.setspawn:
-    description: allows use of the setspawn command
-    default: op
   dirtlands.dirtlands:
     description: gives access to server-related commands
-    default: op
-  dirtlands.nickname:
-    description: gives the player access to change their nickanme!
-    default: op
-  dirtlands.warps.set:
-    description: gives the player permission to create a warp
-    default: op
-  dirtlands.warps.delete:
-    description: deletes a warp!
-    default: op
-  dirtlands.sethome:
-    description: gives the player access to set a home. dirtlands.sethome.# will give the player access to creating multiple homes
-    default: true
-  dirtlands.chat.color:
-    description: lets the player use colored text
-    default: op
-  dirtlands.broadcast:
-    description: gives access to the broadcast command
-    default: op
-  dirtlands.chat.clear:
-    description: gives access to the clearchat command
-    default: op
-  dirtlands.chat.mute:
-    description: gives access to the mutechat command
-    default: op
-  dirtlands.chat.bypass:
-    description: bypasses muted chat!
     default: op
   dirtlands.economy:
     description: gives access to the /economy command!
     default: op
-  dirtlands.metadata:
-    description: used to give access to the /metadata command
-    default: op
-  dirtlands.afk:
-    description: used to make a player go afk
-    default: op
-  dirtlands.cooldown:
-    description: used to bypass the chat cooldown
-    default: op
-  dirtlands.sudo:
-    description: used to type commands as another player
-    default: op
-  dirtlands.ban:
-    description: used to ban a player
-    default: op
-  dirtlands.mute:
-    description: used to mute a player
-    default: op
-  dirtlands.warn:
-    description: used to warn a player
-    default: op
-  dirtlands.kick:
-    description: used to kick a player
-    default: op
-  dirtlands.memory:
-    description: used to view memory usage
-    default: op
-  dirtlands.ipban:
-    description: used to ban an IP address
-    default: op
-  dirtlands.history:
-    description: used to view punishment history
+  dirtlands.shopkeeper:
+    description: gives access to editing shopkeepers
     default: op

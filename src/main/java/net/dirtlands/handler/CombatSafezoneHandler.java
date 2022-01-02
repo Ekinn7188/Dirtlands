@@ -22,7 +22,7 @@ import java.util.Set;
 
 public class CombatSafezoneHandler extends FlagValueChangeHandler<StateFlag.State> {
     public static final Factory FACTORY = new Factory();
-    private static ConfigSetup config = Main.getPlugin().config();
+    private static final ConfigSetup config = Main.getPlugin().config();
 
     public static class Factory extends Handler.Factory<CombatSafezoneHandler> {
         @Override
