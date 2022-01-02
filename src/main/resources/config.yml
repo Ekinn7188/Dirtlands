@@ -1,27 +1,3 @@
-#discord
-Discord Link: https://discord.gg/wpMMgQhV4v
-
-#chat
-Chat Style: <prefix><#7c3e12><player></#7c3e12><suffix> &a» &7<message>
-Join Message: '&7[&2+&7] <player>'
-First Join Message: '&6<player> has joined for the first time! (#<number>)'
-Leave Message: '&7[&4-&7] <player>'
-Broadcast Prefix: '&a[<#7c3e12>Dirtlands</#7c3e12>&a] '
-Player Death: '&c☠ <message>'
-Chat Cleared By Message: '&c&lChat cleared by <player>!'
-Chat Muted By Message: '&c&lChat muted by <player>!'
-Chat Unmuted By Message: '&c&lChat unmuted by <player>!'
-Chat Is Muted: '&cThe chat is currently &4muted&c!'
-Chat Color Set: '&aDefault chat color set'
-Invalid Chat Color: '&cThat is not a valid chat color!'
-Sending Messages Too Fast: '&cYou are sending "<message>" too fast! Slow down!'
-
-#teleporting
-Dont Move Message: '&cDont move or teleportation is &4canceled'
-Teleport Countdown: '&cTeleporting to <location> in: &4<time>'
-Teleport Canceled: '&cTeleport &4canceled&c!'
-Teleport Success: '&aSuccessfully teleported to <dark_green><location></dark_green>!'
-
 #combat
 Combat Time In Seconds: '10'
 Combat Timer: '&cYou will untagged in &4<time>&c seconds'
@@ -30,30 +6,8 @@ Command In Combat: '&cYou cant send commands when you''re combat tagged!'
 Enter Safezone In Combat Title: '&4No Entry'
 Enter Safezone In Combat Subtitle: '&cYou cant enter safezones while in combat!'
 
-#spawn
-Spawn Set: '&aSpawn point set!'
-
-#warps
-Warp Created: '&a/warp <name> was successfully created!'
-Warp Deleted: '&a/warp <name> was successfully deleted!'
-Warp List: '&aYour current warps: <warps>'
-Warp Doesnt Exist: '&a/warp <name> does not exist!'
-No Warps: '&cThere are no warps!'
-
-#homes
-Home Created: '&a/home <name> was successfully created!'
-Home Deleted: '&a/home <name> was successfully deleted!'
-Home Doesnt Exist: '&a/home <name> does not exist!'
-Too Many Homes: '&cYou''ve created too many homes! You can make up to &4<number>'
-Home List: '&aYour current homes: <homes>'
-No Homes: '&cYou dont have any homes! Create one with /sethome {name}!'
-
 #config
 Dirtlands Reloaded: '&aDirtlands Reloaded!'
-
-#nickname
-Nickname Change: '&aYour nickname has been set to <#7c3e12><name>&a!'
-Invalid Nickname: '&cThat is an invalid nickname!'
 
 #commands
 No Command Permission: '&cYou dont have permission to use this command!'
@@ -61,20 +15,6 @@ Player Only Command: '&cYou must be a player to execute this command!'
 Player Doesnt Exist: '&4<player>&c doesn''t exist!'
 Player Hasnt Logged In: '&4<player>&c has never logged in before!'
 Player Is Offline: '&4<player>&c is offline!'
-
-#npc
-Npc Selected: <name>&a has been selected!
-No Npcs: '&cYou need to create an npc first!'
-Metadata Message: '&aYour metadata has been generated in shopkeeper.yml, index <index>!'
-
-#tab
-Tablist Header:
-  First Line: <#b8a567>&l⛏ &r<#b8a567>[&r<#7c3e12>&lDirtlands&r<#b8a567>] &l■
-  Second Line: ''
-Tablist Footer:
-  First Line: ''
-  Second Line: <#d1c59f>⚔ <onlineplayers>/<maxplayers> Online ☠
-Player Tab Style: '<prefix><#7c3e12><player> '
 
 #economy
 Money Gained Actionbar: '&3+<money> &bExpensive Diamonds &o(You Have &3<balance>&b)'
@@ -87,106 +27,6 @@ Baltop Names: '<#b8a567>(#<position>) <#856f2d><name>: <#7c3e12><balance>'
 Player Balance: '&3<player>&b has &3<balance>&b expensive diamonds'
 Balance: '&3You&b have &3<balance>&b expensive diamonds'
 
-
-#afk
-Player AFK: '&3<player>&b is now AFK'
-Player Not AFK: '&3<player>&b is no longer AFK'
-
 #word filter
 Word Filter: ["Nigger", "Nigga", "Chink", "Coon", "Jap", "Kys", "Kill yourself", "Fag", "Faggot", "Retard", "Retarded"]
 Chat Blocked: "&c&lHey! &r&cYour message hasn't been sent due to a blocked word. &4(&c<word>&4)"
-
-#rules
-Rules:
-  - "<#169406>&m-----<#246b1a>--</#246b1a>-------<#47c945>-</#47c945>-----<#246b1a>--</#246b1a>&r <#7c3e12>Rules<#169406> &m-----<#47c945>---</#47c945>-------<#246b1a>--</#246b1a>----"
-  - "<#856f2d>1.  <#b8a567>Racial <#856f2d>slurs</#856f2d> or any slurs in general are NOT allowed."
-  - "<#856f2d>2.  <#b8a567>Harassing other players is not tolerated."
-  - "<#856f2d>3.  <#b8a567>Any form of <#856f2d>exploit</#856f2d> will result in severe punishment."
-  - "<#856f2d>4.  <#b8a567><#856f2d>Spamming</#856f2d> or bypassing <#856f2d>chat filters</#856f2d> is not allowed."
-  - "<#856f2d>5.  <#b8a567>Joking about real world tragedies is not allowed."
-  - "<#856f2d>6.  <#b8a567>Offensive jokes are <#856f2d>not allowed</#856f2d>."
-  - "<#856f2d>7.  <#b8a567><#856f2d>Be respectful</#856f2d> towards staff and other Dirtlads."
-  - "<#856f2d>8.  <#b8a567><#856f2d>Do not advertise</#856f2d> other servers here."
-  - "<#856f2d>9.  <#b8a567>Do not join just to say <#856f2d>disrespectful</#856f2d> things."
-  - "<#856f2d>10. <#b8a567>Do not ask for operator or staff positions."
-  - "<#856f2d>11. <#b8a567>Nothing too explicit. (<#856f2d>NSFW</#856f2d> Skins, Builds, etc.)"
-  - "<#856f2d>12. <#b8a567>Do not <#856f2d>evade</#856f2d> a ban. This will result in an <#856f2d>IP Ban</#856f2d>."
-  - "<#856f2d>13. <#b8a567>Most importantly, <#856f2d>enjoy your time</#856f2d> here!"
-  - "<#856f2d>&m-------------------------------------------------"
-
-#memory
-Memory Usage: '<#b8a567>Memory Usage: <#7c3e12><memory> mb'
-
-#punishments
-Punishment Header: '<#b8a567>[&r<#7c3e12>&lDirtlands&r<#b8a567>]'
-Ban Broadcast: '&4<player> &chas been banned for &4<reason>&c. (<time>)'
-Ban No Reason Broadcast: '&4<player> &chas been banned. (<time>)'
-IP Ban Broadcast: '&4<player> &chas been ip banned for &4<reason>&c.'
-IP Ban No Reason Broadcast: '&4<player> &chas been ip banned.'
-Unban Not Banned: '&4<player> &cis not banned.'
-Player Unbanned: '&4<player> &chas been &4unbanned&c.'
-Unmute Not Muted: '&4<player> &cis not muted.'
-Player Unmuted: '&4<player> &chas been &4unmuted&c.'
-Player Not IP Banned: '&4<player> &cis not ip unbanned&c.'
-Player Un IP Banned: '&4<player> &chas had their &4ip unbanned&c.'
-Player Warned: '&4<player> &chas been &4Warned&c.'
-Warn Message No Reason: |-
-  &cYou have been warned. (Offence &4#<offence>&c).
-  On your &43rd&c warning, you will be banned.
-Warn Message: |-
-  &cYou have been warned for &4<reason>&c. (Offence &4#<offence>&c).
-  On your &43rd&c warning, you will be banned.
-Ban Message: |
-  <#b8a567>You have been banned.
-
-  Time: &r<#856f2d><time>
-
-  &r<#b8a567>Appeal here: &r&n<#856f2d><discord>
-Ban With Reason: |
-  <#b8a567>You have been banned.
-
-
-  Reason: &r<#856f2d><reason>
-  &r<#b8a567>Time: &r<#856f2d><time>
-
-  &r<#b8a567>Appeal here: &r&n<#856f2d><discord>
-IP Ban Message: |
-  <#b8a567>You have been Ip banned.
-
-  Time: &r<#856f2d><time>
-
-  &r<#b8a567>Appeal here: &r&n<#856f2d><discord>
-IP Ban With Reason: |
-  <#b8a567>You have been Ip banned.
-
-
-  Reason: &r<#856f2d><reason>
-  &r<#b8a567>Time: &r<#856f2d><time>
-
-  &r<#b8a567>Appeal here: &r&n<#856f2d><discord>
-Perm Ban Message: |
-  <#b8a567>You have been banned <#856f2d>Permanently.
-
-
-  &r<#b8a567>Appeal here: &r&n<#856f2d><discord>
-Perm Ban With Reason: |
-  <#b8a567>You have been banned <#856f2d>Permanently.
-
-  <#b8a567>Reason: &r<#856f2d><reason>
-
-  &r<#b8a567>Appeal here: &r&n<#856f2d><discord>
-Punishment Time: '<#b8a567>Enter a time for the punishment. enter in format <#856f2d>0d 0h 0m<#b8a567>. Type "<#856f2d>Permanent<#b8a567>" for the punishment to last forever'
-Punishment Reason: '<#b8a567>Enter a reason for the punishment'
-Punishment Time Invalid: '<#b8a567>You entered an invalid time. Use the format <#856f2d>0d 0h 0m'
-Permanent Mute No Reason: <#b8a567>You are currently muted <#b8a567>permanently
-Permanent Mute With Reason: <#b8a567>You are currently muted for <#856f2d><reason><#b8a567>. You are muted <#856f2d>permanently<#b8a567>.
-Muted No Reason: <#b8a567>You are currently muted for <#856f2d><time>
-Muted With Reason: <#b8a567>You are currently muted for <#856f2d><reason><#b8a567>. (<#856f2d><time><#b8a567>)
-Mute Successful No Reason: <#856f2d><player> <#b8a567>successfully muted for <#856f2d><time>
-Mute Successful: <#856f2d><player> <#b8a567>successfully muted for <#856f2d><reason><#b8a567>. (<#856f2d><time><#b8a567>)
-Kick Message: '<#b8a567>You have been kicked.'
-Kick With Reason: |
-  <#b8a567>You have been kicked.
-
-
-  Reason: &r<#856f2d><reason>
