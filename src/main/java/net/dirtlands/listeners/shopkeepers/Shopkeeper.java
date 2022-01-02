@@ -1,37 +1,45 @@
 package net.dirtlands.listeners.shopkeepers;
 
-import jeeper.utils.MessageTools;
+import dirtlands.db.Tables;
 import jeeper.utils.config.ConfigSetup;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import net.dirtlands.Main;
+import net.dirtlands.commands.Permission;
+import net.dirtlands.database.DatabaseTools;
+import net.dirtlands.database.ItemSerialization;
 import net.dirtlands.files.NpcInventory;
-import net.dirtlands.tools.ItemTools;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.TextDecoration;
+import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.inventory.InventoryDragEvent;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
+import org.jooq.DSLContext;
 
-import java.util.ArrayList;
+import java.io.IOException;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 public class Shopkeeper implements Listener {
     
     NpcInventory npcInventory = Main.getPlugin().npcInventory();
     private static ConfigSetup config = Main.getPlugin().config();
+    static DSLContext dslContext = Main.getPlugin().getDslContext();
+    //player uuid, open inventory
+    private static Map<UUID, Inventory> openShopMenus = new HashMap<>();
+
     
     @EventHandler
     public void playerInteractWithEntity(PlayerInteractEntityEvent e) {
@@ -41,190 +49,114 @@ public class Shopkeeper implements Listener {
         if (!CitizensAPI.getNPCRegistry().isNPC(e.getRightClicked())){
             return;
         }
+        if (e.getPlayer().isSneaking() && e.getPlayer().hasPermission(Permission.SHOPKEEPER.getName())) {
+            Editor.openEditor(e);
+            return;
+        }
+        openShop(e);
+    }
 
+    /**
+     * not an event!
+     * @see Shopkeeper#playerInteractWithEntity(PlayerInteractEntityEvent)
+     */
+    private void openShop(PlayerInteractEntityEvent e) {
         NPC npc = CitizensAPI.getNPCRegistry().getNPC(e.getRightClicked());
 
-        Player player = e.getPlayer();
+        String base64 = DatabaseTools.firstString(dslContext.select(Tables.SHOPKEEPERS.INVENTORYBASE64).from(Tables.SHOPKEEPERS)
+                .where(Tables.SHOPKEEPERS.SHOPKEEPERID.eq(npc.getId())).fetchAny());
 
-        String npcIdAsString = npcInventory.get().getString("Npc Ids." + npc.getId() + ".inventory");
-
-        if (npcIdAsString != null){
-            player.openInventory(configParser(player, Integer.parseInt(npcIdAsString)));
-        }
-    }
-
-    protected Inventory configParser(Player player, int inventoryNumber) {
-        Inventory inventory;
-
-        String inventoryPrefix = "Inventories." + inventoryNumber;
-
-        //open the inventory with slots and name to the player
-        inventory = Bukkit.createInventory(player, npcInventory.get().getInt(inventoryPrefix + ".inventory size"),
-                MessageTools.parseText(npcInventory.get().getString(inventoryPrefix + ".inventory name")));
-
-        ConfigurationSection slots = npcInventory.get().getConfigurationSection(inventoryPrefix + ".slots");
-        //if no items have been defined for the inventory, just stop parsing
-        if (slots == null) {
-            return inventory;
-        }
-
-        //all the item slots ids written in config
-        List<String> itemSlotsWithDefault = new ArrayList<>(slots.getKeys(false).stream().toList());
-        //make it so "default" is on top of the list of ids
-        Collections.sort(itemSlotsWithDefault, Collections.reverseOrder());
-
-        //loop through every id
-        for (String slotName : itemSlotsWithDefault) {
-
-            //get the metadata option if set
-            String metadataIndexAsString = npcInventory.get().getString(inventoryPrefix + ".slots." + slotName + ".metadata");
-            ItemStack itemStack = null;
-            if (metadataIndexAsString != null) {
-                int metadataIndex = npcInventory.get().getInt(inventoryPrefix + ".slots." + slotName + ".metadata");
-                itemStack = npcInventory.get().getItemStack("Metadata." + metadataIndex);
-                Bukkit.broadcast(npcInventory.get().getItemStack("Metadata." + metadataIndex).displayName());
-            }
-
-
-
-            //get the item material to put in slot
-            Material material = Material.matchMaterial(npcInventory.get().getString(inventoryPrefix + ".slots." + slotName + ".block"));
-
-            //get name of item
-            String name = "test";//npcInventory.get().getString(inventoryPrefix + ".slots." + slotName + ".name");
-//            if (name == null) {
-//                name = "";
-//            }
-
-            //get lore to put and seperate it into a list
-            String loreString = npcInventory.get().getString(inventoryPrefix + ".slots." + slotName + ".lore");
-            List<Component> lore = new ArrayList<Component>();
-            boolean hasLore = false;
-            if (loreString != null){
-                lore = Arrays.stream(loreString.split("\\|")).map(s -> MessageTools.parseText(s)).collect(Collectors.toList());
-                hasLore = true;
-            }
-
-            //find how many items to put in the spot. If not set, default is 1
-            int amountDisplay = -1;
-            String amountInConfig = npcInventory.get().getString(inventoryPrefix + ".slots." + slotName + ".amount");
-            if (amountInConfig != null){
-                amountDisplay = Integer.valueOf(amountInConfig);
-            }
-
-            //if the name is default, loop through all the chest slots and create its defined item
-            if (slotName.equals("default")){
-                for (int j = npcInventory.get().getInt(inventoryPrefix + ".inventory size")-1; 0 <= j; j--) {
-                    if (hasLore){
-                        if (itemStack != null) {
-                            inventory.setItem(j, ItemTools.createGuiItem(itemStack, material, MessageTools.parseText(name), amountDisplay, lore.toArray(new Component[lore.size()])));
-                        } else {
-                            inventory.setItem(j, ItemTools.createGuiItem(material, MessageTools.parseText(name), amountDisplay, lore.toArray(new Component[lore.size()])));
-                        }
-                    } else {
-                        if (itemStack != null) {
-                            inventory.setItem(j, ItemTools.createGuiItem(itemStack, material, MessageTools.parseText(name), amountDisplay));
-                        } else {
-                            inventory.setItem(j, ItemTools.createGuiItem(material, MessageTools.parseText(name), amountDisplay));
-                        }
-                    }
-
-                }
-            } else { //if it's not deafult, just put an item in its slot
-                if (hasLore){
-                    if (itemStack != null) {
-                        inventory.setItem(Integer.valueOf(slotName), ItemTools.createGuiItem(itemStack, material, MessageTools.parseText(name), amountDisplay, lore.toArray(new Component[lore.size()])));
-                    } else {
-                        inventory.setItem(Integer.valueOf(slotName), ItemTools.createGuiItem(material, MessageTools.parseText(name), amountDisplay, lore.toArray(new Component[lore.size()])));
-                    }
-
-                } else {
-                    if (itemStack != null) {
-                        inventory.setItem(Integer.valueOf(slotName), ItemTools.createGuiItem(itemStack, material, MessageTools.parseText(name), amountDisplay));
-                    } else {
-                        inventory.setItem(Integer.valueOf(slotName), ItemTools.createGuiItem(material, MessageTools.parseText(name), amountDisplay));
-                    }
-                }
-            }
-        }
-        return inventory;
-    }
-
-
-
-    @EventHandler
-    public void onInventoryClick(InventoryClickEvent e){
-        ConfigurationSection inventories = npcInventory.get().getConfigurationSection("Inventories");
-        if (inventories == null){
+        if (base64 == null) {
             return;
         }
 
-        //get all the inventory ids
-        inventories.getKeys(false).forEach(key -> {
+        Inventory invSaved;
+        Component invName;
 
-            //if titles match an inventory, move on
-            if (e.getView().title().equals(MessageTools.parseText(
-                    npcInventory.get().getString("Inventories." + key + ".inventory name")))) {
-
-                //loop through all of the item slots of the menu
-                npcInventory.get().getConfigurationSection("Inventories." + key + ".slots").getKeys(false).forEach(index -> {
-
-                    //if there is nothing clicked on, return
-                    ItemStack clickedStack = e.getCurrentItem();
-                    if (clickedStack == null) {
-                        return;
-                    }
-                    ItemMeta clickedMeta = clickedStack.getItemMeta();
-
-                    //if materials are the same in config and clicked, continue
-                    if (clickedStack.getType() != Material.matchMaterial(npcInventory.get().getString("Inventories." + key + ".slots." + index + ".block"))){
-                        return;
-                    }
-
-
-                    //if amount is the same
-                    int amountDisplay = 1;
-                    String amountInConfig = npcInventory.get().getString("Inventories." + key + ".slots." + index + ".amount");
-                    if (amountInConfig != null){
-                        amountDisplay = Integer.valueOf(amountInConfig);
-                    }
-                    if (clickedStack.getAmount() != amountDisplay){
-                        return;
-                    }
-
-                    //if name is the same
-                    String name = npcInventory.get().getString("Inventories." + key + ".slots." + index + ".name");
-                    if (name == null) {
-                        name = "";
-                    }
-                    if (!clickedMeta.displayName().equals(MessageTools.parseText(name).decoration(TextDecoration.ITALIC, false))) {
-                        return;
-                    }
-
-                    //if lore is the same
-                    String loreString = npcInventory.get().getString("Inventories." + key + ".slots." + index + ".lore");
-                    List<Component> lore = new ArrayList<Component>();
-                    boolean hasLore = false;
-                    if (loreString != null) {
-                        lore = Arrays.stream(loreString.split("\\|")).map(s -> MessageTools.parseText(s)).collect(Collectors.toList());
-                        lore = lore.stream().map(c -> c.decoration(TextDecoration.ITALIC, false)).toList();
-                        hasLore = true;
-                    }
-                    if (!clickedMeta.hasLore() && !hasLore || clickedMeta.lore().equals(lore)){
-                        //if there's an inventory option, set on an item, bring the player to the new inventory
-                        String inventoryChange = npcInventory.get().getString("Inventories." + key + ".slots." + index + ".inventory");
-                        if (inventoryChange != null) {
-                            e.getView().getPlayer().openInventory(configParser((Player) e.getView().getPlayer(), Integer.valueOf(inventoryChange)));
-                        }
-
-                    }
-
-
-                });
-                e.setCancelled(true);
+        try {
+            ItemSerialization shopData = ItemSerialization.fromBase64(base64);
+            invSaved = shopData.getInventory();
+            invName = GsonComponentSerializer.gson().deserialize(shopData.getTitle());
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            return;
+        }
+        ItemStack[] items = invSaved.getContents();
+        ItemStack chestItem = items[items.length-5];
+        if (chestItem.getType() != Material.CHEST) {
+            return;
+        }
+        //get the number from the lore here
+        int invSize = Integer.parseInt(PlainTextComponentSerializer.plainText().serialize(chestItem.lore().get(1)).replaceAll("Editor Size: ", ""));
+        Inventory inv = Bukkit.createInventory(null, invSize, invName);
+        if (invSize==54) {
+            for (int i = invSize-9; i < invSize; i++) {
+                items[i] = Editor.editorHotbar.get(0);
             }
-        });
+        } else {
+            items = Arrays.copyOfRange(items, 0, items.length-9);
+        }
 
+        inv.setContents(items);
+        e.getPlayer().openInventory(inv);
+        openShopMenus.put(e.getPlayer().getUniqueId(), inv);
+    }
+
+    @EventHandler
+    public void onShopInteract(InventoryClickEvent e) {
+        if (!openShopMenus.containsKey(e.getWhoClicked().getUniqueId())) {
+            return;
+        }
+        if (e.getClickedInventory() == null) {
+            return;
+        }
+        //can move inventory is not a chest and if player is not shift clicking in their inventory
+        if (e.getClickedInventory().getType() == InventoryType.PLAYER && !e.getClick().isShiftClick()) {
+            return;
+        }
+
+        e.setCancelled(true);
+
+/*        ItemStack item = e.getCurrentItem();
+        if (item == null) {
+            return;
+        }
+        List<Component> lore = item.lore();
+        if (lore == null) {
+            return;
+        }
+
+        for (Component line : lore) {
+            String plainLine = PlainTextComponentSerializer.plainText().serialize(line);
+
+            //Buy: 20 expensive diamonds
+            if (plainLine.toUpperCase().startsWith("BUY: ")) {
+                //20 expensive diamonds
+                plainLine = plainLine.replace("BUY: ", "");
+                //20
+                plainLine = plainLine.substring(0, plainLine.indexOf(" "));
+
+
+            } else if (plainLine.toUpperCase().startsWith("SELL: ")) {
+
+            }
+        }*/
+
+    }
+
+    @EventHandler
+    public void onShopDrag(InventoryDragEvent e) {
+        if (!openShopMenus.containsKey(e.getWhoClicked().getUniqueId())) {
+            return;
+        }
+        e.setCancelled(true);
+    }
+
+    @EventHandler
+    public void playerCloseInventory(InventoryCloseEvent e) {
+        if (openShopMenus.containsKey(e.getPlayer().getUniqueId())) {
+            openShopMenus.remove(e.getPlayer().getUniqueId());
+        }
     }
 
 }

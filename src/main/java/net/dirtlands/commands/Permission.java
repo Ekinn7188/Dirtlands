@@ -24,7 +24,8 @@ public enum Permission {
     WARN("dirtlands.warn"),
     BAN_IP("dirtlands.ipban"),
     MEMORY("dirtlands.memory"),
-    HISTORY("dirtlands.history");
+    HISTORY("dirtlands.history"),
+    SHOPKEEPER("dirtlands.shopkeeper");
 
     private final String name;
 

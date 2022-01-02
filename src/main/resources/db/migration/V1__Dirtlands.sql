@@ -32,3 +32,10 @@ CREATE TABLE punishments (
                        PunishmentStart     DATETIME                      DEFAULT NULL, --null if warn
                        PunishmentEnd       DATETIME                      DEFAULT NULL  -- null if permanent ban/warn
 );
+
+CREATE TABLE shopkeepers (
+                       ShopkeeperID        INTEGER       PRIMARY KEY     AUTOINCREMENT,
+                       InventoryBase64     TEXT          NOT NULL
+);
+
+
