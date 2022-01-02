@@ -39,16 +39,19 @@ dependencies {
     implementation 'net.wesjd:anvilgui:1.5.3-SNAPSHOT'
 
     //database
-    implementation 'org.jooq:jooq:3.15.4'
+    implementation 'org.jooq:jooq:3.15.5'
     compileOnly 'org.xerial:sqlite-jdbc:3.36.0.3'
-    implementation 'org.flywaydb:flyway-core:8.1.0'
-    implementation 'ch.qos.logback:logback-classic:1.2.8'
+    implementation 'org.flywaydb:flyway-core:8.3.0'
+    implementation 'ch.qos.logback:logback-classic:1.2.10'
     jooqGenerator 'org.xerial:sqlite-jdbc:3.36.0.3'
+
+    //discord
+    implementation 'net.dv8tion:JDA:5.0.0-alpha.2'
 
     //other
     implementation 'org.apache.directory.studio:org.apache.commons.io:2.4'
-    compileOnly 'org.apache.logging.log4j:log4j-api:2.16.0'
-    compileOnly 'org.apache.logging.log4j:log4j-core:2.16.0'
+    compileOnly 'org.apache.logging.log4j:log4j-api:2.17.0'
+    compileOnly 'org.apache.logging.log4j:log4j-core:2.17.0'
 }
 
 flyway {

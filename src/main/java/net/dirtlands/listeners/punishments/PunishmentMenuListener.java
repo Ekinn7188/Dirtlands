@@ -7,6 +7,7 @@ import net.dirtlands.commands.essentials.admin.punishments.PunishmentHistory;
 import net.dirtlands.database.DatabaseTools;
 import net.dirtlands.log.LogColor;
 import net.dirtlands.tools.UUIDTools;
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Bukkit;
@@ -19,9 +20,11 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.jooq.DSLContext;
 
+import java.awt.*;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 public class PunishmentMenuListener implements Listener {
@@ -89,13 +92,29 @@ public class PunishmentMenuListener implements Listener {
                 return;
             }
 
+            String punishmentType = PlainTextComponentSerializer.plainText().serialize(itemName);
+
             dslContext.deleteFrom(Tables.PUNISHMENTS)
                     .where(Tables.PUNISHMENTS.USERID.eq(DatabaseTools.getUserID(uuid))
-                            .and(Tables.PUNISHMENTS.PUNISHMENTTYPE.eq(PlainTextComponentSerializer.plainText().serialize(itemName)))
+                            .and(Tables.PUNISHMENTS.PUNISHMENTTYPE.eq(punishmentType))
                             .and(Tables.PUNISHMENTS.PUNISHMENTSTART
                                     .startsWith(DatabaseTools.stringToLocalDateTime(PlainTextComponentSerializer.plainText()
                                             .serialize(lore.get(3)).substring(7))))
                     ).execute();
+
+            Main.getPlugin().getJda().getGuilds().forEach(guild -> {
+                EmbedBuilder embedBuilder = new EmbedBuilder();
+                embedBuilder.setTitle(punishmentType + " Removed From History");
+                embedBuilder.addField("Player", player.getName(), true);
+                embedBuilder.addField("Revoked By", e.getWhoClicked().getName(), true);
+                embedBuilder.setColor(Color.BLUE);
+                embedBuilder.setThumbnail("https://minotar.net/helm/" + player.getName() + "/64");
+                try {
+                    Objects.requireNonNull(guild.getTextChannelById(921676351696687175L)).sendMessage(" ").setEmbeds(embedBuilder.build()).queue();
+                } catch (NullPointerException exception) {
+                    exception.printStackTrace();
+                }
+            });
 
 
 

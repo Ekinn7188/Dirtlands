@@ -8,14 +8,22 @@ import net.dirtlands.commands.tab.PluginTabCompleter;
 import net.dirtlands.database.SQLite;
 import net.dirtlands.files.NpcInventory;
 import net.dirtlands.handler.CombatSafezoneHandler;
+import net.dirtlands.log.LogColor;
 import net.dirtlands.log.LogFilter;
 import net.dirtlands.tabscoreboard.TabMenu;
+import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.JDABuilder;
+import net.dv8tion.jda.api.requests.GatewayIntent;
+import net.dv8tion.jda.api.utils.ChunkingFilter;
+import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import org.apache.logging.log4j.LogManager;
+import org.bukkit.Bukkit;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jooq.DSLContext;
 import org.reflections.Reflections;
 
+import javax.security.auth.login.LoginException;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
@@ -27,6 +35,7 @@ public class Main extends JavaPlugin {
     private NpcInventory npcInventory;
     private ConfigSetup config;
     private DSLContext dslContext;
+    private JDA jda;
 
     @Override
     public void onEnable(){
@@ -48,12 +57,37 @@ public class Main extends JavaPlugin {
         }
         Main.initializeClasses();
 
+
+        runBot();
+
+
         TabMenu.updateTabLoop();
 
 
         var sessionManager = WorldGuard.getInstance().getPlatform().getSessionManager();
         sessionManager.registerHandler(CombatSafezoneHandler.FACTORY,null);
+
+
+
+
     }
+
+    private void runBot() {
+        String token = config.get().getString("Discord Bot Token");
+
+        try{
+            jda = JDABuilder.createDefault(token)
+                    .setChunkingFilter(ChunkingFilter.ALL)
+                    .setMemberCachePolicy(MemberCachePolicy.ALL)
+                    .enableIntents(GatewayIntent.GUILD_MEMBERS)
+                    .build().awaitReady();
+        } catch (LoginException | InterruptedException e) {
+            e.printStackTrace();
+            Bukkit.getLogger().info(LogColor.RED + "Failed to connect to Discord. Try checking your bot token in config.yml" + LogColor.RESET);
+        }
+
+    }
+
 
     /**
      * Initializes all Commands in net.dirtlands.commands<br>
@@ -109,6 +143,9 @@ public class Main extends JavaPlugin {
     }
     public ConfigSetup config() {
         return config;
+    }
+    public JDA getJda() {
+        return jda;
     }
 
 

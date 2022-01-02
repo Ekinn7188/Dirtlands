@@ -6,6 +6,7 @@ import jeeper.utils.config.ConfigSetup;
 import net.dirtlands.Main;
 import net.dirtlands.database.DatabaseTools;
 import net.dirtlands.log.LogColor;
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.kyori.adventure.text.minimessage.Template;
 import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.Bukkit;
@@ -16,6 +17,7 @@ import org.bukkit.entity.Player;
 import org.jooq.DSLContext;
 import org.jooq.impl.DSL;
 
+import java.awt.*;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Objects;
@@ -140,6 +142,13 @@ public class PunishmentTools {
             case KICK -> "kicked";
             case IP_BAN -> "ip banned";
         };
+        Color punishmentColor = switch(punishment) {
+            case IP_BAN -> Color.DARK_GRAY;
+            case BAN -> Color.RED;
+            case MUTE -> new Color(255, 140, 0);
+            case KICK -> Color.ORANGE;
+            case WARN -> Color.GREEN;
+        };
 
         String punisherName = (punisherID == -1 ? "Console" : Bukkit.getOfflinePlayer(UUID.fromString(punisherUUID)).getName());
         String ipString = (punishment.equals(Punishment.IP_BAN) ? " (" + punishedIP + ")" : "");
@@ -148,6 +157,35 @@ public class PunishmentTools {
         } else {
             Bukkit.getLogger().warning(LogColor.RED + punisherName + " has " + pastTensePunishment + " " + punishedName + " for " + reason + ipString + LogColor.RESET);
         }
+
+        String currentTimeString = DatabaseTools.localDateTimeToString(currentTime).replaceAll(":\\d\\d\\.\\d\\d\\d", "");
+        final String endTimeString;
+        if (endTime != null) {
+            endTimeString = DatabaseTools.localDateTimeToString(endTime).replaceAll(":\\d\\d\\.\\d\\d\\d", "");
+        } else {
+            endTimeString = null;
+        }
+
+        Main.getPlugin().getJda().getGuilds().forEach(guild -> {
+            EmbedBuilder embedBuilder = new EmbedBuilder();
+            embedBuilder.setTitle("Player " + pastTensePunishment);
+            embedBuilder.addField("**Player**", punishedName, true);
+            embedBuilder.addField("**Punished By**", punisherName, true);
+            embedBuilder.addField("Reason: ", reason == null ? "none" : reason, false);
+            if (endTimeString != null) {
+                embedBuilder.addField("**Start Time:**", currentTimeString, true);
+                embedBuilder.addField("**End Time:**", endTimeString, true);
+            }
+
+            embedBuilder.setColor(punishmentColor);
+            embedBuilder.setThumbnail("https://minotar.net/helm/" + punishedName + "/64");
+            try {
+                Objects.requireNonNull(guild.getTextChannelById(921676351696687175L)).sendMessage(" ").setEmbeds(embedBuilder.build()).queue();
+            } catch (NullPointerException e) {
+                e.printStackTrace();
+            }
+
+        });
 
 
 
