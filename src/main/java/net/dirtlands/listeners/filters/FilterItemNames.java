@@ -7,6 +7,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 public class FilterItemNames implements Listener {
 
@@ -19,7 +20,11 @@ public class FilterItemNames implements Listener {
                 if (item == null) {
                     return;
                 }
-                Component itemNameComponent = item.getItemMeta().displayName();
+                ItemMeta meta = item.getItemMeta();
+                if (meta == null) {
+                    return;
+                }
+                Component itemNameComponent = meta.displayName();
                 if (itemNameComponent == null) {
                     return;
                 }
