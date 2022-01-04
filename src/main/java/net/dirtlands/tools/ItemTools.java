@@ -29,13 +29,13 @@ public class ItemTools {
             item.setType(material);
         }
         if (!name.equals(Component.empty())){
-            meta.displayName(name.decoration(TextDecoration.ITALIC, false));
+            meta.displayName(enableItalicUsage(name));
         }
         if (amount == -1){
             item.setAmount(amount);
         }
         if (lore.length > 0){
-            meta.lore(Arrays.stream(lore).filter(c -> c!=Component.empty()).map(c -> c.decoration(TextDecoration.ITALIC, false)).toList());
+            meta.lore(Arrays.stream(lore).filter(c -> c!=Component.empty()).map(ItemTools::enableItalicUsage).toList());
         }
 
         item.setItemMeta(meta);
@@ -49,5 +49,9 @@ public class ItemTools {
         meta.setOwningPlayer(player);
         item.setItemMeta(meta);
         return item;
+    }
+
+    public static Component enableItalicUsage(Component message){
+        return message.decoration(TextDecoration.ITALIC, false).mergeStyle(message);
     }
 }
