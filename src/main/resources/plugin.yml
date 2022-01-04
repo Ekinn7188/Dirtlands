@@ -2,7 +2,7 @@ name: Dirtlands
 version: 1.0
 api-version: 1.17
 description: Dirt
-depend: [WorldGuard, LuckPerms, ProtocolLib, Citizens, Jeeper-Essentials]
+depend: [WorldGuard, LuckPerms, Citizens, Jeeper-Essentials]
 author: Jeeper_
 main: net.dirtlands.Main
 commands:
