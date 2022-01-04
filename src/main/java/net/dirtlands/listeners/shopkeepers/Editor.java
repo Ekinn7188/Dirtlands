@@ -9,7 +9,7 @@ import net.dirtlands.database.DatabaseTools;
 import net.dirtlands.database.ItemSerialization;
 import net.dirtlands.tools.ItemTools;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.TextDecoration;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.Template;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
@@ -19,11 +19,9 @@ import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryCloseEvent;
-import org.bukkit.event.inventory.InventoryDragEvent;
-import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.event.inventory.*;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -42,8 +40,13 @@ public class Editor implements Listener {
     //if there is a human entity in the list, they can close the inventory
     //<Player, (NPC Edited, Will inventory be saved?)
     private static final HashMap<HumanEntity, ClosedEditorData> closingEditor = new HashMap<>();
+    //gives a 1-second cooldown before opening any inventories
+    private static final Map<UUID, Long> editorCooldown = new HashMap<>();
     protected static final List<ItemStack> editorHotbar = List.of(
             ItemTools.createGuiItem(Material.GRAY_STAINED_GLASS_PANE, Component.text(" "), 1),
+
+            ItemTools.createGuiItem(Material.BARRIER, MessageTools.parseText("&cDelete Shop"), 1),
+
             ItemTools.createGuiItem(Material.BOOK, MessageTools.parseText("<aqua>Example Item"), 1,
                     List.of(Component.text(" "),
                             MessageTools.parseText("<aqua>Example Item Description"),
@@ -55,16 +58,17 @@ public class Editor implements Listener {
             ItemTools.createGuiItem(Material.RED_STAINED_GLASS_PANE, MessageTools.parseText("<dark_red>Leave Without Saving"), 1),
             ItemTools.createGuiItem(Material.CHEST, MessageTools.parseText("<gold>Adjust Inventory Size"), 1,
                     List.of(MessageTools.parseText("&7"),
-                            MessageTools.parseText("&6Editor Size:&e unknown").decoration(TextDecoration.ITALIC, false)).toArray(new Component[0])),
+                            ItemTools.enableItalicUsage(MessageTools.parseText("&6Editor Size:&e unknown"))).toArray(new Component[0])),
             ItemTools.createGuiItem(Material.LIME_STAINED_GLASS_PANE, MessageTools.parseText("<green>Leave And Save"), 1),
             ItemTools.createGuiItem(Material.NAME_TAG, MessageTools.parseText("<red>Edit Shop Name"), 1,
                     List.of(MessageTools.parseText("&7"),
-                            MessageTools.parseText("<red>Name: <dark_red>unknown").decoration(TextDecoration.ITALIC, false)).toArray(new Component[0])),
+                            ItemTools.enableItalicUsage(MessageTools.parseText("<red>Name: <dark_red>unknown"))).toArray(new Component[0])),
             ItemTools.createGuiItem(Material.ARROW, MessageTools.parseText("<dark_red>Go to second page"), 1)
     );
 
     /**
      * not an event!
+     *
      * @see Shopkeeper#playerInteractWithEntity(PlayerInteractEntityEvent)
      */
     protected static void openEditor(PlayerInteractEntityEvent e) {
@@ -89,20 +93,27 @@ public class Editor implements Listener {
 
         for (int i = 9; i > 0; i--) {
             switch (i) {
-                case 8 -> inventory.setItem(inventory.getSize() - i, editorHotbar.get(1));
-                case 6 -> inventory.setItem(inventory.getSize() - i, editorHotbar.get(2));
-                case 5 -> inventory.setItem(inventory.getSize() - i, getChestNewLore(inventory.getSize()));
-                case 4 -> inventory.setItem(inventory.getSize() - i, editorHotbar.get(4));
+                case 9 -> inventory.setItem(inventory.getSize() - i, editorHotbar.get(1));
+                case 8 -> inventory.setItem(inventory.getSize() - i, editorHotbar.get(2));
+                case 6 -> inventory.setItem(inventory.getSize() - i, editorHotbar.get(3));
+                case 5 -> {
+                    ItemStack item = inventory.getItem(inventory.getSize() - i);
+
+                    if (item == null || !item.getType().equals(Material.CHEST)) {
+                        inventory.setItem(inventory.getSize() - i, getChestNewLore(inventory.getSize()));
+                    }
+                }
+                case 4 -> inventory.setItem(inventory.getSize() - i, editorHotbar.get(5));
                 case 2 -> {
-                    ItemStack item = inventory.getItem(inventory.getSize()-i);
+                    ItemStack item = inventory.getItem(inventory.getSize() - i);
                     //if name is null or is not a name tag, rename the item
                     if (item == null || !item.getType().equals(Material.NAME_TAG)) {
                         inventory.setItem(inventory.getSize() - i, getNewShopName(MessageTools.parseText("<gold>Shop")));
                     }
                 }
-                case 1 -> inventory.setItem(inventory.getSize() - i, editorHotbar.get(6));
+                case 1 -> inventory.setItem(inventory.getSize() - i, editorHotbar.get(7));
                 //set to glass if not a special item
-                default -> inventory.setItem(inventory.getSize()-i,  editorHotbar.get(0));
+                default -> inventory.setItem(inventory.getSize() - i, editorHotbar.get(0));
             }
         }
 
@@ -123,7 +134,17 @@ public class Editor implements Listener {
 
         if (e.getCurrentItem() != null) {
             for (ItemStack item : editorHotbar) {
-                if (e.getCurrentItem().equals(item)) {
+                ItemMeta hotbarMeta = item.getItemMeta();
+                ItemStack itemCopy = new ItemStack(item);
+                if (hotbarMeta != null) {
+                    itemCopy.lore(null);
+                }
+                ItemStack clickedCopy = new ItemStack(e.getCurrentItem());
+                if (clickedCopy.getItemMeta() != null) {
+                    clickedCopy.lore(null);
+                }
+
+                if (clickedCopy.equals(itemCopy)) {
                     e.setCancelled(true);
                     if (e.getCurrentItem().getType().equals(Material.LIME_STAINED_GLASS_PANE)) {
                         var whoClickedData = closingEditor.get(e.getWhoClicked());
@@ -132,7 +153,7 @@ public class Editor implements Listener {
                         openEditors.remove(e.getWhoClicked().getUniqueId());
                         e.getWhoClicked().closeInventory();
 
-                    } else if (e.getCurrentItem().getType().equals(Material.RED_STAINED_GLASS_PANE)){
+                    } else if (e.getCurrentItem().getType().equals(Material.RED_STAINED_GLASS_PANE)) {
                         var whoClickedData = closingEditor.get(e.getWhoClicked());
                         whoClickedData.setSave(true);
                         closingEditor.replace(e.getWhoClicked(), closingEditor.get(e.getWhoClicked()), whoClickedData);
@@ -165,31 +186,31 @@ public class Editor implements Listener {
                                     int oldSize = inv.getSize();
                                     inv = Bukkit.createInventory(null, updatedSize, MessageTools.parseText("Shopkeeper Editor (Page 1)"));
                                     //oldSize/size helps deal with making the inventory work smaller and bigger
-                                    inv.setContents(Arrays.copyOfRange(contents, 0, oldSize < updatedSize ? oldSize-9 : updatedSize - 9));
+                                    inv.setContents(Arrays.copyOfRange(contents, 0, oldSize < updatedSize ? oldSize - 9 : updatedSize - 9));
 
                                     for (int i = 0; i < 9; i++) {
-                                        inv.setItem(i+updatedSize-9,  editorHotbar.get(0));
+                                        inv.setItem(i + updatedSize - 9, editorHotbar.get(0));
                                     }
 
-                                    inv.setItem(updatedSize-8, editorHotbar.get(1));
-                                    inv.setItem(updatedSize-6, editorHotbar.get(2));
-                                    inv.setItem(updatedSize-5, getChestNewLore(size));
-                                    inv.setItem(updatedSize-4, editorHotbar.get(4));
-                                    inv.setItem(updatedSize-2, editorHotbar.get(5));
-                                    inv.setItem(updatedSize-1, editorHotbar.get(6));
+                                    inv.setItem(updatedSize - 9, editorHotbar.get(1));
+                                    inv.setItem(updatedSize - 8, editorHotbar.get(2));
+                                    inv.setItem(updatedSize - 6, editorHotbar.get(3));
+                                    inv.setItem(updatedSize - 5, getChestNewLore(size));
+                                    inv.setItem(updatedSize - 4, editorHotbar.get(5));
+                                    inv.setItem(updatedSize - 2, editorHotbar.get(6));
+                                    inv.setItem(updatedSize - 1, editorHotbar.get(7));
 
                                     invReference.inv = inv;
                                     return AnvilGUI.Response.close();
                                 })
                                 .onClose((Player player) ->
-                                    Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getPlugin(), () -> {
-                                        player.openInventory(invReference.inv);
-                                        //disable players from closing the new editor window
-                                        closingEditor.put(e.getWhoClicked(), new ClosedEditorData(npc, false));
-                                        //keep track of this inventory being open
-                                        openEditors.put(e.getWhoClicked().getUniqueId(), invReference.inv);
-                                        System.out.println("Closed");
-                                    }, 5L))
+                                        Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getPlugin(), () -> {
+                                            player.openInventory(invReference.inv);
+                                            //disable players from closing the new editor window
+                                            closingEditor.put(e.getWhoClicked(), new ClosedEditorData(npc, false));
+                                            //keep track of this inventory being open
+                                            openEditors.put(e.getWhoClicked().getUniqueId(), invReference.inv);
+                                        }, 5L))
                                 .text("9, 18, 27, 36, 45, 54")
                                 .title("Shop Size Editor")
                                 .plugin(Main.getPlugin())
@@ -206,7 +227,7 @@ public class Editor implements Listener {
                                 .onComplete((player, text) -> {
                                     Inventory inv = invReference.inv;
                                     Component name = MessageTools.parseText(text);
-                                    inv.setItem(inv.getSize()-2, getNewShopName(name));
+                                    inv.setItem(inv.getSize() - 2, getNewShopName(name));
                                     invReference.inv = inv;
                                     return AnvilGUI.Response.close();
                                 })
@@ -221,6 +242,20 @@ public class Editor implements Listener {
                                 .title("Shop Name Editor")
                                 .plugin(Main.getPlugin())
                                 .open((Player) e.getWhoClicked());
+                    } else if (e.getCurrentItem().getType().equals(Material.BARRIER)) {
+                        if (closingEditor.containsKey(e.getWhoClicked())) {
+                            var whoClickedData = closingEditor.get(e.getWhoClicked());
+
+                            NPC npc = whoClickedData.getNpc();
+
+                            dslContext.deleteFrom(Tables.SHOPKEEPERS)
+                                    .where(Tables.SHOPKEEPERS.SHOPKEEPERID.eq(npc.getId())).execute();
+
+                            whoClickedData.setSave(true);
+                            closingEditor.replace(e.getWhoClicked(), closingEditor.get(e.getWhoClicked()), whoClickedData);
+                            e.getWhoClicked().closeInventory();
+
+                        }
                     }
                     return;
                 }
@@ -236,26 +271,26 @@ public class Editor implements Listener {
     }
 
     private static ItemStack getChestNewLore(int newSize) {
-        ItemStack chest = editorHotbar.get(3);
+        ItemStack chest = editorHotbar.get(4);
         ItemMeta meta = chest.getItemMeta();
         List<Component> lore = meta.lore();
         if (lore == null) {
             return chest;
         }
-        lore.set(1, MessageTools.parseText("&6Editor Size: &e" + newSize).decoration(TextDecoration.ITALIC, false));
+        lore.set(1, ItemTools.enableItalicUsage(MessageTools.parseText("&6Editor Size: &e" + newSize)));
         meta.lore(lore);
         chest.setItemMeta(meta);
         return chest;
     }
 
     private static ItemStack getNewShopName(Component name) {
-        ItemStack nameTag = editorHotbar.get(5);
+        ItemStack nameTag = editorHotbar.get(6);
         ItemMeta meta = nameTag.getItemMeta();
         List<Component> lore = meta.lore();
         if (lore == null) {
             return nameTag;
         }
-        lore.set(1, MessageTools.parseText("<red>Name: <reset><name>", Template.template("name", name)).decoration(TextDecoration.ITALIC, false));
+        lore.set(1, ItemTools.enableItalicUsage(MessageTools.parseText("<red>Name: <reset><name>", Template.template("name", name))));
         meta.lore(lore);
         nameTag.setItemMeta(meta);
         return nameTag;
@@ -285,7 +320,7 @@ public class Editor implements Listener {
 
                     ItemMeta meta = item.getItemMeta();
 
-                    meta.displayName(MessageTools.parseText("<name>", Template.template("name", MessageTools.parseText(plainName))).decoration(TextDecoration.ITALIC, false));
+                    meta.displayName(ItemTools.enableItalicUsage(MessageTools.parseText(MiniMessage.miniMessage().serialize(name))));
                     item.setItemMeta(meta);
 
                 }
@@ -295,17 +330,27 @@ public class Editor implements Listener {
             if (lore == null) {
                 return item;
             }
-
-            lore.forEach(l -> {
-                String plainLore = PlainTextComponentSerializer.plainText().serialize(l);
-                if (!plainLore.equals(PlainTextComponentSerializer.plainText().serialize(MessageTools.parseText(plainLore)))) {
-                    lore.set(lore.indexOf(l), MessageTools.parseText("<name>", Template.template("name", MessageTools.parseText(plainLore))).decoration(TextDecoration.ITALIC, false));
-                    ItemMeta meta = item.getItemMeta();
-                    meta.lore(lore);
-                    item.setItemMeta(meta);
+            ItemMeta meta = item.getItemMeta();
+            for (Component line : lore) {
+                String plainLore = PlainTextComponentSerializer.plainText().serialize(line);
+                if (plainLore.toUpperCase().startsWith("BUY: ")) {
+                    String noBuy = plainLore.substring(5);
+                    lore.set(lore.indexOf(line), ItemTools.enableItalicUsage(MessageTools.parseText("<#7c3e12>Buy: <#b8a567>" + noBuy)));
+                    continue;
+                } else if (plainLore.toUpperCase().startsWith("SELL: ")) {
+                    String noSell = plainLore.substring(6);
+                    lore.set(lore.indexOf(line), ItemTools.enableItalicUsage(MessageTools.parseText("<#7c3e12>Sell: <#b8a567>" + noSell)));
+                    continue;
+                } else if (plainLore.equalsIgnoreCase("Carbon Copy")) {
+                    lore.set(lore.indexOf(line), ItemTools.enableItalicUsage(MessageTools.parseText("<italic><#b8a567>Carbon Copy")));
+                    continue;
                 }
-            });
+                lore.set(lore.indexOf(line), ItemTools.enableItalicUsage(MessageTools.parseText(MiniMessage.miniMessage().serialize(line))));
+            }
+            meta.lore(lore);
+            item.setItemMeta(meta);
         }
+
         return item;
     }
 
@@ -345,6 +390,7 @@ public class Editor implements Listener {
                     closingEditor.remove(e.getPlayer());
                 }
             } else {
+                editorCooldown.put(e.getPlayer().getUniqueId(), System.currentTimeMillis());
                 Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getPlugin(), () -> e.getPlayer().openInventory(e.getInventory()), 5L);
             }
         }
@@ -352,6 +398,24 @@ public class Editor implements Listener {
 
     }
 
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+    public void onInventoryOpen(InventoryOpenEvent e) {
+        if (!editorCooldown.containsKey(e.getPlayer().getUniqueId())) {
+            return;
+        }
+        if (!openEditors.containsKey(e.getPlayer().getUniqueId())) {
+            return;
+        }
+        if(openEditors.get(e.getPlayer().getUniqueId()).equals(e.getInventory())) {
+            return;
+        }
+        //a bit less than 5 ticks
+        long secondsLeft = editorCooldown.get(e.getPlayer().getUniqueId()) + 225 - System.currentTimeMillis();
+        if (secondsLeft > 0) {
+            e.getPlayer().sendMessage(MessageTools.parseText("<red>You are opening inventories too quickly!"));
+            e.setCancelled(true);
+        }
+    }
 }
 
 class ClosedEditorData {

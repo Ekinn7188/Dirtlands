@@ -16,6 +16,9 @@ Player Doesnt Exist: '&4<player>&c doesn''t exist!'
 Player Hasnt Logged In: '&4<player>&c has never logged in before!'
 Player Is Offline: '&4<player>&c is offline!'
 
+#input errors
+Invalid Number: '&cInvalid number!'
+
 #economy
 Money Gained Actionbar: '&3+<money> &bExpensive Diamonds &o(You Have &3<balance>&b)'
 Money Set Actionbar: '&bYour Balance Has Been Set To &3<money>'
@@ -26,6 +29,10 @@ Baltop Header: '<#b8a567>&m----------&r <#7c3e12>Baltop <#b8a567>&m-</#b8a567>&r
 Baltop Names: '<#b8a567>(#<position>) <#856f2d><name>: <#7c3e12><balance>'
 Player Balance: '&3<player>&b has &3<balance>&b expensive diamonds'
 Balance: '&3You&b have &3<balance>&b expensive diamonds'
+
+#shop
+No Space: '&cYou don''t have enough space in your inventory for this'
+
 
 #word filter
 Word Filter: ["Nigger", "Nigga", "Chink", "Coon", "Jap", "Kys", "Kill yourself", "Fag", "Faggot", "Retard", "Retarded"]
