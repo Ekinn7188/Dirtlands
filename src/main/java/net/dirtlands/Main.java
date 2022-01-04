@@ -28,7 +28,7 @@ public class Main extends JavaPlugin {
     @Override
     public void onEnable(){
         //makes sure the server has all the required plugins. if not, the plugin will disable
-        PluginEnable.checkForPluginDependencies(List.of("WorldGuard", "LuckPerms", "ProtocolLib", "Citizens", "Jeeper-Essentials"), "dirtlands");
+        PluginEnable.checkForPluginDependencies(List.of("WorldGuard", "LuckPerms", "Citizens", "Jeeper-Essentials"), "dirtlands");
 
         org.apache.logging.log4j.core.Logger coreLogger = (org.apache.logging.log4j.core.Logger) LogManager.getRootLogger();
         coreLogger.addFilter(new LogFilter());
