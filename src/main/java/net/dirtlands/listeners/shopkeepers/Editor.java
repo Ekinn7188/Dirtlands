@@ -47,11 +47,11 @@ public class Editor implements Listener {
 
             ItemTools.createGuiItem(Material.BARRIER, MessageTools.parseText("&cDelete Shop"), 1),
 
-            ItemTools.createGuiItem(Material.BOOK, MessageTools.parseText("<aqua>Example Item"), 1,
+            ItemTools.createGuiItem(Material.BOOK, MessageTools.parseText("<#856f2d>Example Item"), 1,
                     List.of(Component.text(" "),
-                            MessageTools.parseText("<aqua>Example Item Description"),
+                            MessageTools.parseText("<#856f2d>Example Item Description"),
                             Component.text(" "),
-                            MessageTools.parseText("<aqua>Buy/Sell: <dark_aqua>{price} <aqua>expensive diamonds")
+                            MessageTools.parseText("<#856f2d>Buy/Sell: <#7c3e12>{price} <#856f2d>expensive diamonds")
                     ).toArray(new Component[0])
             ),
 
@@ -178,7 +178,7 @@ public class Editor implements Listener {
                                             throw new NumberFormatException();
                                         }
                                     } catch (NumberFormatException ex) {
-                                        player.sendMessage(MessageTools.parseText("&cInvalid number!"));
+                                        player.sendMessage(MessageTools.parseFromPath(Main.getPlugin().config(), "Invalid Number"));
                                         return AnvilGUI.Response.close();
                                     }
 
@@ -412,7 +412,7 @@ public class Editor implements Listener {
         //a bit less than 5 ticks
         long secondsLeft = editorCooldown.get(e.getPlayer().getUniqueId()) + 225 - System.currentTimeMillis();
         if (secondsLeft > 0) {
-            e.getPlayer().sendMessage(MessageTools.parseText("<red>You are opening inventories too quickly!"));
+            e.getPlayer().sendMessage(MessageTools.parseFromPath(Main.getPlugin().config(), "Quick Inventory"));
             e.setCancelled(true);
         }
     }

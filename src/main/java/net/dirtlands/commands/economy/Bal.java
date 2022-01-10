@@ -33,10 +33,10 @@ public class Bal extends PluginCommand {
         if (args.length == 0) {
             if (sender instanceof Player player) {
                 player.sendMessage(MessageTools.parseFromPath(config, "Balance", Template.template("balance",
-                        String.valueOf(Economy.getBalance(player)))));
+                        String.valueOf(Economy.commaSeperatedBalance(player)))));
                 return;
             }
-            sender.sendMessage(MessageTools.parseText("&cCorrect usage: /bal {player}"));
+            sender.sendMessage(MessageTools.parseFromPath(config, "Correct Usage", Template.template("command", "/bal {player}")));
             return;
         }
 

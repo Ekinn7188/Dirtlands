@@ -40,7 +40,7 @@ public class Baltop extends PluginCommand {
                 page = Integer.parseInt(args[0]);
                 offset = (page-1)*10;
             } catch (NumberFormatException e) {
-                sender.sendMessage(MessageTools.parseText("&cCorrect Usage: /baltop {page}"));
+                sender.sendMessage(MessageTools.parseFromPath(config, "Correct Usage", Template.template("command", "/baltop {page}")));
                 return;
             }
         }

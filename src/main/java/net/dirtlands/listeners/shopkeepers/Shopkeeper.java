@@ -599,7 +599,7 @@ public class Shopkeeper implements Listener {
         try {
             buySellPrice = Integer.parseInt(costLine.substring(0, costLine.indexOf(" ")))/item.getAmount();
         } catch (NumberFormatException ex) {
-            player.sendMessage(MessageTools.parseText("&cThere was a problem with this trade. Please contact an admin."));
+            player.sendMessage(MessageTools.parseFromPath(config, "Trade Error"));
             ex.printStackTrace();
             return null;
         }

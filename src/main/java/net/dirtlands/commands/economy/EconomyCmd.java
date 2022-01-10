@@ -60,7 +60,7 @@ public class EconomyCmd extends PluginCommand {
                         sender.sendMessage(MessageTools.parseFromPath(config, "Player Balance",
                                 Template.template("player", name), Template.template("balance", Economy.commaSeperatedBalance(player))));
                     } catch (NumberFormatException e) {
-                        sender.sendMessage(MessageTools.parseText("&cCorrect Usage: /economy add <number> <player>"));
+                        sender.sendMessage(MessageTools.parseFromPath(config, "Correct Usage", Template.template("command", "/economy add <number> <player>")));
                     }
                     break;
                 case "remove":
@@ -73,7 +73,7 @@ public class EconomyCmd extends PluginCommand {
                         }
 
                     } catch (NumberFormatException e) {
-                        sender.sendMessage(MessageTools.parseText("&cCorrect Usage: /economy remove <number> <player>"));
+                        sender.sendMessage(MessageTools.parseFromPath(config, "Correct Usage", Template.template("command", "/economy remove <number> <player>")));
                     }
                     break;
                 case "forceremove":
@@ -82,7 +82,7 @@ public class EconomyCmd extends PluginCommand {
                         sender.sendMessage(MessageTools.parseFromPath(config, "Player Balance",
                                 Template.template("player", name), Template.template("balance", Economy.commaSeperatedBalance(player))));
                     } catch (NumberFormatException e) {
-                        sender.sendMessage(MessageTools.parseText("&cCorrect Usage: /economy forceremove <number> <player>"));
+                        sender.sendMessage(MessageTools.parseFromPath(config, "Correct Usage", Template.template("command", "/economy forceremove <number> <player>")));
                     }
                     break;
                 case "set":
@@ -91,17 +91,17 @@ public class EconomyCmd extends PluginCommand {
                         sender.sendMessage(MessageTools.parseFromPath(config, "Player Balance",
                                 Template.template("player", name), Template.template("balance", Economy.commaSeperatedBalance(player))));
                     } catch (NumberFormatException e) {
-                        sender.sendMessage(MessageTools.parseText("&cCorrect Usage: /economy set <number> <player>"));
+                        sender.sendMessage(MessageTools.parseFromPath(config, "Correct Usage", Template.template("command", "/economy set <number> <player>")));
                     }
                     break;
                 default:
-                    sender.sendMessage(MessageTools
-                            .parseText("&cCorrect Usage: /economy <add/remove/forceremove/set/get> <player> <number(except for get command)>"));
+                    sender.sendMessage(MessageTools.parseFromPath(config, "Correct Usage", Template.template("command",
+                            "/economy <add/remove/forceremove/set/get> <player> <number(except for get command)>")));
                     break;
             }
         } else {
-            sender.sendMessage(MessageTools
-                    .parseText("&cCorrect Usage: /economy <add/remove/forceremove/set/get> <player> <number(except for get command)>"));
+            sender.sendMessage(MessageTools.parseFromPath(config, "Correct Usage", Template.template("command",
+                    "/economy <add/remove/forceremove/set/get> <player> <number(except for get command)>")));
         }
     }
 
