@@ -13,6 +13,10 @@ shadowJar{
     archiveFileName = "${project.name}.jar"
 }
 
+java {
+    toolchain.languageVersion.set(JavaLanguageVersion.of(17))
+}
+
 repositories {
     mavenCentral()
     maven { url "https://papermc.io/repo/repository/maven-public/" }
@@ -34,7 +38,7 @@ dependencies {
     compileOnly 'com.sk89q.worldguard:worldguard-bukkit:7.0.5'
     implementation 'org.reflections:reflections:0.10.2'
     compileOnly 'net.citizensnpcs:citizens-main:2.0.28-SNAPSHOT'
-    compileOnly 'io.papermc.paper:paper-api:1.17.1-R0.1-SNAPSHOT'
+    implementation 'io.papermc.paper:paper-api:1.18.1-R0.1-SNAPSHOT'
     implementation 'jeeper.utils:PaperPluginUtils:0.1.1'
     implementation 'net.wesjd:anvilgui:1.5.3-SNAPSHOT'
 
@@ -82,10 +86,11 @@ jooq {
 
 tasks {
     runServer {
+        serverJar(file ("${projectDir}/run/server.jar"))
         // Configure the Minecraft version for our task.
         // This is the only required configuration besides applying the plugin.
         // Your plugin's jar (or shadowJar if present) will be used automatically.
-        minecraftVersion("1.17.1")
+        minecraftVersion("1.18")
     }
 }
 

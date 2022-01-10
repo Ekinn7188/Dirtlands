@@ -1,39 +1,61 @@
-#combat
+#  ############################################################
+#  # +------------------------------------------------------+ #
+#  # |                      Dirtlands                       | #
+#  # +------------------------------------------------------+ #
+#  ############################################################
+#
+#  Developed by: Jeeper_ (Jeeper#6808)
+#
+#  Color Choices:
+#    Hex Code Example: <#FFFFFF>text</#FFFFFF>
+#    Make sure to surround the text with its color and make sure it ends with a /!!
+#
+#    Minecraft Color Code Example: &aI'm typing in red!
+#    This website has all the codes! https://www.digminecraft.com/lists/color_list_pc.php
+#
+#    Extra info on text formatting: https://docs.adventure.kyori.net/minimessage.html#the-components
+#
+#
+#    ******* /dirtlands reload to reload files *******
+
+# Combat
 Combat Time In Seconds: '10'
-Combat Timer: '&cYou will untagged in &4<time>&c seconds'
-Not Combat Tagged: '&cYou''re no longer combat tagged'
-Command In Combat: '&cYou cant send commands when you''re combat tagged!'
-Enter Safezone In Combat Title: '&4No Entry'
-Enter Safezone In Combat Subtitle: '&cYou cant enter safezones while in combat!'
+Combat Timer: '<#b8a567>You will untagged in <#856f2d><time></#856f2d> seconds'
+Not Combat Tagged: '<#b8a567>You''re no longer combat tagged'
+Command In Combat: '<#b8a567>You cant send commands when you''re combat tagged!'
+Enter Safezone In Combat Title: '<#856f2d>No Entry'
+Enter Safezone In Combat Subtitle: '<#b8a567>You cant enter safezones while in combat!'
 
-#config
-Dirtlands Reloaded: '&aDirtlands Reloaded!'
+# Config
+Dirtlands Reloaded: '<#856f2d>Dirtlands Reloaded!'
 
-#commands
+# Commands
 No Command Permission: '&cYou dont have permission to use this command!'
-Player Only Command: '&cYou must be a player to execute this command!'
-Player Doesnt Exist: '&4<player>&c doesn''t exist!'
-Player Hasnt Logged In: '&4<player>&c has never logged in before!'
-Player Is Offline: '&4<player>&c is offline!'
+Player Only Command: '<#b8a567>You must be a player to execute this command!'
+Player Doesnt Exist: '<#b8a567><player><#b8a567> doesn''t exist!'
+Player Hasnt Logged In: '<#b8a567><player><#b8a567> has never logged in before!'
+Player Is Offline: '<#b8a567><player><#b8a567> is offline!'
+Correct Usage: '<#b8a567>Usage: <#856f2d><command>'
 
-#input errors
-Invalid Number: '&cInvalid number!'
+# Input Errors
+Invalid Number: '<#856f2d>Invalid number!'
 
-#economy
-Money Gained Actionbar: '&3+<money> &bExpensive Diamonds &o(You Have &3<balance>&b)'
-Money Set Actionbar: '&bYour Balance Has Been Set To &3<money>'
-Money Lost Actionbar: '&3-<money> &bExpensive Diamonds &o(You Have &3<balance>&b)'
-Cant Afford Message: '&cYou can''t afford this!'
-Player Doesnt Have Enough Money: '&c<player> doesn''t have enough money for this action'
+# Economy
+Money Gained Actionbar: '<#856f2d>+<money> <#b8a567>Expensive Diamonds &o(You Have <#856f2d><balance></#856f2d>)'
+Money Set Actionbar: '<#b8a567>Your Balance Has Been Set To <#856f2d><money>'
+Money Lost Actionbar: '<#856f2d>-<money> <#b8a567>Expensive Diamonds &o(You Have <#856f2d><balance></#856f2d>)'
+Cant Afford Message: '<#b8a567>You can''t afford this!'
+Player Doesnt Have Enough Money: '<#b8a567><player><#b8a567> doesn''t have enough money for this action'
 Baltop Header: '<#b8a567>&m----------&r <#7c3e12>Baltop <#b8a567>&m-</#b8a567>&r <#7c3e12>Page</#7c3e12> <#856f2d><page><#7c3e12>/</#7c3e12><pages> <#b8a567>&m----------'
 Baltop Names: '<#b8a567>(#<position>) <#856f2d><name>: <#7c3e12><balance>'
-Player Balance: '&3<player>&b has &3<balance>&b expensive diamonds'
-Balance: '&3You&b have &3<balance>&b expensive diamonds'
+Player Balance: '<#856f2d><player><#b8a567> has <#856f2d><balance></#856f2d> expensive diamonds'
+Balance: '<#856f2d>You<#b8a567> have <#856f2d><balance></#856f2d> expensive diamonds'
 
-#shop
-No Space: '&cYou don''t have enough space in your inventory for this'
+# Shop
+No Space: '<#856f2d>You don''t have enough space in your inventory for this'
+Quick Inventory: '<#856f2d>You are opening inventories too quickly!'
+Trade Error: '<#856f2d>There was a problem with this trade. Please contact an admin.'
 
-
-#word filter
+# Word Filter
 Word Filter: ["Nigger", "Nigga", "Chink", "Coon", "Jap", "Kys", "Kill yourself", "Fag", "Faggot", "Retard", "Retarded"]
-Chat Blocked: "&c&lHey! &r&cYour message hasn't been sent due to a blocked word. &4(&c<word>&4)"
+Chat Blocked: "<#b8a567>Hey! Your message hasn't been sent due to a blocked word. <#856f2d>(<#b8a567><word></#b8a567>)"

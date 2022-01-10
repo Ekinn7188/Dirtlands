@@ -1,6 +1,6 @@
 name: Dirtlands
 version: 1.0
-api-version: 1.17
+api-version: 1.18
 description: Dirt
 depend: [WorldGuard, LuckPerms, Citizens, Jeeper-Essentials]
 author: Jeeper_
@@ -15,7 +15,7 @@ commands:
     description: gets the top richest players
   bal:
     description: gets the balance of a player
-  garp slap:
+  garp:
     description: warps to the shop
 permissions:
   dirtlands.dirtlands:
