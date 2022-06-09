@@ -30,7 +30,7 @@ repositories {
 
 dependencies {
     //minecraft
-    paperDevBundle("1.18-R0.1-SNAPSHOT")
+    paperDevBundle("1.18.2-R0.1-SNAPSHOT")
     compileOnly ("net.luckperms:api:5.4")
     compileOnly ("com.sk89q.worldguard:worldguard-bukkit:7.0.5")
     implementation ("org.reflections:reflections:0.10.2")
@@ -100,7 +100,7 @@ tasks {
         // Configure the Minecraft version for our task.
         // This is the only required configuration besides applying the plugin.
         // Your plugin's jar (or shadowJar if present) will be used automatically.
-        minecraftVersion("1.19")
+        minecraftVersion("1.18")
     }
 
     compileJava {

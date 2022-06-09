@@ -15,6 +15,7 @@ import org.json.simple.parser.ParseException;
 import javax.annotation.Nullable;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
@@ -31,7 +32,7 @@ public class UUIDTools {
     public static String getUuid(String name) {
         String url = "https://api.mojang.com/users/profiles/minecraft/"+name;
         try {
-            String UUIDJson = IOUtils.toString(new URL(url));
+            String UUIDJson = IOUtils.toString(new URL(url), Charset.defaultCharset());
             if(UUIDJson.isEmpty()) {
                 return null;
             }
@@ -53,7 +54,7 @@ public class UUIDTools {
         String UUID = getUuid(name);
 
         if (UUID == null) {
-            sender.sendMessage(MessageTools.parseFromPath(config,"Player Doesnt Exist", Template.template("player", name)));
+            sender.sendMessage(MessageTools.parseFromPath(config,"Player Doesnt Exist", Placeholder.p("player", name)));
             return null;
         }
         OfflinePlayer playerArg = Bukkit.getOfflinePlayer(java.util.UUID.fromString(UUID));
