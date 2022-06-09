@@ -14,6 +14,7 @@ import jeeper.utils.MessageTools;
 import jeeper.utils.config.ConfigSetup;
 import net.citizensnpcs.api.CitizensAPI;
 import net.dirtlands.Main;
+import net.dirtlands.commands.Permission;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.Template;
 import org.bukkit.Bukkit;
@@ -90,8 +91,7 @@ public class CombatTag implements Listener {
     @EventHandler
     public void playerCommand(PlayerCommandPreprocessEvent e){
         Player player = e.getPlayer();
-        if (tasks.containsKey(player.getUniqueId())){
-
+        if (tasks.containsKey(player.getUniqueId()) && !player.hasPermission(Permission.BYPASS_COMBAT.getName())){
             e.setCancelled(true);
             player.sendMessage(MessageTools.parseFromPath(config, "Command In Combat"));
         }

@@ -40,7 +40,7 @@ public class EconomyCmd extends PluginCommand {
             }
 
             String name = player.getName();
-            assert name != null;//checked in UUIDTools.checkNameAndUUID
+            assert name != null; // checked in UUIDTools.checkNameAndUUID
 
             if (args[0].equalsIgnoreCase("get")) {
                 sender.sendMessage(MessageTools.parseFromPath(config, "Player Balance",

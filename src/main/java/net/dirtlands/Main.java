@@ -24,7 +24,6 @@ public class Main extends JavaPlugin {
     private static Main plugin;
     private ConfigSetup config;
     private DSLContext dslContext;
-
     @Override
     public void onEnable(){
         //makes sure the server has all the required plugins. if not, the plugin will disable
