@@ -18,10 +18,7 @@ java {
 repositories {
     mavenCentral()
     mavenLocal()
-//    maven {
-//        name = "sonatype-oss-snapshots"
-//        url = "https://oss.sonatype.org/content/repositories/snapshots/"
-//    }
+    maven ("https://oss.sonatype.org/content/repositories/snapshots/")
     maven("https://maven.enginehub.org/repo/")
     maven("https://repo.dmulloy2.net/repository/public/")
     maven("https://repo.citizensnpcs.co/")
@@ -32,7 +29,7 @@ dependencies {
     //minecraft
     paperDevBundle("1.18.2-R0.1-SNAPSHOT")
     compileOnly ("net.luckperms:api:5.4")
-    compileOnly ("com.sk89q.worldguard:worldguard-bukkit:7.0.5")
+    compileOnly ("com.sk89q.worldguard:worldguard-bukkit:7.0.7")
     implementation ("org.reflections:reflections:0.10.2")
     compileOnly ("net.citizensnpcs:citizens-main:2.0.28-SNAPSHOT")
     implementation ("jeeper.utils:PaperPluginUtils:1.2")
@@ -95,6 +92,11 @@ val emptyConfig by tasks.registering {
 }
 
 tasks {
+
+    assemble {
+        dependsOn(reobfJar)
+    }
+
     runServer {
         serverJar(file ("${projectDir}/run/server.jar"))
         // Configure the Minecraft version for our task.

@@ -76,7 +76,7 @@ public class Main extends JavaPlugin {
         config = new Config("config", "dirtlands");
         config.readDefaults(this, "config.yml");
         config.get().options().copyDefaults(true);
-        //config.get().options().parseComments(true);
+        config.get().options().parseComments(true);
         config.save();
 
         //if making another file, add it to /dirtlands reload

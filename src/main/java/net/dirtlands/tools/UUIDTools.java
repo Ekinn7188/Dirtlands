@@ -1,13 +1,14 @@
 package net.dirtlands.tools;
 
 import jeeper.utils.MessageTools;
-import jeeper.utils.config.ConfigSetup;
+import jeeper.utils.config.Config;
 import net.dirtlands.Main;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.apache.commons.io.IOUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 import org.json.simple.parser.ParseException;
@@ -22,7 +23,7 @@ import java.util.regex.Pattern;
 public class UUIDTools {
 
     private static final Pattern UUID_FIX = Pattern.compile("(\\w{8})(\\w{4})(\\w{4})(\\w{4})(\\w{12})");
-    static ConfigSetup config = Main.getPlugin().config();
+    static Config config = Main.getPlugin().config();
 
     /**
      * Gets the UUID of a player from the Mojang API.
@@ -51,16 +52,17 @@ public class UUIDTools {
      * @return the name of the player or null if it's not a real name
      */
     public static String getNameIfExists(String name, CommandSender sender) {
+        boolean isPlayer = sender instanceof Player; // flag to determine whether player or console
         String UUID = getUuid(name);
 
         if (UUID == null) {
-            sender.sendMessage(MessageTools.parseFromPath(config,"Player Doesnt Exist", Placeholder.p("player", name)));
+            sender.sendMessage(MessageTools.parseFromPath(config,"Player Doesnt Exist", Placeholder.parsed("player", name)));
             return null;
         }
         OfflinePlayer playerArg = Bukkit.getOfflinePlayer(java.util.UUID.fromString(UUID));
         String username = playerArg.getName();
         if (username == null) {
-            sender.sendMessage(MessageTools.parseFromPath(config,"Player Hasnt Logged In", Template.template("player", name)));
+            sender.sendMessage(MessageTools.parseFromPath(config,"Player Hasnt Logged In", Placeholder.parsed("player", name)));
             return null;
         }
 
@@ -71,14 +73,14 @@ public class UUIDTools {
         String playerUUID = UUIDTools.getUuid(name);
 
         if (playerUUID == null) {
-            sender.sendMessage(MessageTools.parseFromPath(config,"Player Doesnt Exist", Template.template("player", name)));
+            sender.sendMessage(MessageTools.parseFromPath(config,"Player Doesnt Exist", Placeholder.parsed("player", name)));
             return null;
         }
 
         OfflinePlayer player = Bukkit.getOfflinePlayer(UUID.fromString(playerUUID));
         String playerName = player.getName();
         if (playerName == null) {
-            sender.sendMessage(MessageTools.parseFromPath(config,"Player Hasnt Logged In", Template.template("player", name)));
+            sender.sendMessage(MessageTools.parseFromPath(config,"Player Hasnt Logged In", Placeholder.parsed("player", name)));
             return null;
         }
 

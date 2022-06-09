@@ -10,7 +10,7 @@ import net.dirtlands.database.ItemSerialization;
 import net.dirtlands.tools.ItemTools;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import net.wesjd.anvilgui.AnvilGUI;
@@ -81,7 +81,6 @@ public class Editor implements Listener {
             try {
                 ItemSerialization invData = ItemSerialization.fromBase64(npcId.get(Tables.SHOPKEEPERS.INVENTORYBASE64));
                 inventory = Bukkit.createInventory(null, invData.getInventory().getSize(), MessageTools.parseText("Shopkeeper Editor (Page 1)"));
-                //noinspection NullableProblems
                 inventory.setContents(invData.getInventory().getContents());
             } catch (IOException ex) {
                 ex.printStackTrace();
@@ -290,7 +289,7 @@ public class Editor implements Listener {
         if (lore == null) {
             return nameTag;
         }
-        lore.set(1, ItemTools.enableItalicUsage(MessageTools.parseText("<red>Name: <reset><name>", Template.template("name", name))));
+        lore.set(1, ItemTools.enableItalicUsage(MessageTools.parseText("<red>Name: <reset><name>", Placeholder.component("name", name))));
         meta.lore(lore);
         nameTag.setItemMeta(meta);
         return nameTag;

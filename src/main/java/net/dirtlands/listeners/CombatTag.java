@@ -11,12 +11,12 @@ import com.sk89q.worldguard.protection.flags.Flags;
 import com.sk89q.worldguard.protection.regions.RegionContainer;
 import com.sk89q.worldguard.protection.regions.RegionQuery;
 import jeeper.utils.MessageTools;
-import jeeper.utils.config.ConfigSetup;
+import jeeper.utils.config.Config;
 import net.citizensnpcs.api.CitizensAPI;
 import net.dirtlands.Main;
 import net.dirtlands.commands.Permission;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -40,7 +40,7 @@ import java.util.UUID;
 
 public class CombatTag implements Listener {
     private static final Map<UUID, Integer> tasks = new HashMap<>();
-    private static final ConfigSetup config = Main.getPlugin().config();
+    private static final Config config = Main.getPlugin().config();
 
     @EventHandler
     public void onAttack(EntityDamageByEntityEvent e){
@@ -161,7 +161,7 @@ public class CombatTag implements Listener {
                     Bukkit.getScheduler().cancelTask(tasks.get(player.getUniqueId()));
                     tasks.remove(player.getUniqueId());
                 } else{
-                    final Component message = MessageTools.parseFromPath(config, "Combat Timer", Template.template("time", String.valueOf(time)));
+                    final Component message = MessageTools.parseFromPath(config, "Combat Timer", Placeholder.parsed("time", String.valueOf(time)));
                     player.sendActionBar(message);
                     time--;
                 }

@@ -2,7 +2,7 @@ package net.dirtlands.listeners.shopkeepers;
 
 import dirtlands.db.Tables;
 import jeeper.utils.MessageTools;
-import jeeper.utils.config.ConfigSetup;
+import jeeper.utils.config.Config;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import net.dirtlands.Main;
@@ -13,7 +13,7 @@ import net.dirtlands.economy.Economy;
 import net.dirtlands.tools.ItemTools;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import net.wesjd.anvilgui.AnvilGUI;
@@ -44,7 +44,7 @@ import java.util.stream.Collectors;
 
 public class Shopkeeper implements Listener {
 
-    private static ConfigSetup config = Main.getPlugin().config();
+    private static Config config = Main.getPlugin().config();
     static DSLContext dslContext = Main.getPlugin().getDslContext();
     //player uuid, open inventory
     private static Map<UUID, Inventory> openShopMenus = new HashMap<>();
@@ -237,7 +237,7 @@ public class Shopkeeper implements Listener {
 
 
         if (buyLoreIndex != -1 && sellLoreIndex != -1) {
-            Inventory buyOrSell = Bukkit.createInventory(null, 27, MessageTools.parseText("Buy or Sell <name>", Template.template("name", meta.displayName())));
+            Inventory buyOrSell = Bukkit.createInventory(null, 27, MessageTools.parseText("Buy or Sell <name>", Placeholder.component("name", meta.displayName())));
             ItemStack[] contents = buyOrSell.getContents();
             for (int i = 0; i < contents.length; i++) {
                 contents[i] = GRAY_GLASS_ITEM;
@@ -254,9 +254,9 @@ public class Shopkeeper implements Listener {
                 }
             }
 
-            buyOrSell.setItem(11, ItemTools.createGuiItem(Material.EMERALD, MessageTools.parseText("<green>Sell <name>", Template.template("name", meta.displayName())), 1));
+            buyOrSell.setItem(11, ItemTools.createGuiItem(Material.EMERALD, MessageTools.parseText("<green>Sell <name>", Placeholder.component("name", meta.displayName())), 1));
             buyOrSell.setItem(13, e.getCurrentItem());
-            buyOrSell.setItem(15, ItemTools.createGuiItem(Material.NAME_TAG, MessageTools.parseText("<green>Buy <name>", Template.template("name", meta.displayName())), 1));
+            buyOrSell.setItem(15, ItemTools.createGuiItem(Material.NAME_TAG, MessageTools.parseText("<green>Buy <name>", Placeholder.component("name", meta.displayName())), 1));
 
             e.getWhoClicked().openInventory(buyOrSell);
             openShopMenus.put(e.getWhoClicked().getUniqueId(), buyOrSell);
@@ -268,7 +268,7 @@ public class Shopkeeper implements Listener {
             }
 
             int generalIndex = buyLoreIndex != -1 ? buyLoreIndex : sellLoreIndex;
-            Inventory shopMenu = Bukkit.createInventory(null, 45, MessageTools.parseText(data.getBuyOrSell() + " <name>", Template.template("name", meta.displayName())));
+            Inventory shopMenu = Bukkit.createInventory(null, 45, MessageTools.parseText(data.getBuyOrSell() + " <name>", Placeholder.component("name", meta.displayName())));
             ItemStack[] contents = shopMenu.getContents();
             for (int i = 0; i < contents.length; i++) {
                 contents[i] = GRAY_GLASS_ITEM;
@@ -356,7 +356,7 @@ public class Shopkeeper implements Listener {
         ItemMeta meta = item.getItemMeta();
         Component itemName = meta.displayName();
 
-        Component newName = ItemTools.enableItalicUsage(MessageTools.parseText("<reset><gray>" + quantity + "x</gray></reset> <name>", Template.template("name", itemName)));
+        Component newName = ItemTools.enableItalicUsage(MessageTools.parseText("<reset><gray>" + quantity + "x</gray></reset> <name>", Placeholder.component("name", itemName)));
         meta.displayName(newName);
 
         item.setItemMeta(meta);
