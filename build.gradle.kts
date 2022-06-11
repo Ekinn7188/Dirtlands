@@ -1,10 +1,14 @@
-//file:noinspection GroovyAssignabilityCheck
+import java.net.URI;
+
 plugins {
     `java-library`
-    id("nu.studer.jooq") version "6.0.1"
-    id("org.flywaydb.flyway") version "8.0.5"
-    id("io.papermc.paperweight.userdev") version "1.3.6"
-    id("xyz.jpenilla.run-paper") version "1.0.6"
+    java
+
+    id("com.github.johnrengelman.shadow") version "7.1.2" // fat jar
+    id("nu.studer.jooq") version "6.0.1" // database
+    id("org.flywaydb.flyway") version "8.0.5" // database
+    id("io.papermc.paperweight.userdev") version "1.3.6" // paper
+    id("xyz.jpenilla.run-paper") version "1.0.6" // server
 }
 
 group = "net.dirtlands"
@@ -18,7 +22,10 @@ java {
 repositories {
     mavenCentral()
     mavenLocal()
-    maven ("https://oss.sonatype.org/content/repositories/snapshots/")
+    maven {
+        name = "sonatype-oss-snapshots"
+        url = URI("https://oss.sonatype.org/content/repositories/snapshots/")
+    }
     maven("https://maven.enginehub.org/repo/")
     maven("https://repo.dmulloy2.net/repository/public/")
     maven("https://repo.citizensnpcs.co/")
@@ -27,19 +34,19 @@ repositories {
 
 dependencies {
     //minecraft
-    paperDevBundle("1.18.2-R0.1-SNAPSHOT")
+    paperDevBundle("1.19-R0.1-SNAPSHOT")
     compileOnly ("net.luckperms:api:5.4")
     compileOnly ("com.sk89q.worldguard:worldguard-bukkit:7.0.7")
     implementation ("org.reflections:reflections:0.10.2")
-    compileOnly ("net.citizensnpcs:citizens-main:2.0.28-SNAPSHOT")
-    implementation ("jeeper.utils:PaperPluginUtils:1.2")
+    compileOnly ("net.citizensnpcs:citizens-main:2.0.30-SNAPSHOT")
+    implementation ("jeeper.utils:PaperPluginUtils:1.3")
     implementation ("net.wesjd:anvilgui:1.5.3-SNAPSHOT")
 
     //database
     implementation("org.jooq:jooq:3.16.6")
-    compileOnly ("org.xerial:sqlite-jdbc:3.36.0.3")
     implementation ("org.flywaydb:flyway-core:8.5.11")
     implementation ("ch.qos.logback:logback-classic:1.2.11")
+    compileOnly ("org.xerial:sqlite-jdbc:3.36.0.3")
     jooqGenerator ("org.xerial:sqlite-jdbc:3.36.0.3")
 }
 
@@ -102,7 +109,7 @@ tasks {
         // Configure the Minecraft version for our task.
         // This is the only required configuration besides applying the plugin.
         // Your plugin's jar (or shadowJar if present) will be used automatically.
-        minecraftVersion("1.18")
+        //minecraftVersion("1.19")
     }
 
     compileJava {
@@ -129,7 +136,4 @@ tasks {
     classes {
         dependsOn(named<nu.studer.gradle.jooq.JooqGenerate>("generateJooq"))
     }
-
-
 }
-

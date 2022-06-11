@@ -27,10 +27,11 @@ public class Main extends JavaPlugin {
     @Override
     public void onEnable(){
         //makes sure the server has all the required plugins. if not, the plugin will disable
-        PluginEnable.checkForPluginDependencies(List.of("WorldGuard", "LuckPerms", "Citizens", "Jeeper-Essentials"), "dirtlands");
+        PluginEnable.checkForPluginDependencies(List.of("WorldGuard", "LuckPerms", "Citizens", "Jeeper-Essentials"), "Dirtlands");
 
         org.apache.logging.log4j.core.Logger coreLogger = (org.apache.logging.log4j.core.Logger) LogManager.getRootLogger();
         coreLogger.addFilter(new LogFilter());
+
 
         Main.initializeClasses();
 
@@ -73,7 +74,7 @@ public class Main extends JavaPlugin {
 
         */
 
-        config = new Config("config", "dirtlands");
+        config = new Config("config", "Dirtlands");
         config.readDefaults(this, "config.yml");
         config.get().options().copyDefaults(true);
         config.get().options().parseComments(true);
