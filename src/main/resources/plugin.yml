@@ -15,7 +15,7 @@ commands:
     description: gets the top richest players
   bal:
     description: gets the balance of a player
-  garp slap:
+  garp:
     description: warps to the shop
 permissions:
   dirtlands.dirtlands:
@@ -26,4 +26,7 @@ permissions:
     default: op
   dirtlands.shopkeeper:
     description: gives access to editing shopkeepers
+    default: op
+  dirtlands.combat.bypass:
+    description: allows bypassing combat restrictions
     default: op

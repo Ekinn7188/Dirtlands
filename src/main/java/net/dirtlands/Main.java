@@ -2,7 +2,7 @@ package net.dirtlands;
 
 import com.sk89q.worldguard.WorldGuard;
 import jeeper.utils.PluginEnable;
-import jeeper.utils.config.ConfigSetup;
+import jeeper.utils.config.Config;
 import net.dirtlands.commands.PluginCommand;
 import net.dirtlands.commands.tab.PluginTabCompleter;
 import net.dirtlands.database.SQLite;
@@ -22,16 +22,16 @@ import java.util.Objects;
 public class Main extends JavaPlugin {
 
     private static Main plugin;
-    private ConfigSetup config;
+    private Config config;
     private DSLContext dslContext;
-
     @Override
     public void onEnable(){
         //makes sure the server has all the required plugins. if not, the plugin will disable
-        PluginEnable.checkForPluginDependencies(List.of("WorldGuard", "LuckPerms", "Citizens", "Jeeper-Essentials"), "dirtlands");
+        PluginEnable.checkForPluginDependencies(List.of("WorldGuard", "LuckPerms", "Citizens", "Jeeper-Essentials"), "Dirtlands");
 
         org.apache.logging.log4j.core.Logger coreLogger = (org.apache.logging.log4j.core.Logger) LogManager.getRootLogger();
         coreLogger.addFilter(new LogFilter());
+
 
         Main.initializeClasses();
 
@@ -48,6 +48,39 @@ public class Main extends JavaPlugin {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+
+    public static Main getPlugin(){
+        return plugin;
+    }
+
+    public DSLContext getDslContext(){
+        return dslContext;
+    }
+    public Config config() {
+        return config;
+    }
+
+    private void startFileSetup(){
+        getConfig().options().copyDefaults();
+        saveDefaultConfig();
+
+        /*
+
+
+        config.yml
+
+
+        */
+
+        config = new Config("config", "Dirtlands");
+        config.readDefaults(this, "config.yml");
+        config.get().options().copyDefaults(true);
+        config.get().options().parseComments(true);
+        config.save();
+
+        //if making another file, add it to /dirtlands reload
     }
 
 
@@ -92,38 +125,6 @@ public class Main extends JavaPlugin {
 
         }
 
-    }
-
-    public static Main getPlugin(){
-        return plugin;
-    }
-    public DSLContext getDslContext(){
-        return dslContext;
-    }
-    public ConfigSetup config() {
-        return config;
-    }
-
-
-    private void startFileSetup(){
-        getConfig().options().copyDefaults();
-        saveDefaultConfig();
-
-        /*
-
-
-        config.yml
-
-
-        */
-
-        config = new ConfigSetup("config", "dirtlands");
-        config.readDefaults(this, "config.yml");
-        config.get().options().copyDefaults(true);
-        config.get().options().parseComments(true);
-        config.save();
-
-        //if making another file, add it to /dirtlands reload
     }
 
 

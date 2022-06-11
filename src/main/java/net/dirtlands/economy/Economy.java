@@ -2,17 +2,17 @@ package net.dirtlands.economy;
 
 import dirtlands.db.Tables;
 import jeeper.utils.MessageTools;
-import jeeper.utils.config.ConfigSetup;
+import jeeper.utils.config.Config;
 import net.dirtlands.Main;
 import net.dirtlands.database.DatabaseTools;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.OfflinePlayer;
 import org.jooq.DSLContext;
 
 import java.util.Objects;
 
 public class Economy {
-    private static final ConfigSetup config = Main.getPlugin().config();
+    private static final Config config = Main.getPlugin().config();
     static DSLContext dslContext = Main.getPlugin().getDslContext();
 
     /**
@@ -33,7 +33,7 @@ public class Economy {
 
         if (player.isOnline()) {
             Objects.requireNonNull(player.getPlayer()).sendActionBar(MessageTools.parseFromPath(config, "Money Gained Actionbar",
-                    Template.template("money", String.format("%,d", amount)), Template.template("balance", String.format("%,d", balance))));
+                    Placeholder.parsed("money", String.format("%,d", amount)), Placeholder.parsed("balance", String.format("%,d", balance))));
         }
 
 
@@ -62,7 +62,7 @@ public class Economy {
 
         if (player.isOnline()) {
             Objects.requireNonNull(player.getPlayer()).sendActionBar(MessageTools.parseFromPath(config, "Money Lost Actionbar",
-                    Template.template("money", String.format("%,d", amount)), Template.template("balance", String.format("%,d", balance))));
+                    Placeholder.parsed("money", String.format("%,d", amount)), Placeholder.parsed("balance", String.format("%,d", balance))));
         }
 
         return true;
@@ -86,7 +86,7 @@ public class Economy {
 
         if (player.isOnline()) {
             Objects.requireNonNull(player.getPlayer()).sendActionBar(MessageTools.parseFromPath(config, "Money Lost Actionbar",
-                Template.template("money", String.format("%,d", amount)), Template.template("balance", String.format("%,d", balance))));
+                Placeholder.parsed("money", String.format("%,d", amount)), Placeholder.parsed("balance", String.format("%,d", balance))));
         }
     }
 
@@ -104,7 +104,7 @@ public class Economy {
 
         if (player.isOnline()) {
             Objects.requireNonNull(player.getPlayer()).sendActionBar(MessageTools.parseFromPath(config,"Money Set Actionbar",
-                    Template.template("money", String.format("%,d", amount))));
+                    Placeholder.parsed("money", String.format("%,d", amount))));
         }
 
     }

@@ -3,7 +3,8 @@ package net.dirtlands.commands;
 public enum Permission {
     DIRTLANDS("dirtlands.dirtlands"),
     ECONOMY("dirtlands.economy"),
-    SHOPKEEPER("dirtlands.shopkeeper");
+    SHOPKEEPER("dirtlands.shopkeeper"),
+    BYPASS_COMBAT("dirtlands.combat.bypass");
 
     private final String name;
 

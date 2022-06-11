@@ -1,19 +1,19 @@
 package net.dirtlands.commands.economy;
 
 import jeeper.utils.MessageTools;
-import jeeper.utils.config.ConfigSetup;
+import jeeper.utils.config.Config;
 import net.dirtlands.Main;
 import net.dirtlands.commands.Permission;
 import net.dirtlands.commands.PluginCommand;
 import net.dirtlands.economy.Economy;
 import net.dirtlands.tools.UUIDTools;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 
 public class EconomyCmd extends PluginCommand {
 
-    private static final ConfigSetup config = Main.getPlugin().config();
+    private static final Config config = Main.getPlugin().config();
 
     @Override
     public String getName() {
@@ -40,11 +40,11 @@ public class EconomyCmd extends PluginCommand {
             }
 
             String name = player.getName();
-            assert name != null;//checked in UUIDTools.checkNameAndUUID
+            assert name != null; // checked in UUIDTools.checkNameAndUUID
 
             if (args[0].equalsIgnoreCase("get")) {
                 sender.sendMessage(MessageTools.parseFromPath(config, "Player Balance",
-                        Template.template("player", name), Template.template("balance", Economy.commaSeperatedBalance(player))));
+                        Placeholder.parsed("player", name), Placeholder.parsed("balance", Economy.commaSeperatedBalance(player))));
                 return;
             }
 
@@ -58,49 +58,49 @@ public class EconomyCmd extends PluginCommand {
                     try {
                         Economy.addMoney(player, Integer.parseInt(args[2]));
                         sender.sendMessage(MessageTools.parseFromPath(config, "Player Balance",
-                                Template.template("player", name), Template.template("balance", Economy.commaSeperatedBalance(player))));
+                                Placeholder.parsed("player", name), Placeholder.parsed("balance", Economy.commaSeperatedBalance(player))));
                     } catch (NumberFormatException e) {
-                        sender.sendMessage(MessageTools.parseFromPath(config, "Correct Usage", Template.template("command", "/economy add <number> <player>")));
+                        sender.sendMessage(MessageTools.parseFromPath(config, "Correct Usage", Placeholder.parsed("command", "/economy add <number> <player>")));
                     }
                     break;
                 case "remove":
                     try {
                         if (!Economy.removeMoney(player, Integer.parseInt(args[2]))) {
-                            sender.sendMessage(MessageTools.parseFromPath(config, "Player Doesnt Have Enough Money", Template.template("player", name)));
+                            sender.sendMessage(MessageTools.parseFromPath(config, "Player Doesnt Have Enough Money", Placeholder.parsed("player", name)));
                         } else {
                             sender.sendMessage(MessageTools.parseFromPath(config, "Player Balance",
-                                    Template.template("player", name), Template.template("balance", Economy.commaSeperatedBalance(player))));
+                                    Placeholder.parsed("player", name), Placeholder.parsed("balance", Economy.commaSeperatedBalance(player))));
                         }
 
                     } catch (NumberFormatException e) {
-                        sender.sendMessage(MessageTools.parseFromPath(config, "Correct Usage", Template.template("command", "/economy remove <number> <player>")));
+                        sender.sendMessage(MessageTools.parseFromPath(config, "Correct Usage", Placeholder.parsed("command", "/economy remove <number> <player>")));
                     }
                     break;
                 case "forceremove":
                     try {
                         Economy.forceRemoveMoney(player, Integer.parseInt(args[2]));
                         sender.sendMessage(MessageTools.parseFromPath(config, "Player Balance",
-                                Template.template("player", name), Template.template("balance", Economy.commaSeperatedBalance(player))));
+                                Placeholder.parsed("player", name), Placeholder.parsed("balance", Economy.commaSeperatedBalance(player))));
                     } catch (NumberFormatException e) {
-                        sender.sendMessage(MessageTools.parseFromPath(config, "Correct Usage", Template.template("command", "/economy forceremove <number> <player>")));
+                        sender.sendMessage(MessageTools.parseFromPath(config, "Correct Usage", Placeholder.parsed("command", "/economy forceremove <number> <player>")));
                     }
                     break;
                 case "set":
                     try {
                         Economy.setBalance(player, Integer.parseInt(args[2]));
                         sender.sendMessage(MessageTools.parseFromPath(config, "Player Balance",
-                                Template.template("player", name), Template.template("balance", Economy.commaSeperatedBalance(player))));
+                                Placeholder.parsed("player", name), Placeholder.parsed("balance", Economy.commaSeperatedBalance(player))));
                     } catch (NumberFormatException e) {
-                        sender.sendMessage(MessageTools.parseFromPath(config, "Correct Usage", Template.template("command", "/economy set <number> <player>")));
+                        sender.sendMessage(MessageTools.parseFromPath(config, "Correct Usage", Placeholder.parsed("command", "/economy set <number> <player>")));
                     }
                     break;
                 default:
-                    sender.sendMessage(MessageTools.parseFromPath(config, "Correct Usage", Template.template("command",
+                    sender.sendMessage(MessageTools.parseFromPath(config, "Correct Usage", Placeholder.parsed("command",
                             "/economy <add/remove/forceremove/set/get> <player> <number(except for get command)>")));
                     break;
             }
         } else {
-            sender.sendMessage(MessageTools.parseFromPath(config, "Correct Usage", Template.template("command",
+            sender.sendMessage(MessageTools.parseFromPath(config, "Correct Usage", Placeholder.parsed("command",
                     "/economy <add/remove/forceremove/set/get> <player> <number(except for get command)>")));
         }
     }
