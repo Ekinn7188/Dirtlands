@@ -1,6 +1,6 @@
 name: Dirtlands
 version: 1.0
-api-version: 1.18
+api-version: 1.19
 description: Dirt
 depend: [WorldGuard, LuckPerms, Citizens, Jeeper-Essentials]
 author: Jeeper_
