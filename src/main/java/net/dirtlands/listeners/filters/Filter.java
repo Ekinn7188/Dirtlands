@@ -1,9 +1,9 @@
 package net.dirtlands.listeners.filters;
 
 import jeeper.utils.MessageTools;
-import jeeper.utils.config.ConfigSetup;
+import jeeper.utils.config.Config;
 import net.dirtlands.Main;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.entity.HumanEntity;
 
 import java.util.ArrayList;
@@ -13,7 +13,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Filter {
-    public static ConfigSetup config = Main.getPlugin().config();
+    public static Config config = Main.getPlugin().config();
     public static final ArrayList<Pattern> blockedPatterns = getBlockedRegex(Objects.requireNonNull(config.get().getStringList("Word Filter")));
 
     public static ArrayList<Pattern> getBlockedRegex(List<String> BlockedWords) {
@@ -75,7 +75,7 @@ public class Filter {
                     blockedMessage = blockedMessage.substring(1);
                 }
 
-                p.sendMessage(MessageTools.parseFromPath(config, "Chat Blocked", Template.template("word", blockedMessage.trim())));
+                p.sendMessage(MessageTools.parseFromPath(config, "Chat Blocked", Placeholder.parsed("word", blockedMessage.trim())));
                 return true;
             }
         }

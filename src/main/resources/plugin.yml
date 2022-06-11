@@ -27,3 +27,6 @@ permissions:
   dirtlands.shopkeeper:
     description: gives access to editing shopkeepers
     default: op
+  dirtlands.combat.bypass:
+    description: allows bypassing combat restrictions
+    default: op

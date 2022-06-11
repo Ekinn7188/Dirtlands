@@ -2,11 +2,11 @@ package net.dirtlands.commands.economy;
 
 import dirtlands.db.Tables;
 import jeeper.utils.MessageTools;
-import jeeper.utils.config.ConfigSetup;
+import jeeper.utils.config.Config;
 import net.dirtlands.Main;
 import net.dirtlands.commands.PluginCommand;
 import net.dirtlands.database.DatabaseTools;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
@@ -17,7 +17,7 @@ import java.util.UUID;
 
 public class Baltop extends PluginCommand {
     DSLContext dslContext = Main.getPlugin().getDslContext();
-    final ConfigSetup config = Main.getPlugin().config();
+    final Config config = Main.getPlugin().config();
 
     @Override
     public String getName() {
@@ -40,7 +40,7 @@ public class Baltop extends PluginCommand {
                 page = Integer.parseInt(args[0]);
                 offset = (page-1)*10;
             } catch (NumberFormatException e) {
-                sender.sendMessage(MessageTools.parseFromPath(config, "Correct Usage", Template.template("command", "/baltop {page}")));
+                sender.sendMessage(MessageTools.parseFromPath(config, "Correct Usage", Placeholder.parsed("command", "/baltop {page}")));
                 return;
             }
         }
@@ -51,8 +51,8 @@ public class Baltop extends PluginCommand {
 
         int pages = (int)Math.ceil(dslContext.fetchCount(Tables.ECONOMY) / 10.0);
 
-        sender.sendMessage(MessageTools.parseFromPath(config, "Baltop Header", Template.template("page", String.valueOf(page)),
-                Template.template("pages", String.valueOf(pages))));
+        sender.sendMessage(MessageTools.parseFromPath(config, "Baltop Header", Placeholder.parsed("page", String.valueOf(page)),
+                Placeholder.parsed("pages", String.valueOf(pages))));
 
         var set = map.entrySet().iterator();
 
@@ -76,8 +76,8 @@ public class Baltop extends PluginCommand {
             }
 
             sender.sendMessage(MessageTools.parseFromPath(config, "Baltop Names",
-                    Template.template("position", String.valueOf(position)), Template.template("name", player.getName()),
-                    Template.template("balance", String.format("%,d", value))));
+                    Placeholder.parsed("position", String.valueOf(position)), Placeholder.parsed("name", player.getName()),
+                    Placeholder.parsed("balance", String.format("%,d", value))));
 
             position++;
         }
