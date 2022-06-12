@@ -5,7 +5,6 @@ import jeeper.utils.MessageTools;
 import jeeper.utils.config.Config;
 import net.dirtlands.Main;
 import net.dirtlands.commands.PluginCommand;
-import net.dirtlands.database.DatabaseTools;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -66,8 +65,8 @@ public class Baltop extends PluginCommand {
             OfflinePlayer player;
             try {
                 player = Bukkit.getOfflinePlayer(UUID.fromString(Objects.requireNonNull(
-                        DatabaseTools.firstString(dslContext.select(Tables.USERS.USERUUID).from(Tables.USERS)
-                                .where(Tables.USERS.USERID.eq(key)).fetchAny()))));
+                        dslContext.select(Tables.USERS.USERUUID).from(Tables.USERS)
+                                .where(Tables.USERS.USERID.eq(key)).fetchAny()).get(Tables.USERS.USERUUID)));
             } catch (NullPointerException e) {
                 continue;
             }

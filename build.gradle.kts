@@ -1,4 +1,4 @@
-import java.net.URI;
+import java.net.URI
 
 plugins {
     `java-library`
@@ -41,6 +41,8 @@ dependencies {
     compileOnly ("net.citizensnpcs:citizens-main:2.0.30-SNAPSHOT")
     implementation ("jeeper.utils:PaperPluginUtils:1.3")
     implementation ("net.wesjd:anvilgui:1.5.3-SNAPSHOT")
+    implementation ("net.kyori:adventure-text-serializer-plain:4.11.0")
+    implementation("net.kyori:adventure-text-serializer-gson:4.11.0")
 
     //database
     implementation("org.jooq:jooq:3.16.6")

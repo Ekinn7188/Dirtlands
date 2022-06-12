@@ -51,6 +51,11 @@ Baltop Names: '<#b8a567>(#<position>) <#856f2d><name>: <#7c3e12><balance>'
 Player Balance: '<#856f2d><player><#b8a567> has <#856f2d><balance></#856f2d> expensive diamonds'
 Balance: '<#856f2d>You<#b8a567> have <#856f2d><balance></#856f2d> expensive diamonds'
 
+# Playtime
+
+Your Playtime: '<#856f2d>You have been playing for <#b8a567><hours></#b8a567> hours and <#b8a567><minutes></#b8a567> minutes'
+Other Playtime: '<#856f2d><player><#b8a567> has been playing for <#b8a567><hours></#b8a567> hours and <#b8a567><minutes></#b8a567> minutes'
+
 # Shop
 No Space: '<#856f2d>You don''t have enough space in your inventory for this'
 Quick Inventory: '<#856f2d>You are opening inventories too quickly!'

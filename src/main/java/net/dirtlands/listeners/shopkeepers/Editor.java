@@ -5,7 +5,6 @@ import jeeper.utils.MessageTools;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import net.dirtlands.Main;
-import net.dirtlands.database.DatabaseTools;
 import net.dirtlands.database.ItemSerialization;
 import net.dirtlands.tools.ItemTools;
 import net.kyori.adventure.text.Component;
@@ -359,7 +358,10 @@ public class Editor implements Listener {
                     NPC npc = closingEditor.get(e.getPlayer()).getNpc();
                     closingEditor.remove(e.getPlayer());
 
-                    var inventoryData = DatabaseTools.firstString(dslContext.select(Tables.SHOPKEEPERS.INVENTORYBASE64).from(Tables.SHOPKEEPERS).where(Tables.SHOPKEEPERS.SHOPKEEPERID.eq(npc.getId())).fetchAny());
+                    var inventoryDataRecord = dslContext.select(Tables.SHOPKEEPERS.INVENTORYBASE64)
+                            .from(Tables.SHOPKEEPERS).where(Tables.SHOPKEEPERS.SHOPKEEPERID.eq(npc.getId())).fetchAny();
+
+                    String inventoryData = inventoryDataRecord == null ? null : inventoryDataRecord.get(Tables.SHOPKEEPERS.INVENTORYBASE64);
 
                     //get the inventory name from the lore of the name tag in slot inventory.getSize() - 2
                     Component name = MessageTools.parseText("<gold>Shop");

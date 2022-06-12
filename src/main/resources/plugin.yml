@@ -17,6 +17,8 @@ commands:
     description: gets the balance of a player
   garp:
     description: warps to the shop
+  playtime:
+    description: gets the playtime of a player
 permissions:
   dirtlands.dirtlands:
     description: gives access to server-related commands

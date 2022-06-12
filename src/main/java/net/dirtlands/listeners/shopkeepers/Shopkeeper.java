@@ -7,7 +7,6 @@ import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import net.dirtlands.Main;
 import net.dirtlands.commands.Permission;
-import net.dirtlands.database.DatabaseTools;
 import net.dirtlands.database.ItemSerialization;
 import net.dirtlands.economy.Economy;
 import net.dirtlands.tools.ItemTools;
@@ -77,8 +76,10 @@ public class Shopkeeper implements Listener {
     private void openShop(PlayerInteractEntityEvent e) {
         NPC npc = CitizensAPI.getNPCRegistry().getNPC(e.getRightClicked());
 
-        String base64 = DatabaseTools.firstString(dslContext.select(Tables.SHOPKEEPERS.INVENTORYBASE64).from(Tables.SHOPKEEPERS)
-                .where(Tables.SHOPKEEPERS.SHOPKEEPERID.eq(npc.getId())).fetchAny());
+        var base64Record = dslContext.select(Tables.SHOPKEEPERS.INVENTORYBASE64).from(Tables.SHOPKEEPERS)
+                .where(Tables.SHOPKEEPERS.SHOPKEEPERID.eq(npc.getId())).fetchAny();
+
+        String base64 = base64Record == null ? null : base64Record.get(Tables.SHOPKEEPERS.INVENTORYBASE64);
 
         if (base64 == null) {
             return;
