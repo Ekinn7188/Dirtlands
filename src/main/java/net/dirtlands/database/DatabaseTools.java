@@ -4,7 +4,6 @@ import dirtlands.db.Tables;
 import net.dirtlands.Main;
 import org.jooq.DSLContext;
 
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 public class DatabaseTools {
@@ -15,16 +14,16 @@ public class DatabaseTools {
      * Add a user to the database, providing player's UUID
      */
     public static void addUser(UUID uuid) {
-        dslContext.insertInto(Tables.USERS, Tables.USERS.USERUUID, Tables.USERS.JOINDATE)
-                .values(uuid.toString(), LocalDateTime.now()).execute();
+        dslContext.insertInto(Tables.USERS, Tables.USERS.USERUUID)
+                .values(uuid.toString()).execute();
     }
 
     /**
      * Add a user to the database, providing player's UUID
      */
     public static void addUser(String uuid) {
-        dslContext.insertInto(Tables.USERS, Tables.USERS.USERUUID, Tables.USERS.JOINDATE)
-                .values(uuid, LocalDateTime.now()).execute();
+        dslContext.insertInto(Tables.USERS, Tables.USERS.USERUUID)
+                .values(uuid).execute();
     }
 
     /**
