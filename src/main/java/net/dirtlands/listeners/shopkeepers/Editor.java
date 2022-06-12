@@ -62,8 +62,7 @@ public class Editor implements Listener {
             ItemTools.createGuiItem(Material.LIME_STAINED_GLASS_PANE, MessageTools.parseText("<green>Leave And Save"), 1),
             ItemTools.createGuiItem(Material.NAME_TAG, MessageTools.parseText("<red>Edit Shop Name"), 1,
                     List.of(MessageTools.parseText("&7"),
-                            ItemTools.enableItalicUsage(MessageTools.parseText("<red>Name: <dark_red>unknown"))).toArray(new Component[0])),
-            ItemTools.createGuiItem(Material.ARROW, MessageTools.parseText("<dark_red>Go to second page"), 1)
+                            ItemTools.enableItalicUsage(MessageTools.parseText("<red>Name: <dark_red>unknown"))).toArray(new Component[0]))
     );
 
     /**
@@ -110,7 +109,6 @@ public class Editor implements Listener {
                         inventory.setItem(inventory.getSize() - i, getNewShopName(MessageTools.parseText("<gold>Shop")));
                     }
                 }
-                case 1 -> inventory.setItem(inventory.getSize() - i, editorHotbar.get(7));
                 //set to glass if not a special item
                 default -> inventory.setItem(inventory.getSize() - i, editorHotbar.get(0));
             }
