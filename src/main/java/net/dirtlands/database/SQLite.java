@@ -40,6 +40,7 @@ public class SQLite {
                 .set(settings);
 
         System.getProperties().setProperty("org.jooq.no-logo", "true");
+        System.setProperty("org.jooq.no-tips", "true");
 
         return DSL.using(configuration);
     }

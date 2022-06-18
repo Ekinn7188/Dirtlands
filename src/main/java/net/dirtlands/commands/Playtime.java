@@ -26,7 +26,7 @@ public class Playtime extends PluginCommand {
 
         if (args.length == 0) {
             if (player == null) {
-                sender.sendMessage("Usage: /playtime <player>");
+                sender.sendMessage(MessageTools.parseFromPath(Main.getPlugin().config(), "Correct Usage", Placeholder.parsed("command", "/playtime {player}")));
                 return;
             }
         }
