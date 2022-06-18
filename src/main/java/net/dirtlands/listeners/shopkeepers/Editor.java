@@ -352,6 +352,9 @@ public class Editor implements Listener {
 
     @EventHandler
     public void onInventoryClose(InventoryCloseEvent e) {
+        if (e.getInventory().getType().equals(InventoryType.CRAFTING)) {
+            return;
+        }
         if (closingEditor.containsKey(e.getPlayer())) {
             if (closingEditor.get(e.getPlayer()).getSave()) {
                 if (!openEditors.containsKey(e.getPlayer().getUniqueId())) {
