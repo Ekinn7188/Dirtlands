@@ -312,13 +312,16 @@ public class Editor implements Listener {
             Component name = item.getItemMeta().displayName();
             if (name != null) {
                 String plainName = PlainTextComponentSerializer.plainText().serialize(name);
-                if (!plainName.equals(PlainTextComponentSerializer.plainText().serialize(MessageTools.parseText(plainName)))) {
 
+                if (!plainName.equals(PlainTextComponentSerializer.plainText().serialize(MessageTools.parseText(plainName)))) {
                     ItemMeta meta = item.getItemMeta();
 
-                    meta.displayName(ItemTools.enableItalicUsage(MessageTools.parseText(MiniMessage.miniMessage().serialize(name))));
-                    item.setItemMeta(meta);
+                    // For some reason if a message like "\<green>" gets passed, newName becomes "\\\<green>".
+                    // This regex will remove 2 backslashes if they exist, so the escaped character parses correctly
+                    String newName = MiniMessage.miniMessage().serialize(name).replaceAll("\\\\{1,2}<", "<");
 
+                    meta.displayName(ItemTools.enableItalicUsage(MessageTools.parseText(newName)));
+                    item.setItemMeta(meta);
                 }
             }
 
@@ -341,7 +344,18 @@ public class Editor implements Listener {
                     lore.set(lore.indexOf(line), ItemTools.enableItalicUsage(MessageTools.parseText("<italic><#b8a567>Carbon Copy")));
                     continue;
                 }
-                lore.set(lore.indexOf(line), ItemTools.enableItalicUsage(MessageTools.parseText(MiniMessage.miniMessage().serialize(line))));
+                lore.set(lore.indexOf(line),
+                        ItemTools.enableItalicUsage(
+                                MessageTools.parseText(
+
+                                        // For some reason if a message like "\<green>" gets passed,
+                                        // newName becomes "\\\<green>".
+                                        // This regex will remove 2 backslashes if they exist,
+                                        // so the escaped character parses correctly
+                                        MiniMessage.miniMessage().serialize(line)
+                                                .replaceAll("\\\\{1,2}<", "<")
+                                )
+                        ));
             }
             meta.lore(lore);
             item.setItemMeta(meta);
