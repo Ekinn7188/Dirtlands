@@ -11,6 +11,11 @@ public class Dirtlands extends PluginCommand {
     }
 
     @Override
+    protected Permission getPermissionType() {
+        return Permission.DIRTLANDS;
+    }
+
+    @Override
     public boolean isRequiresPlayer() {
         return false;
     }
