@@ -132,6 +132,9 @@ public class Shopkeeper implements Listener {
 
         ItemStack item = e.getCurrentItem();
         if (item == null) {
+            if (e.getCursor() != null) {
+                e.setCancelled(true);
+            }
             return;
         }
         if (item.getType() == Material.AIR) {
