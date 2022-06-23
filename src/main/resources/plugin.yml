@@ -19,6 +19,9 @@ commands:
     description: warps to the shop
   playtime:
     description: gets the playtime of a player
+  horsemount:
+    description: gives the player a horse mount with the specified arguments
+    aliases: [horse]
 permissions:
   dirtlands.dirtlands:
     description: gives access to server-related commands
@@ -31,4 +34,7 @@ permissions:
     default: op
   dirtlands.combat.bypass:
     description: allows bypassing combat restrictions
+    default: op
+  dirtlands.horsemount:
+    description: allows the use of the /horsemount command
     default: op

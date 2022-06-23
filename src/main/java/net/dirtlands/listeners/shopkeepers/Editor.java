@@ -71,7 +71,7 @@ public class Editor implements Listener {
      */
     protected static void openEditor(PlayerInteractEntityEvent e) {
         NPC npc = CitizensAPI.getNPCRegistry().getNPC(e.getRightClicked());
-        closingEditor.put(e.getPlayer(), new ClosedEditorData(npc, false));
+        closingEditor.put(e.getPlayer(), new ClosedEditorData(npc, null));
 
         var npcId = dslContext.selectFrom(Tables.SHOPKEEPERS).where(Tables.SHOPKEEPERS.SHOPKEEPERID.eq(npc.getId())).fetchOne();
         Inventory inventory;
@@ -146,12 +146,12 @@ public class Editor implements Listener {
                         var whoClickedData = closingEditor.get(e.getWhoClicked());
                         whoClickedData.setSave(true);
                         closingEditor.replace(e.getWhoClicked(), closingEditor.get(e.getWhoClicked()), whoClickedData);
-                        openEditors.remove(e.getWhoClicked().getUniqueId());
+
                         e.getWhoClicked().closeInventory();
 
                     } else if (e.getCurrentItem().getType().equals(Material.RED_STAINED_GLASS_PANE)) {
                         var whoClickedData = closingEditor.get(e.getWhoClicked());
-                        whoClickedData.setSave(true);
+                        whoClickedData.setSave(false);
                         closingEditor.replace(e.getWhoClicked(), closingEditor.get(e.getWhoClicked()), whoClickedData);
                         e.getWhoClicked().closeInventory();
                     } else if (e.getCurrentItem().getType().equals(Material.CHEST)) {
@@ -193,8 +193,7 @@ public class Editor implements Listener {
                                     inv.setItem(updatedSize - 6, editorHotbar.get(3));
                                     inv.setItem(updatedSize - 5, getChestNewLore(size));
                                     inv.setItem(updatedSize - 4, editorHotbar.get(5));
-                                    inv.setItem(updatedSize - 2, editorHotbar.get(6));
-                                    inv.setItem(updatedSize - 1, editorHotbar.get(7));
+                                    inv.setItem(updatedSize - 3, editorHotbar.get(6));
 
                                     invReference.inv = inv;
                                     return AnvilGUI.Response.close();
@@ -203,7 +202,7 @@ public class Editor implements Listener {
                                         Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getPlugin(), () -> {
                                             player.openInventory(invReference.inv);
                                             //disable players from closing the new editor window
-                                            closingEditor.put(e.getWhoClicked(), new ClosedEditorData(npc, false));
+                                            closingEditor.put(e.getWhoClicked(), new ClosedEditorData(npc, null));
                                             //keep track of this inventory being open
                                             openEditors.put(e.getWhoClicked().getUniqueId(), invReference.inv);
                                         }, 5L))
@@ -227,13 +226,14 @@ public class Editor implements Listener {
                                     invReference.inv = inv;
                                     return AnvilGUI.Response.close();
                                 })
-                                .onClose((Player player) -> {
-                                    player.openInventory(invReference.inv);
-                                    //disable players from closing the new editor window
-                                    closingEditor.put(e.getWhoClicked(), new ClosedEditorData(npc, false));
-                                    //keep track of this inventory being open
-                                    openEditors.put(e.getWhoClicked().getUniqueId(), invReference.inv);
-                                })
+                                .onClose((Player player) ->
+                                    Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getPlugin(), () -> {
+                                        player.openInventory(invReference.inv);
+                                        //disable players from closing the new editor window
+                                        closingEditor.put(e.getWhoClicked(), new ClosedEditorData(npc, null));
+                                        //keep track of this inventory being open
+                                        openEditors.put(e.getWhoClicked().getUniqueId(), invReference.inv);
+                                    }, 5L))
                                 .text("<green>New Name")
                                 .title("Shop Name Editor")
                                 .plugin(Main.getPlugin())
@@ -247,7 +247,7 @@ public class Editor implements Listener {
                             dslContext.deleteFrom(Tables.SHOPKEEPERS)
                                     .where(Tables.SHOPKEEPERS.SHOPKEEPERID.eq(npc.getId())).execute();
 
-                            whoClickedData.setSave(true);
+                            whoClickedData.setSave(false);
                             closingEditor.replace(e.getWhoClicked(), closingEditor.get(e.getWhoClicked()), whoClickedData);
                             e.getWhoClicked().closeInventory();
 
@@ -302,7 +302,7 @@ public class Editor implements Listener {
         }
         e.getNewItems().forEach((key, value) -> {
             if (e.getInventory().getSize() > key) {
-                Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getPlugin(), () -> e.getInventory().setItem(key, parseNewItem(value)), 10L);
+                Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getPlugin(), () -> e.getInventory().setItem(key, parseNewItem(value)), 1L);
             }
         });
     }
@@ -370,44 +370,51 @@ public class Editor implements Listener {
             return;
         }
         if (closingEditor.containsKey(e.getPlayer())) {
-            if (closingEditor.get(e.getPlayer()).getSave()) {
-                if (!openEditors.containsKey(e.getPlayer().getUniqueId())) {
-                    NPC npc = closingEditor.get(e.getPlayer()).getNpc();
-                    closingEditor.remove(e.getPlayer());
-
-                    var inventoryDataRecord = dslContext.select(Tables.SHOPKEEPERS.INVENTORYBASE64)
-                            .from(Tables.SHOPKEEPERS).where(Tables.SHOPKEEPERS.SHOPKEEPERID.eq(npc.getId())).fetchAny();
-
-                    String inventoryData = inventoryDataRecord == null ? null : inventoryDataRecord.get(Tables.SHOPKEEPERS.INVENTORYBASE64);
-
-                    //get the inventory name from the lore of the name tag in slot inventory.getSize() - 2
-                    Component name = MessageTools.parseText("<gold>Shop");
-
-                    ItemStack nameTag = e.getInventory().getItem(e.getInventory().getSize() - 2);
-                    if (nameTag != null && nameTag.getType() == Material.NAME_TAG) {
-                        ItemMeta meta = nameTag.getItemMeta();
-                        List<Component> lore = meta.lore();
-                        if (lore != null) {
-                            name = lore.get(1).replaceText(x -> x.match("Name: ").replacement(Component.empty()));
-                        }
-                    }
-
-                    if (inventoryData == null) {
-                        dslContext.insertInto(Tables.SHOPKEEPERS)
-                                .columns(Tables.SHOPKEEPERS.SHOPKEEPERID, Tables.SHOPKEEPERS.INVENTORYBASE64)
-                                .values(npc.getId(), ItemSerialization.toBase64(new ItemSerialization(e.getInventory(), GsonComponentSerializer.gson().serialize(name)))).execute();
-                        return;
-                    }
-
-                    dslContext.update(Tables.SHOPKEEPERS)
-                            .set(Tables.SHOPKEEPERS.INVENTORYBASE64, ItemSerialization.toBase64(new ItemSerialization(e.getInventory(), GsonComponentSerializer.gson().serialize(name))))
-                            .where(Tables.SHOPKEEPERS.SHOPKEEPERID.eq(npc.getId())).execute();
-                } else {
-                    closingEditor.remove(e.getPlayer());
+            if (openEditors.containsKey(e.getPlayer().getUniqueId())) {
+                Boolean save = closingEditor.get(e.getPlayer()).getSave();
+                if (save == null) {
+                    editorCooldown.put(e.getPlayer().getUniqueId(), System.currentTimeMillis());
+                    Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getPlugin(), () -> e.getPlayer().openInventory(e.getInventory()), 5L);
                 }
-            } else {
-                editorCooldown.put(e.getPlayer().getUniqueId(), System.currentTimeMillis());
-                Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getPlugin(), () -> e.getPlayer().openInventory(e.getInventory()), 5L);
+                else {
+                   if (save) {
+                       openEditors.remove(e.getPlayer().getUniqueId());
+                       NPC npc = closingEditor.get(e.getPlayer()).getNpc();
+                       closingEditor.remove(e.getPlayer());
+
+                       var inventoryDataRecord = dslContext.select(Tables.SHOPKEEPERS.INVENTORYBASE64)
+                               .from(Tables.SHOPKEEPERS).where(Tables.SHOPKEEPERS.SHOPKEEPERID.eq(npc.getId())).fetchAny();
+
+                       String inventoryData = inventoryDataRecord == null ? null : inventoryDataRecord.get(Tables.SHOPKEEPERS.INVENTORYBASE64);
+
+                       //get the inventory name from the lore of the name tag in slot inventory.getSize() - 2
+                       Component name = MessageTools.parseText("<gold>Shop");
+
+                       ItemStack nameTag = e.getInventory().getItem(e.getInventory().getSize() - 2);
+                       if (nameTag != null && nameTag.getType() == Material.NAME_TAG) {
+                           ItemMeta meta = nameTag.getItemMeta();
+                           List<Component> lore = meta.lore();
+                           if (lore != null) {
+                               name = lore.get(1).replaceText(x -> x.match("Name: ").replacement(Component.empty()));
+                           }
+                       }
+
+                       if (inventoryData == null) {
+                           dslContext.insertInto(Tables.SHOPKEEPERS)
+                                   .columns(Tables.SHOPKEEPERS.SHOPKEEPERID, Tables.SHOPKEEPERS.INVENTORYBASE64)
+                                   .values(npc.getId(), ItemSerialization.toBase64(new ItemSerialization(e.getInventory(), GsonComponentSerializer.gson().serialize(name)))).execute();
+                           return;
+                       }
+
+                       dslContext.update(Tables.SHOPKEEPERS)
+                               .set(Tables.SHOPKEEPERS.INVENTORYBASE64, ItemSerialization.toBase64(new ItemSerialization(e.getInventory(), GsonComponentSerializer.gson().serialize(name))))
+                               .where(Tables.SHOPKEEPERS.SHOPKEEPERID.eq(npc.getId())).execute();
+                   }
+                   else {
+                       openEditors.remove(e.getPlayer().getUniqueId());
+                       closingEditor.remove(e.getPlayer());
+                   }
+                }
             }
         }
 
@@ -438,9 +445,9 @@ class ClosedEditorData {
     //npc editor that will be closed
     NPC npc;
     //will the editor data be saved?
-    boolean save;
+    Boolean save;
 
-    public ClosedEditorData(NPC npc, boolean save) {
+    public ClosedEditorData(NPC npc, Boolean save) {
         this.npc = npc;
         this.save = save;
     }
@@ -453,11 +460,11 @@ class ClosedEditorData {
         this.npc = npc;
     }
 
-    public boolean getSave() {
+    public Boolean getSave() {
         return save;
     }
 
-    public void setSave(boolean save) {
+    public void setSave(Boolean save) {
         this.save = save;
     }
 
