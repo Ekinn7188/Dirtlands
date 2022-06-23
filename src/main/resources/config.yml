@@ -29,12 +29,15 @@ Enter Safezone In Combat Subtitle: '<#b8a567>You cant enter safezones while in c
 # Config
 Dirtlands Reloaded: '<#856f2d>Dirtlands Reloaded!'
 
+# Horse
+Unsafe Spawn Location: '<#856f2d>Unsafe Spawn Location.'
+
 # Commands
 No Command Permission: '&cYou dont have permission to use this command!'
 Player Only Command: '<#b8a567>You must be a player to execute this command!'
-Player Doesnt Exist: '<#b8a567><player><#b8a567> doesn''t exist!'
-Player Hasnt Logged In: '<#b8a567><player><#b8a567> has never logged in before!'
-Player Is Offline: '<#b8a567><player><#b8a567> is offline!'
+Player Doesnt Exist: '<#856f2d><player><#b8a567> doesn''t exist!'
+Player Hasnt Logged In: '<#856f2d><player><#b8a567> has never logged in before!'
+Player Is Offline: '<#856f2d><player><#b8a567> is offline!'
 Correct Usage: '<#b8a567>Usage: <#856f2d><command>'
 
 # Input Errors
