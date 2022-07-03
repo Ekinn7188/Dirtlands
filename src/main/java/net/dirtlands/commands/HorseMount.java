@@ -44,7 +44,7 @@ public class HorseMount extends PluginCommand {
             style = Horse.Style.valueOf(args[3]);
         } catch (IllegalArgumentException e) {
             player.sendMessage(MessageTools.parseFromPath(Main.getPlugin().config(), "Correct Usage",
-                    Placeholder.parsed("command", "/horsemount {speed} {jump strength} {Color} {Style}")));
+                    Placeholder.parsed("command", "/horsemount {speed} {jump strength} {color} {style}")));
             return;
         }
 
@@ -65,4 +65,5 @@ public class HorseMount extends PluginCommand {
 
         player.getInventory().addItem(saddle);
     }
+
 }

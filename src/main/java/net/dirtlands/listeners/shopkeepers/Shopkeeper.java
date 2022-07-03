@@ -41,6 +41,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+/*
+ * Good luck figuring out how to debug this
+ */
 public class Shopkeeper implements Listener {
 
     private static Config config = Main.getPlugin().config();
@@ -106,7 +109,7 @@ public class Shopkeeper implements Listener {
         Inventory inv = Bukkit.createInventory(null, invSize, invName);
         if (invSize==54) {
             for (int i = invSize-9; i < invSize; i++) {
-                items[i] = Editor.editorHotbar.get(0);
+                items[i] = Editor.removeHotbarItem(Editor.editorHotbar.get(0));
             }
         } else {
             items = Arrays.copyOfRange(items, 0, items.length-9);
@@ -345,14 +348,14 @@ public class Shopkeeper implements Listener {
         if (lore == null) {
             lore = new ArrayList<>();
             lore.add(Component.empty());
-            lore.add(ItemTools.enableItalicUsage(MessageTools.parseText("&r<#7c3e12>" + buyOrSell + ": <#b8a567>" + newPrice + " Expensive Diamonds")));
+            lore.add(ItemTools.enableItalicUsage(MessageTools.parseText("&r<#2BD5D5>" + buyOrSell + ": <aqua>" + newPrice + " <dark_aqua><bold>❖")));
             item.lore(lore);
             return item;
         }
 
-        lore.set(loreIndex, ItemTools.enableItalicUsage(MessageTools.parseText("&r<#7c3e12>" + buyOrSell + ": <#b8a567>" + newPrice + " Expensive Diamonds")));
+        lore.set(loreIndex, ItemTools.enableItalicUsage(MessageTools.parseText("&r<#2BD5D5>" + buyOrSell + ": <aqua>" + newPrice + " <dark_aqua><bold>❖")));
         if (carbonCopyLine != null) {
-            lore.set(lore.indexOf(carbonCopyLine), ItemTools.enableItalicUsage(MessageTools.parseText("&r<italic><#7c3e12>Carbon Copy")));
+            lore.set(lore.indexOf(carbonCopyLine), ItemTools.enableItalicUsage(MessageTools.parseText("&r<italic><#2BD5D5>Carbon Copy")));
         }
         item.lore(lore);
 
