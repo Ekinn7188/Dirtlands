@@ -3,7 +3,6 @@ package net.dirtlands.listeners.shopkeepers;
 import dirtlands.db.Tables;
 import jeeper.utils.MessageTools;
 import net.citizensnpcs.api.CitizensAPI;
-import net.citizensnpcs.api.npc.NPC;
 import net.dirtlands.Main;
 import net.dirtlands.database.ItemSerialization;
 import net.dirtlands.tools.ItemTools;
@@ -77,10 +76,10 @@ public class Editor implements Listener {
      * @see Shopkeeper#playerInteractWithEntity(PlayerInteractEntityEvent)
      */
     protected static void openEditor(PlayerInteractEntityEvent e) {
-        NPC npc = CitizensAPI.getNPCRegistry().getNPC(e.getRightClicked());
-        closingEditor.put(e.getPlayer(), new ClosedEditorData(npc, null));
+        int npcID = CitizensAPI.getNPCRegistry().getNPC(e.getRightClicked()).getId();
+        closingEditor.put(e.getPlayer(), new ClosedEditorData(npcID, null));
 
-        var npcId = dslContext.selectFrom(Tables.SHOPKEEPERS).where(Tables.SHOPKEEPERS.SHOPKEEPERID.eq(npc.getId())).fetchOne();
+        var npcId = dslContext.selectFrom(Tables.SHOPKEEPERS).where(Tables.SHOPKEEPERS.SHOPKEEPERID.eq(npcID)).fetchOne();
         Inventory inventory;
         if (npcId != null) {
             try {
@@ -152,7 +151,7 @@ public class Editor implements Listener {
                 var whoClickedData = closingEditor.get(e.getWhoClicked());
                 whoClickedData.setSave(true);
                 closingEditor.replace(e.getWhoClicked(), closingEditor.get(e.getWhoClicked()), whoClickedData);
-                NPC npc = whoClickedData.getNpc();
+                int npcID = whoClickedData.getNpc();
                 var invReference = new Object() {
                     Inventory inv = e.getClickedInventory();
                 };
@@ -196,7 +195,7 @@ public class Editor implements Listener {
                                 Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getPlugin(), () -> {
                                     player.openInventory(invReference.inv);
                                     //disable players from closing the new editor window
-                                    closingEditor.put(e.getWhoClicked(), new ClosedEditorData(npc, null));
+                                    closingEditor.put(e.getWhoClicked(), new ClosedEditorData(npcID, null));
                                     //keep track of this inventory being open
                                     openEditors.put(e.getWhoClicked().getUniqueId(), invReference.inv);
                                 }, 5L))
@@ -208,7 +207,7 @@ public class Editor implements Listener {
                 var whoClickedData = closingEditor.get(e.getWhoClicked());
                 whoClickedData.setSave(true);
                 closingEditor.replace(e.getWhoClicked(), closingEditor.get(e.getWhoClicked()), whoClickedData);
-                NPC npc = whoClickedData.getNpc();
+                int npcID = whoClickedData.getNpc();
                 var invReference = new Object() {
                     Inventory inv = e.getClickedInventory();
                 };
@@ -224,7 +223,7 @@ public class Editor implements Listener {
                             Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getPlugin(), () -> {
                                 player.openInventory(invReference.inv);
                                 //disable players from closing the new editor window
-                                closingEditor.put(e.getWhoClicked(), new ClosedEditorData(npc, null));
+                                closingEditor.put(e.getWhoClicked(), new ClosedEditorData(npcID, null));
                                 //keep track of this inventory being open
                                 openEditors.put(e.getWhoClicked().getUniqueId(), invReference.inv);
                             }, 5L))
@@ -236,10 +235,10 @@ public class Editor implements Listener {
                 if (closingEditor.containsKey(e.getWhoClicked())) {
                     var whoClickedData = closingEditor.get(e.getWhoClicked());
 
-                    NPC npc = whoClickedData.getNpc();
+                    int npcID = whoClickedData.getNpc();
 
                     dslContext.deleteFrom(Tables.SHOPKEEPERS)
-                            .where(Tables.SHOPKEEPERS.SHOPKEEPERID.eq(npc.getId())).execute();
+                            .where(Tables.SHOPKEEPERS.SHOPKEEPERID.eq(npcID)).execute();
 
                     whoClickedData.setSave(false);
                     closingEditor.replace(e.getWhoClicked(), closingEditor.get(e.getWhoClicked()), whoClickedData);
@@ -372,11 +371,11 @@ public class Editor implements Listener {
                 else {
                    if (save) {
                        openEditors.remove(e.getPlayer().getUniqueId());
-                       NPC npc = closingEditor.get(e.getPlayer()).getNpc();
+                       int npcID = closingEditor.get(e.getPlayer()).getNpc();
                        closingEditor.remove(e.getPlayer());
 
                        var inventoryDataRecord = dslContext.select(Tables.SHOPKEEPERS.INVENTORYBASE64)
-                               .from(Tables.SHOPKEEPERS).where(Tables.SHOPKEEPERS.SHOPKEEPERID.eq(npc.getId())).fetchAny();
+                               .from(Tables.SHOPKEEPERS).where(Tables.SHOPKEEPERS.SHOPKEEPERID.eq(npcID)).fetchAny();
 
                        String inventoryData = inventoryDataRecord == null ? null : inventoryDataRecord.get(Tables.SHOPKEEPERS.INVENTORYBASE64);
 
@@ -395,13 +394,13 @@ public class Editor implements Listener {
                        if (inventoryData == null) {
                            dslContext.insertInto(Tables.SHOPKEEPERS)
                                    .columns(Tables.SHOPKEEPERS.SHOPKEEPERID, Tables.SHOPKEEPERS.INVENTORYBASE64)
-                                   .values(npc.getId(), ItemSerialization.toBase64(new ItemSerialization(e.getInventory(), GsonComponentSerializer.gson().serialize(name)))).execute();
+                                   .values(npcID, ItemSerialization.toBase64(new ItemSerialization(e.getInventory(), GsonComponentSerializer.gson().serialize(name)))).execute();
                            return;
                        }
 
                        dslContext.update(Tables.SHOPKEEPERS)
                                .set(Tables.SHOPKEEPERS.INVENTORYBASE64, ItemSerialization.toBase64(new ItemSerialization(e.getInventory(), GsonComponentSerializer.gson().serialize(name))))
-                               .where(Tables.SHOPKEEPERS.SHOPKEEPERID.eq(npc.getId())).execute();
+                               .where(Tables.SHOPKEEPERS.SHOPKEEPERID.eq(npcID)).execute();
                    }
                    else {
                        openEditors.remove(e.getPlayer().getUniqueId());
@@ -464,21 +463,21 @@ public class Editor implements Listener {
 }
 
 class ClosedEditorData {
-    //npc editor that will be closed
-    NPC npc;
+    //npc id of the shopkeeper
+    int npc;
     //will the editor data be saved?
     Boolean save;
 
-    public ClosedEditorData(NPC npc, Boolean save) {
+    public ClosedEditorData(int npc, Boolean save) {
         this.npc = npc;
         this.save = save;
     }
 
-    public NPC getNpc() {
+    public int getNpc() {
         return npc;
     }
 
-    public void setNpc(NPC npc) {
+    public void setNpc(int npc) {
         this.npc = npc;
     }
 

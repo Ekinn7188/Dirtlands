@@ -32,6 +32,9 @@ Dirtlands Reloaded: '<#856f2d>Dirtlands Reloaded!'
 # Horse
 Unsafe Spawn Location: '<#856f2d>Unsafe Spawn Location.'
 
+# Drop Confirmation
+Drop Confirmation: '<#856f2d>Press ''<key:key.drop>'' again to confirm drop'
+
 # Commands
 No Command Permission: '&cYou dont have permission to use this command!'
 Player Only Command: '<#b8a567>You must be a player to execute this command!'
@@ -55,7 +58,6 @@ Player Balance: <#2BD5D5><player> has <aqua><balance></aqua> <dark_aqua>Expensiv
 Balance: '<#2BD5D5>You have <aqua><balance></aqua> <dark_aqua>Expensive Diamonds'
 
 # Playtime
-
 Your Playtime: '<#856f2d>You have been playing for <#b8a567><hours></#b8a567> hours and <#b8a567><minutes></#b8a567> minutes'
 Other Playtime: '<#856f2d><player><#b8a567> has been playing for <#b8a567><hours></#b8a567> hours and <#b8a567><minutes></#b8a567> minutes'
 

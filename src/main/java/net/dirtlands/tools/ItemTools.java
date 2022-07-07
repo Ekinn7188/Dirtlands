@@ -4,6 +4,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.enchantments.EnchantmentTarget;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
@@ -53,5 +54,17 @@ public class ItemTools {
 
     public static Component enableItalicUsage(Component message){
         return message.decoration(TextDecoration.ITALIC, false).mergeStyle(message);
+    }
+
+    /**
+     * Includes Armor
+     */
+    public static boolean isTool(ItemStack item) {
+        for (EnchantmentTarget target : EnchantmentTarget.values()) {
+            if (target.includes(item)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

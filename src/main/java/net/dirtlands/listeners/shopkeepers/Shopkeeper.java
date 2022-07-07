@@ -4,7 +4,6 @@ import dirtlands.db.Tables;
 import jeeper.utils.MessageTools;
 import jeeper.utils.config.Config;
 import net.citizensnpcs.api.CitizensAPI;
-import net.citizensnpcs.api.npc.NPC;
 import net.dirtlands.Main;
 import net.dirtlands.commands.Permission;
 import net.dirtlands.database.ItemSerialization;
@@ -27,7 +26,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
-import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.Inventory;
@@ -77,10 +75,10 @@ public class Shopkeeper implements Listener {
      * @see Shopkeeper#playerInteractWithEntity(PlayerInteractEntityEvent)
      */
     private void openShop(PlayerInteractEntityEvent e) {
-        NPC npc = CitizensAPI.getNPCRegistry().getNPC(e.getRightClicked());
+    int npcID = CitizensAPI.getNPCRegistry().getNPC(e.getRightClicked()).getId();
 
         var base64Record = dslContext.select(Tables.SHOPKEEPERS.INVENTORYBASE64).from(Tables.SHOPKEEPERS)
-                .where(Tables.SHOPKEEPERS.SHOPKEEPERID.eq(npc.getId())).fetchAny();
+                .where(Tables.SHOPKEEPERS.SHOPKEEPERID.eq(npcID)).fetchAny();
 
         String base64 = base64Record == null ? null : base64Record.get(Tables.SHOPKEEPERS.INVENTORYBASE64);
 
@@ -126,10 +124,6 @@ public class Shopkeeper implements Listener {
             return;
         }
         if (e.getClickedInventory() == null) {
-            return;
-        }
-        //can move inventory is not a chest and if player is not shift clicking in their inventory
-        if (e.getClickedInventory().getType() == InventoryType.PLAYER && !e.getClick().isShiftClick()) {
             return;
         }
 
