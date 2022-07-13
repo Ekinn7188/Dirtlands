@@ -47,7 +47,7 @@ public class Editor implements Listener {
     private static final HashMap<HumanEntity, ClosedEditorData> closingEditor = new HashMap<>();
     //gives a 1-second cooldown before opening any inventories
     private static final Map<UUID, Long> editorCooldown = new HashMap<>();
-    protected static final List<ItemStack> editorHotbar = Stream.of(
+    public static final List<ItemStack> editorHotbar = Stream.of(
             makeHotbarItem(generateGuiBackground()),
 
             ItemTools.createGuiItem(Material.BARRIER, MessageTools.parseText("&cDelete Shop"), 1),
@@ -249,8 +249,6 @@ public class Editor implements Listener {
             return;
         }
 
-
-
         if (!e.isCancelled()) {
             parseNewItem(e.getCursor());
         }
@@ -325,11 +323,11 @@ public class Editor implements Listener {
             for (Component line : lore) {
                 String plainLore = PlainTextComponentSerializer.plainText().serialize(line);
                 if (plainLore.toUpperCase().startsWith("BUY: ")) {
-                    String noBuyText = plainLore.substring(5);
+                    String noBuyText = plainLore.toUpperCase().replace("BUY: ", "").replace(" ❖", "");
                     lore.set(lore.indexOf(line), ItemTools.enableItalicUsage(MessageTools.parseText("<#2BD5D5>Buy: <aqua>" + noBuyText + " <dark_aqua><bold>❖")));
                     continue;
                 } else if (plainLore.toUpperCase().startsWith("SELL: ")) {
-                    String noSellText = plainLore.substring(6);
+                    String noSellText = plainLore.toUpperCase().replace("SELL: ", "").replace(" ❖", "");
                     lore.set(lore.indexOf(line), ItemTools.enableItalicUsage(MessageTools.parseText("<#2BD5D5>Sell: <aqua>" + noSellText + " <dark_aqua><bold>❖")));
                     continue;
                 } else if (plainLore.equalsIgnoreCase("Carbon Copy")) {
@@ -432,7 +430,7 @@ public class Editor implements Listener {
         }
     }
 
-    protected static ItemStack generateGuiBackground() {
+    public static ItemStack generateGuiBackground() {
         ItemStack item = ItemTools.createGuiItem(Material.BLACK_STAINED_GLASS_PANE, Component.text(" "), 1);
         NamespacedKey backgroundKey = new NamespacedKey(Main.getPlugin(), "GuiBackground");
         ItemMeta meta = item.getItemMeta();
@@ -441,7 +439,7 @@ public class Editor implements Listener {
         return item;
     }
 
-    protected static ItemStack makeHotbarItem(ItemStack item) {
+    public static ItemStack makeHotbarItem(ItemStack item) {
         NamespacedKey editorHotbarKey = new NamespacedKey(Main.getPlugin(), "EditorHotbar");
         ItemMeta meta = item.getItemMeta();
         meta.getPersistentDataContainer().set(editorHotbarKey, PersistentDataType.BYTE, (byte)1);
@@ -449,14 +447,14 @@ public class Editor implements Listener {
         return item;
     }
 
-    protected static ItemStack removeHotbarItem(ItemStack item) {
+    public static ItemStack removeHotbarItem(ItemStack item) {
         ItemMeta meta = item.getItemMeta();
         meta.getPersistentDataContainer().remove(new NamespacedKey(Main.getPlugin(), "EditorHotbar"));
         item.setItemMeta(meta);
         return item;
     }
 
-    protected static boolean isHotbarItem(ItemStack item) {
+    public static boolean isHotbarItem(ItemStack item) {
         return item.getItemMeta().getPersistentDataContainer()
                 .has(new NamespacedKey(Main.getPlugin(), "EditorHotbar"));
     }

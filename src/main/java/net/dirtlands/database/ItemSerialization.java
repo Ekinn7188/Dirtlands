@@ -64,7 +64,7 @@ public class ItemSerialization {
                 dataOutput.writeObject(new SerializedItem(item.serializeAsBytes()));
             }
 
-            dataOutput.writeObject(inventoryData.getTitle().getBytes(StandardCharsets.UTF_8));
+            dataOutput.writeObject(new SerializedItem(inventoryData.getTitle().getBytes(StandardCharsets.UTF_8)));
 
             // Serialize that array
             dataOutput.close();
@@ -87,8 +87,9 @@ public class ItemSerialization {
             BukkitObjectInputStream dataInput = new BukkitObjectInputStream(inputStream);
             Inventory inventory = Bukkit.getServer().createInventory(null, dataInput.readInt());
 
+            String inventoryName = "";
             // Read the serialized inventory
-            for (int i = 0; i < inventory.getSize(); i++) {
+            for (int i = 0; i < inventory.getSize()+1; i++) {
                 Object item = dataInput.readObject();
                 if (item == null) {
                     inventory.setItem(i, null);
@@ -97,12 +98,16 @@ public class ItemSerialization {
                     inventory.setItem(i, (ItemStack)item);
                 }
                 else if (item instanceof SerializedItem serialized) {
-                    inventory.setItem(i, ItemStack.deserializeBytes(serialized.bytes));
+                    if (i == inventory.getSize()) {
+                        inventoryName = new String(serialized.bytes, StandardCharsets.UTF_8);
+                    } else {
+                        inventory.setItem(i, ItemStack.deserializeBytes(serialized.bytes));
+                    }
                 }
             }
 
             dataInput.close();
-            return new ItemSerialization(inventory, new String(dataInput.readAllBytes()));
+            return new ItemSerialization(inventory, inventoryName);
         } catch (ClassNotFoundException e) {
             throw new IOException("Unable to decode class type.", e);
         }

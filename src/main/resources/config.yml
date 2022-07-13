@@ -63,6 +63,8 @@ Other Playtime: '<#856f2d><player><#b8a567> has been playing for <#b8a567><hours
 
 # Shop
 No Space: '<#856f2d>You don''t have enough space in your inventory for this'
+No Space Drop: '<#856f2d>You don''t have enough space in your inventory for this, so the item has been dropped. <#b8a567>(Don''t worry, you''re the only one who can see it!)'
+Horse Max Upgrade: '<#856f2d>You''ve reached the max upgrade for this!'
 Quick Inventory: '<#856f2d>You are opening inventories too quickly!'
 Trade Error: '<#856f2d>There was a problem with this trade. Please contact an admin.'
 

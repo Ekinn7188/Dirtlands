@@ -8,6 +8,7 @@ import net.dirtlands.Main;
 import net.dirtlands.commands.Permission;
 import net.dirtlands.database.ItemSerialization;
 import net.dirtlands.economy.Economy;
+import net.dirtlands.listeners.shopkeepers.custom.shops.HorseShop;
 import net.dirtlands.tools.ItemTools;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -47,10 +48,9 @@ public class Shopkeeper implements Listener {
     private static Config config = Main.getPlugin().config();
     static DSLContext dslContext = Main.getPlugin().getDslContext();
     //player uuid, open inventory
-    private static Map<UUID, Inventory> openShopMenus = new HashMap<>();
+    public static Map<UUID, Inventory> openShopMenus = new HashMap<>();
 
-    private static final ItemStack BLACK_GLASS_ITEM = ItemTools.createGuiItem(Material.BLACK_STAINED_GLASS_PANE, MessageTools.parseText("&7"), 1);
-    private static final ItemStack GRAY_GLASS_ITEM = ItemTools.createGuiItem(Material.GRAY_STAINED_GLASS_PANE, MessageTools.parseText("&7"), 1);
+    private static final ItemStack BLACK_GLASS_ITEM = Editor.generateGuiBackground();
     private static final ItemStack NAME_TAG_ITEM = ItemTools.createGuiItem(Material.NAME_TAG, ItemTools.enableItalicUsage(MessageTools.parseText("&cCustom Amount")), 1);
     private static final ItemStack EMERALD_BLOCK_ITEM = ItemTools.createGuiItem(Material.EMERALD_BLOCK, ItemTools.enableItalicUsage(MessageTools.parseText("<green>Sell All")), 1);
 
@@ -156,7 +156,9 @@ public class Shopkeeper implements Listener {
             }
         }
 
-
+        if (HorseShop.isHorseShopItem(e.getCurrentItem())) {
+            return;
+        }
 
         openBuySellMenu(e);
     }
@@ -167,7 +169,7 @@ public class Shopkeeper implements Listener {
      * not an event!
      * @see Shopkeeper#onShopInteract(InventoryClickEvent)
      */
-    private void openBuySellMenu(InventoryClickEvent e) {
+    public static void openBuySellMenu(InventoryClickEvent e) {
         ItemStack item = e.getCurrentItem();
 
         if (item == null || item.getItemMeta() == null) {
@@ -239,20 +241,8 @@ public class Shopkeeper implements Listener {
 
         if (buyLoreIndex != -1 && sellLoreIndex != -1) {
             Inventory buyOrSell = Bukkit.createInventory(null, 27, MessageTools.parseText("Buy or Sell <name>", Placeholder.component("name", meta.displayName())));
-            ItemStack[] contents = buyOrSell.getContents();
-            for (int i = 0; i < contents.length; i++) {
-                contents[i] = GRAY_GLASS_ITEM;
-            }
-            buyOrSell.setContents(contents);
-            for (int i = 0; i < 9; i++) {
+            for (int i = 0; i < buyOrSell.getSize(); i++) {
                 buyOrSell.setItem(i, BLACK_GLASS_ITEM);
-                buyOrSell.setItem(i+18, BLACK_GLASS_ITEM);
-                if (i*9 <= 18) {
-                    buyOrSell.setItem(i*9, BLACK_GLASS_ITEM);
-                }
-                if (i!=0 && i*9-1 <= 26) {
-                    buyOrSell.setItem(i*9-1, BLACK_GLASS_ITEM);
-                }
             }
 
             buyOrSell.setItem(11, ItemTools.createGuiItem(Material.EMERALD, MessageTools.parseText("<green>Sell <name>", Placeholder.component("name", meta.displayName())), 1));
@@ -270,20 +260,8 @@ public class Shopkeeper implements Listener {
 
             int generalIndex = buyLoreIndex != -1 ? buyLoreIndex : sellLoreIndex;
             Inventory shopMenu = Bukkit.createInventory(null, 45, MessageTools.parseText(data.getBuyOrSell() + " <name>", Placeholder.component("name", meta.displayName())));
-            ItemStack[] contents = shopMenu.getContents();
-            for (int i = 0; i < contents.length; i++) {
-                contents[i] = GRAY_GLASS_ITEM;
-            }
-            shopMenu.setContents(contents);
-            for (int i = 0; i < 9; i++) {
+            for (int i = 0; i < shopMenu.getSize(); i++) {
                 shopMenu.setItem(i, BLACK_GLASS_ITEM);
-                shopMenu.setItem(i+36, BLACK_GLASS_ITEM);
-                if (i*9 <= 36) {
-                    shopMenu.setItem(i*9, BLACK_GLASS_ITEM);
-                }
-                if (i!=0 && i*9-1 <= 44) {
-                    shopMenu.setItem(i*9-1, BLACK_GLASS_ITEM);
-                }
             }
 
             ItemStack itemDisplay = item.asOne();
@@ -299,7 +277,7 @@ public class Shopkeeper implements Listener {
             }
 
             if (data.isCarbonCopy()) {
-                displayLore.set(displayLore.indexOf(data.getCarbonCopyLine()), ItemTools.enableItalicUsage(MessageTools.parseText("&r<italic><#7c3e12>Carbon Copy")));
+                displayLore.set(displayLore.indexOf(data.getCarbonCopyLine()), ItemTools.enableItalicUsage(MessageTools.parseText("&r<italic><#2BD5D5>Carbon Copy")));
             }
 
             displayMeta.lore(displayLore.stream().map(ItemTools::enableItalicUsage).collect(Collectors.toList()));
@@ -330,7 +308,7 @@ public class Shopkeeper implements Listener {
     }
 
 
-    private ItemStack newPriceBuyItem(String buyOrSell, ItemStack item, int currentPrice, int loreIndex, int quantity, Component carbonCopyLine) {
+    private static ItemStack newPriceBuyItem(String buyOrSell, ItemStack item, int currentPrice, int loreIndex, int quantity, Component carbonCopyLine) {
         int newPrice = currentPrice * quantity;
         try {
             item = item.asQuantity(quantity);
@@ -368,7 +346,7 @@ public class Shopkeeper implements Listener {
 
     private void tradeMenuAction(InventoryClickEvent e) {
         ItemStack item = e.getCurrentItem();
-        if (item == null || item.getType().equals(Material.AIR) || item.equals(GRAY_GLASS_ITEM) || item.equals(BLACK_GLASS_ITEM)) {
+        if (item == null || item.getType().equals(Material.AIR) || item.equals(BLACK_GLASS_ITEM)) {
             return;
         }
         ItemStack itemToParse = new ItemStack(item);
@@ -381,7 +359,7 @@ public class Shopkeeper implements Listener {
                 if (plainName.contains("Sell All") || plainName.contains("Custom Amount")) {
                     if (e.getSlot() > 0) {
                         ItemStack itemBefore = e.getInventory().getItem(e.getSlot() - 1);
-                        if (itemBefore.getType().equals(Material.GRAY_STAINED_GLASS_PANE)) {
+                        if (itemBefore.getType().equals(Material.BLACK_STAINED_GLASS_PANE)) {
                             itemBefore = e.getInventory().getItem(e.getSlot() - 4);
                         }
                         if (itemBefore != null) {
@@ -430,7 +408,7 @@ public class Shopkeeper implements Listener {
 
     }
 
-    private ItemStack noCarbonCopyLore(ItemStack itemtoParse, SellData data) {
+    private static ItemStack noCarbonCopyLore(ItemStack itemtoParse, SellData data) {
         ItemStack result = new ItemStack(itemtoParse);
         ItemMeta topItemMeta = result.getItemMeta();
         if (topItemMeta != null) {
@@ -565,7 +543,7 @@ public class Shopkeeper implements Listener {
         return true;
     }
 
-    private SellData getSellData(HumanEntity player, ItemStack item) {
+    private static SellData getSellData(HumanEntity player, ItemStack item) {
         List<Component> lore = item.getItemMeta().lore();
         if (lore == null) {
             return null;
@@ -645,7 +623,7 @@ public class Shopkeeper implements Listener {
         return totalItems;
     }
 
-    private boolean canFitItem(Inventory inv, ItemStack item, int quanity) {
+    public static boolean canFitItem(Inventory inv, ItemStack item, int quanity) {
         List<ItemStack> slots = Arrays.stream(Arrays.copyOfRange(inv.getContents(), 0, 36)).filter(a -> a == null || a.getAmount() != a.getMaxStackSize()).collect(Collectors.toList());
         ItemMeta itemMeta = item.getItemMeta();
         int totalRoom = 0;
