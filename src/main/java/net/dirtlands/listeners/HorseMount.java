@@ -175,6 +175,7 @@ public class HorseMount implements Listener {
         }
     }
 
+    @EventHandler
     public void onHorseDamage(EntityDamageEvent e) {
         if (e.getEntity().getType().equals(EntityType.HORSE)) {
             Horse horse = (Horse) e.getEntity();
