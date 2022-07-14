@@ -1,5 +1,7 @@
 package net.dirtlands.database;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -22,6 +24,11 @@ public class ItemSerialization {
     public ItemSerialization(Inventory inventory, String titleGson) {
         this.inventory = inventory;
         this.title = titleGson;
+    }
+
+    public ItemSerialization(Inventory inventory, Component title) {
+        this.inventory = inventory;
+        this.title = GsonComponentSerializer.gson().serialize(title);
     }
 
     public Inventory getInventory() {
