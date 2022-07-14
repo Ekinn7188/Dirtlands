@@ -2,25 +2,22 @@ package net.dirtlands.listeners.shopkeepers.custom.shops;
 
 import jeeper.utils.MessageTools;
 import net.dirtlands.Main;
+import net.dirtlands.economy.Currency;
 import net.dirtlands.economy.Economy;
 import net.dirtlands.listeners.shopkeepers.Editor;
 import net.dirtlands.listeners.shopkeepers.Shopkeeper;
 import net.dirtlands.tools.ItemTools;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
-import net.minecraft.network.protocol.game.ClientboundRemoveEntitiesPacket;
-import net.minecraft.world.entity.Entity;
-import org.bukkit.*;
-import org.bukkit.craftbukkit.v1_19_R1.entity.CraftItem;
-import org.bukkit.craftbukkit.v1_19_R1.entity.CraftPlayer;
+import org.bukkit.Bukkit;
+import org.bukkit.Color;
+import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.entity.HumanEntity;
-import org.bukkit.entity.Item;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.ItemDespawnEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
-import org.bukkit.event.player.PlayerAttemptPickupItemEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
@@ -37,8 +34,8 @@ public class HorseShop implements Listener {
     private static final Map<UUID, Inventory> openShopMenus = Shopkeeper.openShopMenus;
     private static final Map<UUID, String> colorChosen = new HashMap<>();
     private static final Map<UUID, Integer> horseCost = new HashMap<>();
-    private static final int JUMP_UPGRADE_COST = 1000;
-    private static final int SPEED_UPGRADE_COST = 1000;
+    private static final int JUMP_UPGRADE_COST = 1;
+    private static final int SPEED_UPGRADE_COST = 1;
     static ItemStack BOOTS_ITEM;
     static {
         BOOTS_ITEM = ItemTools.createGuiItem(Material.GOLDEN_BOOTS,
@@ -375,45 +372,11 @@ public class HorseShop implements Listener {
     }
     
     private void returnSaddle(HumanEntity player, ItemStack item) {
-        if (Shopkeeper.canFitItem(player.getInventory(), item, item.getAmount())) {
+        if (ItemTools.canFitItem(player.getInventory(), item, item.getAmount())) {
             player.getInventory().addItem(item);
         } else {
-            Location location = player.getLocation();
-            Item dropped = location.getWorld().dropItemNaturally(location, item);
-
-            Entity droppedEntity = ((CraftItem) dropped).getHandle();
-
-            Bukkit.getOnlinePlayers().stream().filter(p -> !p.equals(player)).forEach(p ->
-                    ((CraftPlayer) p).getHandle().connection.send(new ClientboundRemoveEntitiesPacket(droppedEntity.getId())));
-
-            canPickupSaddleItem.put(dropped, player.getUniqueId());
-
-
-            player.sendMessage(MessageTools.parseFromPath(Main.getPlugin().config(), "No Space Drop"));
-
+            ItemTools.dropItemForOnlyPlayer(player, item);
         }
-    }
-
-    private static final Map<Item, UUID> canPickupSaddleItem = new HashMap<>();
-
-    @EventHandler
-    public void onItemPickup(PlayerAttemptPickupItemEvent e) {
-        if (canPickupSaddleItem.containsKey(e.getItem())) {
-            if (!Shopkeeper.canFitItem(e.getPlayer().getInventory(), e.getItem().getItemStack(),
-                    e.getItem().getItemStack().getAmount())) {
-                return;
-            }
-            if (!canPickupSaddleItem.get(e.getItem()).equals(e.getPlayer().getUniqueId())) {
-                e.setCancelled(true);
-            } else {
-                canPickupSaddleItem.remove(e.getItem());
-            }
-        }
-    }
-
-    @EventHandler
-    public void onItemDespawn(ItemDespawnEvent e) {
-        canPickupSaddleItem.remove(e.getEntity());
     }
 
     /**
@@ -451,7 +414,7 @@ public class HorseShop implements Listener {
         }
 
         // Runs if player can't afford
-        if (!Economy.removeMoney((OfflinePlayer)e.getWhoClicked(), cost)) {
+        if (!Economy.take(e.getWhoClicked(), new Currency(cost, 0))) {
             e.getWhoClicked().sendMessage(MessageTools.parseFromPath(Main.getPlugin().config(), "Cant Afford Message"));
             return;
         }

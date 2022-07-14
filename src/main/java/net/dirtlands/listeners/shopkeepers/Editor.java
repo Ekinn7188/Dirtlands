@@ -56,7 +56,7 @@ public class Editor implements Listener {
                     List.of(Component.text(" "),
                             MessageTools.parseText("<#856f2d>Example Item Description"),
                             Component.text(" "),
-                            MessageTools.parseText("<#856f2d>Buy/Sell: <#7c3e12>{price} <#856f2d>expensive diamonds")
+                            MessageTools.parseText("<#856f2d>Buy/Sell: Buy: 1.10")
                     ).toArray(new Component[0])
             ),
 
@@ -322,17 +322,23 @@ public class Editor implements Listener {
             ItemMeta meta = item.getItemMeta();
             for (Component line : lore) {
                 String plainLore = PlainTextComponentSerializer.plainText().serialize(line);
-                if (plainLore.toUpperCase().startsWith("BUY: ")) {
-                    String noBuyText = plainLore.toUpperCase().replace("BUY: ", "").replace(" ❖", "");
-                    lore.set(lore.indexOf(line), ItemTools.enableItalicUsage(MessageTools.parseText("<#2BD5D5>Buy: <aqua>" + noBuyText + " <dark_aqua><bold>❖")));
-                    continue;
-                } else if (plainLore.toUpperCase().startsWith("SELL: ")) {
-                    String noSellText = plainLore.toUpperCase().replace("SELL: ", "").replace(" ❖", "");
-                    lore.set(lore.indexOf(line), ItemTools.enableItalicUsage(MessageTools.parseText("<#2BD5D5>Sell: <aqua>" + noSellText + " <dark_aqua><bold>❖")));
-                    continue;
-                } else if (plainLore.equalsIgnoreCase("Carbon Copy")) {
-                    lore.set(lore.indexOf(line), ItemTools.enableItalicUsage(MessageTools.parseText("<italic><#2BD5D5>Carbon Copy")));
-                    continue;
+                if (!plainLore.contains("❖") && !plainLore.contains("☀")) {
+                    if (plainLore.toUpperCase().startsWith("BUY: ")) {
+                        var temp = createSellBuyLore(plainLore, line, "Buy");
+                        if (temp != null) {
+                            lore.set(lore.indexOf(line), temp);
+                        }
+                        continue;
+                    } else if (plainLore.toUpperCase().startsWith("SELL: ")) {
+                        var temp = createSellBuyLore(plainLore, line, "Sell");
+                        if (temp != null) {
+                            lore.set(lore.indexOf(line), temp);
+                        }
+                        continue;
+                    } else if (plainLore.equalsIgnoreCase("Carbon Copy")) {
+                        lore.set(lore.indexOf(line), ItemTools.enableItalicUsage(MessageTools.parseText("<italic><#2BD5D5>Carbon Copy")));
+                        continue;
+                    }
                 }
                 lore.set(lore.indexOf(line),
                         ItemTools.enableItalicUsage(
@@ -352,6 +358,37 @@ public class Editor implements Listener {
         }
 
         return item;
+    }
+
+    private Component createSellBuyLore(String plainLore, Component line, String buySell) {
+        String noExtraText = plainLore.toUpperCase().replaceFirst("(BUY: )|(SELL: )", "").trim();
+        try {
+            //Confirms that this is a double
+            Double.parseDouble(noExtraText);
+        } catch (NumberFormatException e) {
+            return null;
+        }
+        // splitCost[0] == diamond, splitCost[1] == token
+        String[] splitCost = noExtraText.split("\\.");
+        if (splitCost.length == 1) {
+            if (noExtraText.contains(".") && noExtraText.indexOf(".") < noExtraText.toUpperCase().indexOf(String.valueOf(splitCost[0]))) {
+                return ItemTools.enableItalicUsage(MessageTools.parseText("<#2BD5D5>" + buySell + ": <gold>" +
+                        splitCost[0] + " ☀"));
+            } else {
+                return ItemTools.enableItalicUsage(MessageTools.parseText("<#2BD5D5>" + buySell + ": <dark_aqua>" +
+                        splitCost[0] + " <bold>❖"));
+            }
+        }
+        if (splitCost[0].equals("0") || splitCost[0].equals("")) {
+            return ItemTools.enableItalicUsage(MessageTools.parseText("<#2BD5D5>" + buySell + ": <gold>" +
+                    splitCost[1] + " ☀"));
+        } else if (splitCost[1].equals("0") || splitCost[1].equals("")) {
+            return ItemTools.enableItalicUsage(MessageTools.parseText("<#2BD5D5>" + buySell + ": <dark_aqua>" +
+                            splitCost[0] + " <bold>❖"));
+        } else {
+            return ItemTools.enableItalicUsage(MessageTools.parseText("<#2BD5D5>" + buySell + ": <dark_aqua>" +
+                    splitCost[0] + " <bold>❖</bold> <gold>" + splitCost[1] + " ☀"));
+        }
     }
 
     @EventHandler
