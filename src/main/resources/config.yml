@@ -35,6 +35,9 @@ Unsafe Spawn Location: '<#856f2d>Unsafe Spawn Location.'
 # Drop Confirmation
 Drop Confirmation: '<#856f2d>Press ''<key:key.drop>'' again to confirm drop'
 
+# Block Breaking
+Cant Break Block: '<#856f2d>You need a stronger tool to dig this block'
+
 # Commands
 No Command Permission: '&cYou dont have permission to use this command!'
 Player Only Command: '<#b8a567>You must be a player to execute this command!'
