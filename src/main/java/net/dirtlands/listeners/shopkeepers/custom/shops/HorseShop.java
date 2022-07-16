@@ -352,7 +352,7 @@ public class HorseShop implements Listener {
         if (e.getReason().equals(InventoryCloseEvent.Reason.OPEN_NEW)) {
             return;
         }
-        if (openShopMenus.containsKey(e.getPlayer().getUniqueId()) &&
+        if (!openShopMenus.containsKey(e.getPlayer().getUniqueId()) &&
                 !e.getView().title().equals(MessageTools.parseText("<#856f2d>Upgrade Your Horse"))) {
             return;
         }
