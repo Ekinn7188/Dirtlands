@@ -2,14 +2,20 @@ package net.dirtlands.listeners.blocks;
 
 import jeeper.utils.MessageTools;
 import net.dirtlands.Main;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
-import org.bukkit.Material;
+import net.dirtlands.economy.Currency;
+import org.bukkit.*;
+import org.bukkit.block.ShulkerBox;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.inventory.meta.BlockStateMeta;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class DirtProgression implements Listener {
@@ -62,6 +68,74 @@ public class DirtProgression implements Listener {
         e.setExpToDrop(1);
     }
 
+    @EventHandler
+    public void dropMoneyOnDeath(PlayerDeathEvent e) {
+        if (Boolean.FALSE.equals(e.getPlayer().getLocation().getWorld().getGameRuleValue(GameRule.KEEP_INVENTORY))) {
+            return;
+        }
+        PlayerInventory inv = e.getEntity().getInventory();
+        Inventory enderChest = e.getEntity().getEnderChest();
+
+        List<ItemStack> shulkerBoxes = new ArrayList<>();
+
+        Location location = e.getPlayer().getLocation();
+
+        for (ItemStack item : inv.getContents()) {
+            checkMoney(inv, shulkerBoxes, location, item);
+        }
+
+        for (ItemStack item : enderChest) {
+            checkMoney(inv, shulkerBoxes, location, item);
+        }
+
+        shulkerBoxes.forEach(boxItem -> {
+            ShulkerBox box = (ShulkerBox) ((BlockStateMeta) boxItem.getItemMeta()).getBlockState();
+            Arrays.stream(box.getInventory().getContents()).forEach((item) -> {
+                if (item == null) {
+                    return;
+                }
+                if (item.asOne().equals(Currency.DIAMOND_ITEM) || item.asOne().equals(Currency.TOKEN_ITEM)) {
+                    location.getWorld().dropItemNaturally(location, item);
+
+                    box.getInventory().remove(item);
+
+                    int invIndex = inv.first(boxItem);
+                    int enderChestIndex = inv.first(boxItem);
+
+                    BlockStateMeta meta = (BlockStateMeta) boxItem.getItemMeta();
+                    meta.setBlockState(box);
+                    boxItem.setItemMeta(meta);
+
+                    if (invIndex != -1) {
+                        inv.setItem(invIndex, boxItem);
+                    }
+                    if (enderChestIndex != -1) {
+                        enderChest.setItem(enderChestIndex, boxItem);
+                    }
+
+                }
+            });
+        });
+
+    }
+
+    private void checkMoney(PlayerInventory inv, List<ItemStack> shulkerBoxes, Location location, ItemStack item) {
+        if (item == null) {
+            return;
+        }
+        if (item.asOne().equals(Currency.DIAMOND_ITEM) || item.asOne().equals(Currency.TOKEN_ITEM)) {
+            location.getWorld().dropItemNaturally(location, item);
+            inv.remove(item);
+        }
+        if (Tag.SHULKER_BOXES.getValues().contains(item.getType())) {
+            if (item.getItemMeta() instanceof BlockStateMeta) {
+                BlockStateMeta blockStateMeta = (BlockStateMeta) item.getItemMeta();
+                if (blockStateMeta.getBlockState() instanceof ShulkerBox) {
+                    shulkerBoxes.add(item);
+                }
+            }
+        }
+    }
 
 
 }
