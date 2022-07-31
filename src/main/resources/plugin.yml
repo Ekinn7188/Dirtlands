@@ -15,6 +15,12 @@ commands:
   horsemount:
     description: gives the player a horse mount with the specified arguments
     aliases: [horse]
+  buy:
+    description: edits the lore of an item to make a buy item
+  sell:
+    description: edits the lore of an item to make a sell item
+  carboncopy:
+    description: edits the lore of an item to make it a carbon copy
 permissions:
   dirtlands.dirtlands:
     description: gives access to server-related commands

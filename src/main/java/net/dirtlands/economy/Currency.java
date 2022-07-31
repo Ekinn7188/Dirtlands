@@ -1,8 +1,10 @@
 package net.dirtlands.economy;
 
 import jeeper.utils.MessageTools;
+import net.dirtlands.tools.ItemTools;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -47,10 +49,20 @@ public class Currency {
         this.tokens = 0;
     }
 
+    public Currency(Inventory inventory) {
+        this.diamonds = ItemTools.countItems(inventory, DIAMOND_ITEM);
+        this.tokens = ItemTools.countItems(inventory, TOKEN_ITEM);
+    }
+
     public void convertTokensToDiamonds(){
         int extraDiamonds = tokens/64;
         this.diamonds += extraDiamonds;
         this.tokens = this.tokens - 64 * extraDiamonds;
+    }
+
+    public void convertDiamondsToTokens() {
+        this.tokens = this.tokens + 64 * this.diamonds;
+        this.diamonds = 0;
     }
 
     public Currency multiply(int factor) {

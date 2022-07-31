@@ -287,10 +287,32 @@ public class Shopkeeper implements Listener {
             shopMenu.setItem(13, itemDisplay);
 
             if (item.getMaxStackSize() == 64 || item.getMaxStackSize() == 16) {
-                shopMenu.setItem(29, newPriceBuyItem(data.getBuyOrSell(), item, data.getPrice(), generalIndex, 1, data.getCarbonCopyLine()));
-                shopMenu.setItem(30, newPriceBuyItem(data.getBuyOrSell(), item, data.getPrice(), generalIndex, item.getMaxStackSize() / (item.getMaxStackSize() == 64 ? 8 : 4), data.getCarbonCopyLine()));
-                shopMenu.setItem(31, newPriceBuyItem(data.getBuyOrSell(), item, data.getPrice(), generalIndex,item.getMaxStackSize()/2, data.getCarbonCopyLine()));
-                shopMenu.setItem(32, newPriceBuyItem(data.getBuyOrSell(), item, data.getPrice(), generalIndex,item.getMaxStackSize(), data.getCarbonCopyLine()));
+                if (item.getAmount() == 1) {
+                    shopMenu.setItem(29, newPriceBuyItem(data.getBuyOrSell(), item, data.getPrice(), generalIndex, 1, data.getCarbonCopyLine()));
+                    shopMenu.setItem(30, newPriceBuyItem(data.getBuyOrSell(), item, data.getPrice(), generalIndex, item.getMaxStackSize() / (item.getMaxStackSize() == 64 ? 8 : 4), data.getCarbonCopyLine()));
+                    shopMenu.setItem(31, newPriceBuyItem(data.getBuyOrSell(), item, data.getPrice(), generalIndex,item.getMaxStackSize()/2, data.getCarbonCopyLine()));
+                    shopMenu.setItem(32, newPriceBuyItem(data.getBuyOrSell(), item, data.getPrice(), generalIndex,item.getMaxStackSize(), data.getCarbonCopyLine()));
+                }
+                else {
+                    if (item.getAmount() * 4 <= item.getMaxStackSize()) {
+                        shopMenu.setItem(29, newPriceBuyItem(data.getBuyOrSell(), item, data.getPrice(), generalIndex, item.getAmount(), data.getCarbonCopyLine()));
+                        shopMenu.setItem(30, newPriceBuyItem(data.getBuyOrSell(), item, data.getPrice(), generalIndex, item.getAmount()*2, data.getCarbonCopyLine()));
+                        shopMenu.setItem(31, newPriceBuyItem(data.getBuyOrSell(), item, data.getPrice(), generalIndex,item.getAmount()*3, data.getCarbonCopyLine()));
+                        shopMenu.setItem(32, newPriceBuyItem(data.getBuyOrSell(), item, data.getPrice(), generalIndex,item.getAmount()*4, data.getCarbonCopyLine()));
+                    }
+                    else if (item.getAmount() * 3 <= item.getMaxStackSize()) {
+                        shopMenu.setItem(29, newPriceBuyItem(data.getBuyOrSell(), item, data.getPrice(), generalIndex, item.getAmount(), data.getCarbonCopyLine()));
+                        shopMenu.setItem(30, newPriceBuyItem(data.getBuyOrSell(), item, data.getPrice(), generalIndex, item.getAmount()*2, data.getCarbonCopyLine()));
+                        shopMenu.setItem(31, newPriceBuyItem(data.getBuyOrSell(), item, data.getPrice(), generalIndex,item.getAmount()*3, data.getCarbonCopyLine()));
+                    }
+                    else if (item.getAmount() * 2 <= item.getMaxStackSize()) {
+                        shopMenu.setItem(29, newPriceBuyItem(data.getBuyOrSell(), item, data.getPrice(), generalIndex, item.getAmount(), data.getCarbonCopyLine()));
+                        shopMenu.setItem(31, newPriceBuyItem(data.getBuyOrSell(), item, data.getPrice(), generalIndex, item.getAmount()*2, data.getCarbonCopyLine()));
+                    }
+                    else  {
+                        shopMenu.setItem(29, newPriceBuyItem(data.getBuyOrSell(), item, data.getPrice(), generalIndex, 1, data.getCarbonCopyLine()));
+                    }
+                }
             } else {
                 shopMenu.setItem(29, newPriceBuyItem(data.getBuyOrSell(), item, data.getPrice(), generalIndex, 1, data.getCarbonCopyLine()));
             }
@@ -298,7 +320,7 @@ public class Shopkeeper implements Listener {
                 shopMenu.setItem(33, NAME_TAG_ITEM);
             } else {
                 //set lore for item
-                shopMenu.setItem(33, newPriceBuyItem(data.getBuyOrSell(), EMERALD_BLOCK_ITEM, data.getPrice(), generalIndex, getNumberOfItems(e.getWhoClicked().getOpenInventory().getBottomInventory(), noCarbonCopyLore(itemDisplay, data), data.isCarbonCopy()), data.getCarbonCopyLine()).asQuantity(1));
+                shopMenu.setItem(33, newPriceBuyItem(data.getBuyOrSell(), EMERALD_BLOCK_ITEM, data.getPrice(), generalIndex, getNumberOfItems(e.getWhoClicked().getOpenInventory().getBottomInventory(), noCarbonCopyLore(itemDisplay, data), data.isCarbonCopy())/item.getAmount(), data.getCarbonCopyLine()).asQuantity(1));
             }
 
             e.getWhoClicked().openInventory(shopMenu);
@@ -309,7 +331,7 @@ public class Shopkeeper implements Listener {
 
 
     private static ItemStack newPriceBuyItem(String buyOrSell, ItemStack item, Currency currentPrice, int loreIndex, int quantity, Component carbonCopyLine) {
-        Currency newPrice = currentPrice.multiply(quantity);
+        Currency newPrice = currentPrice.multiply(quantity/item.getAmount());
         try {
             item = item.asQuantity(quantity);
         } catch (Exception ex) {
@@ -380,10 +402,13 @@ public class Shopkeeper implements Listener {
             if (itemMeta != null){
                 String plainName = PlainTextComponentSerializer.plainText().serialize(itemMeta.displayName());
                 if (plainName.contains("Sell All") || plainName.contains("Custom Amount")) {
-                    if (e.getSlot() > 0) {
-                        ItemStack itemBefore = e.getInventory().getItem(e.getSlot() - 1);
-                        if (itemBefore.getType().equals(Material.BLACK_STAINED_GLASS_PANE)) {
-                            itemBefore = e.getInventory().getItem(e.getSlot() - 4);
+                    if (e.getSlot() > 3) {
+                        ItemStack itemBefore = null;
+                        for (int i = 4; i >= 0; i--) {
+                            itemBefore = e.getInventory().getItem(e.getSlot() - i);
+                            if (!itemBefore.getType().equals(Material.BLACK_STAINED_GLASS_PANE)) {
+                                break;
+                            }
                         }
                         if (itemBefore != null) {
                             itemToParse = new ItemStack(itemBefore);
@@ -402,16 +427,21 @@ public class Shopkeeper implements Listener {
             return;
         }
 
-        itemToParse = noCarbonCopyLore(e.getInventory().getItem(13), data);
-
-        int numberOfItems = customAmount ? Integer.MAX_VALUE : item.getAmount();
-
-        //clone is only used to help get the amount of items
-        Material material = itemToParse.getType();
-        ItemStack itemToAdd = data.isCarbonCopy() ? itemToParse : new ItemStack(material, numberOfItems);
+        ItemStack firstBuyOption = e.getInventory().getItem(29);
+        if (itemToParse.equals(new ItemStack(item))) {
+            if (firstBuyOption == null || firstBuyOption.equals(Editor.generateGuiBackground())) {
+                itemToParse = noCarbonCopyLore(e.getInventory().getItem(13), data);
+            } else {
+                itemToParse = noCarbonCopyLore(e.getInventory().getItem(13).asQuantity(item.getAmount()), data);
+            }
+        }
 
         //normal trade
         if (data.getBuyOrSell().equalsIgnoreCase("Buy")) {
+            Material material = itemToParse.getType();
+            //Removes most metadata in item if not a copy
+            ItemStack itemToAdd = data.isCarbonCopy() ? itemToParse : new ItemStack(material, itemToParse.getAmount());
+
             if (customAmount) {
                 //buy custom amount
                 customBuy(e.getClickedInventory(), e.getWhoClicked(), itemToAdd, data.getPrice(), data.isCarbonCopy());
@@ -424,6 +454,7 @@ public class Shopkeeper implements Listener {
 
         Inventory inv = e.getWhoClicked().getInventory();
 
+        int numberOfItems = customAmount ? Integer.MAX_VALUE : item.getAmount();
         sellItems(e.getWhoClicked(), inv, itemToParse, numberOfItems, data.getPrice(), data.isCarbonCopy());
 
         e.setCurrentItem(new ItemStack(e.getInventory().getItem(29)));
@@ -454,19 +485,19 @@ public class Shopkeeper implements Listener {
         return result;
     }
 
-    private void customBuy(Inventory currentInv, HumanEntity buyer, ItemStack item, Currency pricePerUnit, boolean isCarbonCopy) {
+    private void customBuy(Inventory currentInv, HumanEntity buyer, ItemStack item, Currency price, boolean isCarbonCopy) {
         new AnvilGUI.Builder()
                 .onComplete((player, text) -> {
                     openShopMenus.put(buyer.getUniqueId(), currentInv);
-                    int quanity = 0;
+                    int quantity = 0;
                     try {
-                        quanity = Integer.parseInt(text);
-                        if (quanity < 1) {
+                        quantity = Integer.parseInt(text);
+                        if (quantity < 1 || quantity % item.getAmount() != 0) {
                             throw new NumberFormatException();
                         }
                     } catch (NumberFormatException e) {
                         buyer.sendMessage(MessageTools.parseFromPath(config, "Invalid Number"));
-                        Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getPlugin(), () -> customBuy(currentInv, buyer, item, pricePerUnit, isCarbonCopy), 5L);
+                        Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getPlugin(), () -> customBuy(currentInv, buyer, item, price, isCarbonCopy), 5L);
                         return AnvilGUI.Response.close();
                     }
 
@@ -475,7 +506,8 @@ public class Shopkeeper implements Listener {
                         openShopMenus.put(buyer.getUniqueId(), currentInv);
                     }, 5L);
 
-                    buyItems(buyer, item, pricePerUnit, quanity, isCarbonCopy);
+                    int factor = quantity/item.getAmount();
+                    buyItems(buyer, item, price.multiply(factor), quantity, isCarbonCopy);
                     return AnvilGUI.Response.close();
                 })
                 .title("Buy Custom Amount")
@@ -485,19 +517,22 @@ public class Shopkeeper implements Listener {
         return;
     }
 
-    private void buyItems(HumanEntity buyer, ItemStack item, Currency pricePerUnit, int quantity, boolean isCarbonCopy) {
+    private void buyItems(HumanEntity buyer, ItemStack item, Currency price, int quantity, boolean isCarbonCopy) {
         if (ItemTools.canFitItem(buyer.getInventory(), item, quantity)) {
-            if (Economy.take(buyer, pricePerUnit.multiply(quantity))) {
-                for (int i = 0; i < Math.ceil((double)quantity/(double)item.getMaxStackSize()); i++) {
+            if (Economy.take(buyer, price)) {
+                int quantityCopy = quantity;
+                for (int i = 0; i < Math.ceil((double) quantityCopy / (double) item.getMaxStackSize()); i++) {
                     if (quantity < 0) {
                         break;
                     }
                     if (quantity > item.getMaxStackSize()) {
                         buyer.getInventory().addItem(item.asQuantity(item.getMaxStackSize()));
+                        quantity -= item.getMaxStackSize();
                         continue;
                     }
 
                     buyer.getInventory().addItem(item.asQuantity(quantity));
+                    quantity = 0;
                 }
                 return;
             }
@@ -510,12 +545,9 @@ public class Shopkeeper implements Listener {
 
     private static boolean sellItems(HumanEntity player, Inventory inv, ItemStack item, int amount, Currency price, boolean carbonCopy) {
 
-        //count everything to make sure how many can be sold, ignored if max int size because it would sell all of them no matter what
-        if (amount != Integer.MAX_VALUE) {
-            int totalItems = getNumberOfItems(inv, item, carbonCopy);
-            if (totalItems < amount) {
-                return true;
-            }
+        int totalItems = getNumberOfItems(inv, item, carbonCopy);
+        if (amount != Integer.MAX_VALUE && totalItems < amount) {
+            return false;
         }
 
         ItemStack itemCopy = new ItemStack(item);
@@ -528,42 +560,20 @@ public class Shopkeeper implements Listener {
             itemCopy.setItemMeta(itemCopyMeta);
         }
 
-        ItemStack[] slots = inv.getContents();
-        HashMap<Integer, ItemStack> mappedItems = new HashMap<>();
-        for (int i = 0; i < slots.length ; i++) {
-            ItemStack slot = slots[i];
-            if ((slot != null) && (slot.getType() != Material.AIR)) {
-                ItemStack slotCopy = new ItemStack(slot);
-                ItemMeta slotMeta = slotCopy.getItemMeta();
-                if (slotMeta != null) {
-                    slotMeta.displayName(Component.text(""));
-                    if (!carbonCopy) {
-                        slotMeta.lore(null);
-                    }
-                    slotCopy.setItemMeta(slotMeta);
-                }
-                if (slotCopy.isSimilar(itemCopy)) {
-                    mappedItems.put(i, slot);
+        int remainder = totalItems % item.getAmount();
+        int exchangeAmount = amount == Integer.MAX_VALUE ? totalItems-remainder : amount;
+        if (ItemTools.takeItems(player.getInventory(), item, exchangeAmount)) {
+            if (price.asTokens() > 0) {
+                if (amount == Integer.MAX_VALUE) {
+                    Economy.give(player, price.multiply(exchangeAmount/item.getAmount()));
+                } else {
+                    Economy.give(player, price);
                 }
             }
+            return true;
         }
-        Currency totalIncome = new Currency();
-        for (Map.Entry<Integer, ItemStack> entrySlots : mappedItems.entrySet()) {
-            if (entrySlots.getValue().getAmount() <= amount) {
-                inv.setItem(entrySlots.getKey().intValue(), new ItemStack(Material.AIR));
-                amount -= entrySlots.getValue().getAmount();
-                totalIncome = totalIncome.add(price.multiply(entrySlots.getValue().getAmount()));
-            } else {
-                ItemStack invItem = inv.getItem(entrySlots.getKey());
-                invItem.setAmount(invItem.getAmount() - amount);
-                totalIncome = totalIncome.add(price.multiply(amount));
-                break;
-            }
-        }
-        if (totalIncome.asTokens() > 0) {
-            Economy.give(player, totalIncome);
-        }
-        return true;
+        return false;
+
     }
 
     private static SellData getSellData(HumanEntity player, ItemStack item) {
@@ -607,20 +617,24 @@ public class Shopkeeper implements Listener {
         }
 
         costLine = costLine.replaceAll("(BUY: )|(SELL: )|(☀)", "");
-        costLine = costLine.replace("❖", ".").replaceAll(" ", "");
+        if (costLine.contains("❖")) {
+            costLine = costLine.replace("❖", ".").replaceAll(" ", "");
+        } else {
+            costLine = "0." + costLine.trim();
+        }
 
         Currency buySellPrice;
 
         // splitCost[0] == Diamonds, splitCost[1] == Tokens
-        String[] splitCost = costLine.split("\\.");
+        String[] splitCost = costLine.trim().split("\\.");
         try {
             Double.parseDouble(costLine);
             if (splitCost.length == 1) {
                 if (diamonds) {
-                    buySellPrice = new Currency(Integer.parseInt(splitCost[0]), 0).divide(item.getAmount());
+                    buySellPrice = new Currency(Integer.parseInt(splitCost[0]), 0);
                 }
                 else if (tokens) {
-                    buySellPrice = new Currency(0, Integer.parseInt(splitCost[0])).divide(item.getAmount());
+                    buySellPrice = new Currency(0, Integer.parseInt(splitCost[0]));
                 }
                 else {
                     throw new NumberFormatException("Currency isn't tokens nor diamonds");
@@ -628,7 +642,7 @@ public class Shopkeeper implements Listener {
             } else {
                 int diamondCost = Integer.parseInt(splitCost[0]);
                 int tokenCost = Integer.parseInt(splitCost[1]);
-                buySellPrice = new Currency(diamondCost, tokenCost).divide(item.getAmount());
+                buySellPrice = new Currency(diamondCost, tokenCost);
             }
         } catch (NumberFormatException ex) {
             player.sendMessage(MessageTools.parseFromPath(config, "Trade Error"));

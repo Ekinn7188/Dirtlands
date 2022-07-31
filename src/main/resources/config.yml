@@ -45,6 +45,7 @@ Player Doesnt Exist: '<#856f2d><player><#b8a567> doesn''t exist!'
 Player Hasnt Logged In: '<#856f2d><player><#b8a567> has never logged in before!'
 Player Is Offline: '<#856f2d><player><#b8a567> is offline!'
 Correct Usage: '<#b8a567>Usage: <#856f2d><command>'
+Item In Hand: '<#856f2d>You must have an item in your hand to use this command!'
 
 # Input Errors
 Invalid Number: '<#856f2d>Invalid number!'
@@ -53,7 +54,7 @@ Invalid Number: '<#856f2d>Invalid number!'
 Cant Afford Message: '<#b8a567>You can''t afford this!'
 
 # Playtime
-Your Playtime: '<#856f2d>You have been playing for <#b8a567><hours></#b8a567> hours and <#b8a567><minutes></#b8a567> minutes'
+Your Playtime: '<#b8a567>You have been playing for <#856f2d><hours></#856f2d> hours and <#856f2d><minutes></#856f2d> minutes'
 Other Playtime: '<#856f2d><player><#b8a567> has been playing for <#b8a567><hours></#b8a567> hours and <#b8a567><minutes></#b8a567> minutes'
 
 # Shop
@@ -62,6 +63,7 @@ No Space Drop: '<#856f2d>You don''t have enough space in your inventory for this
 Horse Max Upgrade: '<#856f2d>You''ve reached the max upgrade for this!'
 Quick Inventory: '<#856f2d>You are opening inventories too quickly!'
 Trade Error: '<#856f2d>There was a problem with this trade. Please contact an admin.'
+Shop Lore Set: '<#856f2d>Your item''s lore has been successfully updated!'
 
 # Word Filter
 Word Filter: ["Nigger", "Nigga", "Chink", "Coon", "Jap", "Kys", "Kill yourself", "Fag", "Faggot", "Retard", "Retarded"]

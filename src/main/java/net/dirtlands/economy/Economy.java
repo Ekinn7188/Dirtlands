@@ -35,10 +35,35 @@ public class Economy {
      * @return whether the transaction was successful or not
      */
     public static boolean take(HumanEntity player, Currency amount) {
-        if (!ItemTools.takeItems(player.getInventory(), Currency.DIAMOND_ITEM, amount.getDiamonds())) {
-            return false;
+        Currency copy = amount.copy();
+        copy.convertDiamondsToTokens();
+
+        Currency balance = new Currency(player.getInventory());
+
+        int tokens = ItemTools.countItems(player.getInventory(), Currency.TOKEN_ITEM);
+        int diamonds = ItemTools.countItems(player.getInventory(), Currency.DIAMOND_ITEM);
+
+        if (ItemTools.takeItems(player.getInventory(), Currency.TOKEN_ITEM, copy.getTokens())) {
+            return true;
         }
-        return ItemTools.takeItems(player.getInventory(), Currency.TOKEN_ITEM, amount.getTokens());
+
+        if (ItemTools.countItems(player.getInventory(), Currency.DIAMOND_ITEM) >= amount.getDiamonds()
+                && ItemTools.countItems(player.getInventory(), Currency.TOKEN_ITEM) >= amount.getTokens()) {
+            //Check if both items can be taken before they are actually taken
+            ItemTools.takeItems(player.getInventory(), Currency.DIAMOND_ITEM, amount.getDiamonds());
+            ItemTools.takeItems(player.getInventory(), Currency.TOKEN_ITEM, amount.getTokens());
+            return true;
+        }
+
+        // Make change for a purchase
+        if (ItemTools.canFitItem(player.getInventory(), Currency.TOKEN_ITEM, 64-amount.getTokens())) {
+            if (ItemTools.takeItems(player.getInventory(), Currency.DIAMOND_ITEM, amount.getDiamonds()+1)) {
+                player.getInventory().addItem(Currency.TOKEN_ITEM.asQuantity(64 - amount.getTokens()));
+                return true;
+            }
+        }
+
+        return false;
     }
 
 }

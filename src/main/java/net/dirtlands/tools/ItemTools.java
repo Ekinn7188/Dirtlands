@@ -119,29 +119,73 @@ public class ItemTools {
             if (invItem == null) {
                 continue;
             }
-            if (!invItem.asOne().equals(item.asOne())) {
+            if (!isSimilar(invItem,item)) {
                 continue;
             }
 
             int amountLeft = amount - invItem.getAmount();
-            invItem.setAmount(amountLeft >= 0 ? 0 : invItem.getAmount()-amount);
-            amount -= invItem.getAmount();
+            amount = Math.max(amountLeft, 0);
+            invItem.setAmount(amountLeft >= 0 ? 0 : Math.abs(amountLeft-amount));
         }
 
         return true;
     }
 
+    /**
+     * Counts the items in an inventory ignoring the display name
+     * @param inv inventory to count in
+     * @param item the item to search for
+     * @return how many items were found
+     */
     public static int countItems(Inventory inv, ItemStack item) {
         int count = 0;
         for (ItemStack invItem : inv.getContents()) {
             if (invItem == null) {
                 continue;
             }
-            if (invItem.asOne().equals(item.asOne())) {
+            if (isSimilar(invItem, item)) {
                 count += invItem.getAmount();
             }
         }
         return count;
+    }
+
+    public static boolean isSimilar(ItemStack item1, ItemStack item2) {
+        if (item1.isSimilar(item2)) {
+            return true;
+        }
+
+        ItemStack item1Copy = new ItemStack(item1);
+        ItemStack item2Copy = new ItemStack(item2);
+
+        ItemMeta invMeta = item1Copy.getItemMeta();
+        ItemMeta itemMeta = item2Copy.getItemMeta();
+
+        invMeta.displayName(Component.text(""));
+        List<Component> invLore = invMeta.lore();
+        if (invLore != null) {
+            if (invLore.size() == 0) {
+                invMeta.lore(null);
+            }
+        }
+        else {
+            invMeta.lore(null);
+        }
+        itemMeta.displayName(Component.text(""));
+        List<Component> itemLore = invMeta.lore();
+        if (itemLore != null) {
+            if (itemLore.size() == 0) {
+                itemMeta.lore(null);
+            }
+        }
+        else {
+            itemMeta.lore(null);
+        }
+
+        item1Copy.setItemMeta(invMeta);
+        item2Copy.setItemMeta(itemMeta);
+
+        return item1Copy.isSimilar(item2Copy);
     }
 
     public static final Map<Item, UUID> droppedItems = new HashMap<>();

@@ -5,6 +5,7 @@ import jeeper.utils.MessageTools;
 import net.citizensnpcs.api.CitizensAPI;
 import net.dirtlands.Main;
 import net.dirtlands.database.ItemSerialization;
+import net.dirtlands.economy.Currency;
 import net.dirtlands.tools.ItemTools;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -370,19 +371,32 @@ public class Editor implements Listener {
         }
         // splitCost[0] == diamond, splitCost[1] == token
         String[] splitCost = noExtraText.split("\\.");
-        if (splitCost.length == 1) {
-            if (noExtraText.contains(".") && noExtraText.indexOf(".") < noExtraText.toUpperCase().indexOf(String.valueOf(splitCost[0]))) {
+        if (splitCost.length < 1) {
+            return null;
+        }
+        if ((splitCost[0].equals("0") || splitCost[0].equals("")) ||
+                (noExtraText.contains(".") && noExtraText.indexOf(".") < noExtraText.toUpperCase().indexOf(splitCost[0]))) {
+            try {
+                Currency currency = new Currency(0, Integer.parseInt(splitCost[1]));
+                currency.convertTokensToDiamonds();
+                if (currency.getDiamonds() > 0) {
+                    if (currency.getTokens() == 0) {
+                        return ItemTools.enableItalicUsage(MessageTools.parseText("<#2BD5D5>" + buySell + ": <dark_aqua>" +
+                                currency.getDiamonds() + " <bold>❖"));
+                    } else {
+                        return ItemTools.enableItalicUsage(MessageTools.parseText("<#2BD5D5>" + buySell + ": <dark_aqua>" +
+                                currency.getDiamonds() + " <bold>❖</bold> <gold>" + currency.getTokens() + " ☀"));
+                    }
+                } else {
+                    return ItemTools.enableItalicUsage(MessageTools.parseText("<#2BD5D5>" + buySell + ": <gold>" +
+                            currency.getTokens() + " ☀"));
+                }
+            } catch (NumberFormatException e) {
                 return ItemTools.enableItalicUsage(MessageTools.parseText("<#2BD5D5>" + buySell + ": <gold>" +
                         splitCost[0] + " ☀"));
-            } else {
-                return ItemTools.enableItalicUsage(MessageTools.parseText("<#2BD5D5>" + buySell + ": <dark_aqua>" +
-                        splitCost[0] + " <bold>❖"));
             }
         }
-        if (splitCost[0].equals("0") || splitCost[0].equals("")) {
-            return ItemTools.enableItalicUsage(MessageTools.parseText("<#2BD5D5>" + buySell + ": <gold>" +
-                    splitCost[1] + " ☀"));
-        } else if (splitCost[1].equals("0") || splitCost[1].equals("")) {
+        else if (splitCost[1].equals("0") || splitCost[1].equals("")) {
             return ItemTools.enableItalicUsage(MessageTools.parseText("<#2BD5D5>" + buySell + ": <dark_aqua>" +
                             splitCost[0] + " <bold>❖"));
         } else {
