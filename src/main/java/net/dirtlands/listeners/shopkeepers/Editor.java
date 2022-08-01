@@ -178,16 +178,16 @@ public class Editor implements Listener {
                             //oldSize/size helps deal with making the inventory work smaller and bigger
                             inv.setContents(Arrays.copyOfRange(contents, 0, oldSize < updatedSize ? oldSize - 9 : updatedSize - 9));
 
-                            for (int i = 0; i < 9; i++) {
-                                inv.setItem(i + updatedSize - 9, editorHotbar.get(0));
-                            }
+                            ItemStack[] hotbar = Arrays.copyOfRange(contents, contents.length-9, contents.length);
 
-                            inv.setItem(updatedSize - 9, editorHotbar.get(1));
-                            inv.setItem(updatedSize - 8, editorHotbar.get(2));
-                            inv.setItem(updatedSize - 6, editorHotbar.get(3));
-                            inv.setItem(updatedSize - 5, updatedChestLore(size));
-                            inv.setItem(updatedSize - 4, editorHotbar.get(5));
-                            inv.setItem(updatedSize - 2, editorHotbar.get(6));
+                            for (int i = 0; i < 9; i++) {
+                                ItemStack hotbarItem = hotbar[i];
+                                if (hotbarItem.getType().equals(Material.CHEST)) {
+                                    inv.setItem(inv.getSize() - 9 + i, updatedChestLore(size));
+                                    continue;
+                                }
+                                inv.setItem(inv.getSize() - 9 + i, hotbarItem);
+                            }
 
                             invReference.inv = inv;
                             return AnvilGUI.Response.close();
