@@ -21,6 +21,8 @@ commands:
     description: edits the lore of an item to make a sell item
   carboncopy:
     description: edits the lore of an item to make it a carbon copy
+  durability:
+    description: adds custom durability to an item
 permissions:
   dirtlands.dirtlands:
     description: gives access to server-related commands
@@ -33,4 +35,7 @@ permissions:
     default: op
   dirtlands.horsemount:
     description: allows the use of the /horsemount command
+    default: op
+  dirtlands.durability:
+    description: allows players to set custom durability on an item
     default: op

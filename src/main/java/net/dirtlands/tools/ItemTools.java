@@ -70,6 +70,7 @@ public class ItemTools {
 
     /**
      * Includes Armor
+     * @param item The item to check
      */
     public static boolean isTool(ItemStack item) {
         for (EnchantmentTarget target : EnchantmentTarget.values()) {
@@ -78,6 +79,15 @@ public class ItemTools {
             }
         }
         return false;
+    }
+
+    /**
+     * Does not include Tools
+     * @param item The item to check
+     */
+    public static boolean isArmor(ItemStack item) {
+        EnchantmentTarget.ARMOR.includes(item);
+        return true;
     }
 
     public static boolean canFitItem(Inventory inv, ItemStack item) {

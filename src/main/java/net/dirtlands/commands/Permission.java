@@ -4,7 +4,8 @@ public enum Permission {
     DIRTLANDS("dirtlands.dirtlands"),
     ECONOMY("dirtlands.economy"),
     SHOPKEEPER("dirtlands.shopkeeper"),
-    BYPASS_COMBAT("dirtlands.combat.bypass");
+    BYPASS_COMBAT("dirtlands.combat.bypass"),
+    DURABILITY("dirtlands.durability");
 
     private final String name;
 
