@@ -20,14 +20,14 @@ public class OnItemDamage implements Listener {
 
     @EventHandler
     public void onPlayerItemDamage(PlayerItemDamageEvent e) {
-        e.setCancelled(true);
-
         int durability = Durability.getDurability(e.getItem());
         int maxDurability = Durability.getMaxDurability(e.getItem());
+
         if (maxDurability == -1 || durability == -1) {
-            durability = 100;
-            maxDurability = 100;
+            return;
         }
+
+        e.setCancelled(true);
 
         if (e.getItem().containsEnchantment(Enchantment.DURABILITY)) {
             double randomVal = new Random().nextDouble();
