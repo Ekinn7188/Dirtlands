@@ -23,9 +23,16 @@ commands:
     description: edits the lore of an item to make it a carbon copy
   durability:
     description: adds custom durability to an item
+  diamond:
+    description: gives the player a diamond
+  token:
+    description: gives the player a token
 permissions:
   dirtlands.dirtlands:
     description: gives access to server-related commands
+    default: op
+  dirtlands.economy:
+    description: gives access to economy-related commands
     default: op
   dirtlands.shopkeeper:
     description: gives access to editing shopkeepers
