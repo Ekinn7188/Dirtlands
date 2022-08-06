@@ -10,6 +10,7 @@ import net.dirtlands.database.ItemSerialization;
 import net.dirtlands.economy.Currency;
 import net.dirtlands.economy.Economy;
 import net.dirtlands.listeners.shopkeepers.custom.shops.HorseShop;
+import net.dirtlands.tools.Durability;
 import net.dirtlands.tools.ItemTools;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -441,6 +442,18 @@ public class Shopkeeper implements Listener {
             Material material = itemToParse.getType();
             //Removes most metadata in item if not a copy
             ItemStack itemToAdd = data.isCarbonCopy() ? itemToParse : new ItemStack(material, itemToParse.getAmount());
+
+            if (!data.isCarbonCopy()) {
+                int durability, maxDurability;
+
+                durability = Durability.getDurability(itemToParse);
+                maxDurability = Durability.getMaxDurability(itemToParse);
+
+                if (durability != -1 && maxDurability != -1){
+                    Durability.setCustomDurability(itemToAdd, durability, maxDurability);
+                }
+            }
+
 
             if (customAmount) {
                 //buy custom amount
