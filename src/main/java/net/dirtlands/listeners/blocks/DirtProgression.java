@@ -41,7 +41,9 @@ public class DirtProgression implements Listener {
         }
 
 
-        if (e.getBlock().getType().equals(Material.GRASS_BLOCK)) {
+        if (e.getBlock().getType().equals(Material.GRASS_BLOCK) ||
+                e.getBlock().getType().equals(Material.DIRT_PATH) ||
+                e.getBlock().getType().equals(Material.MYCELIUM)) {
             e.setDropItems(false);
             Location location = e.getBlock().getLocation();
             location.getWorld().dropItemNaturally(location, new ItemStack(Material.COARSE_DIRT, 1));
