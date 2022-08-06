@@ -7,22 +7,29 @@ import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Horse;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.HorseInventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.persistence.PersistentDataType;
 import org.spigotmc.event.entity.EntityDismountEvent;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 public class HorseMount implements Listener {
 
@@ -87,20 +94,92 @@ public class HorseMount implements Listener {
 
                 horse.setStyle(style);
 
+                NamespacedKey mountKey = new NamespacedKey(Main.getPlugin(), "HorseMount");
+                horse.getPersistentDataContainer().set(mountKey, PersistentDataType.BYTE, (byte)1);
+
+                NamespacedKey speedKey = new NamespacedKey(Main.getPlugin(), "HorseSpeed");
+                horse.getPersistentDataContainer().set(speedKey, PersistentDataType.INTEGER, speedVal);
+
+                NamespacedKey jumpKey = new NamespacedKey(Main.getPlugin(), "HorseJump");
+                horse.getPersistentDataContainer().set(jumpKey, PersistentDataType.INTEGER, jumpVal);
+
                 horse.setJumpStrength(0.25D*(double)jumpVal + 0.3D);
                 var speed = horse.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED);
                 if (speed != null) {
-                    speed.setBaseValue(((double)speedVal*9D + 2D)/43D);
+                    speed.setBaseValue(0.05*speedVal);
                 }
                 var maxHealth = horse.getAttribute(Attribute.GENERIC_MAX_HEALTH);
                 if (maxHealth != null) {
-                    maxHealth.setBaseValue(20.0);
-                    horse.setHealth(20.0);
+                    maxHealth.setBaseValue(10.0);
+                    horse.setHealth(10.0);
                 }
-
-
-
             }
+        }
+    }
+
+    private static final Map<UUID, Double> distanceBetweenLastEvent = new HashMap<>();
+
+    @EventHandler
+    public void onHorseMountMove(PlayerMoveEvent e) {
+        if (e.getPlayer().getVehicle() == null) {
+            return;
+        }
+        if (e.getPlayer().getVehicle().getType().equals(EntityType.HORSE)) {
+            Horse horse = (Horse) e.getPlayer().getVehicle();
+            horse.setRearing(false);
+
+            NamespacedKey mountKey = new NamespacedKey(Main.getPlugin(), "HorseMount");
+
+            Byte mountByte = horse.getPersistentDataContainer().get(mountKey, PersistentDataType.BYTE);
+
+            if (mountByte == null || mountByte != 1) {
+                return;
+            }
+
+            NamespacedKey speedKey = new NamespacedKey(Main.getPlugin(), "HorseSpeed");
+
+            Integer speedVal = horse.getPersistentDataContainer().get(speedKey, PersistentDataType.INTEGER);
+
+            if (speedVal == null) {
+                return;
+            }
+
+            var speed = horse.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED);
+
+            if (speed == null) {
+                return;
+            }
+
+
+            Double previousDistance = distanceBetweenLastEvent.get(e.getPlayer().getUniqueId());
+            if (previousDistance == null) {
+                previousDistance = 0.0;
+            }
+
+            double currentDistance = e.getFrom().distanceSquared(e.getTo());
+            distanceBetweenLastEvent.put(e.getPlayer().getUniqueId(), currentDistance);
+
+            double maxSpeed = ((double)speedVal*9D+2D)/43D;
+            if (previousDistance >= 0 && previousDistance <= 0.01) {
+                speed.setBaseValue(0.05*speedVal);
+            }
+            else if (previousDistance <= currentDistance && speed.getBaseValue() <= maxSpeed) {
+                speed.setBaseValue(speed.getValue()+0.005D);
+            }
+            // + 0.3D to give some leeway before quickly slowing down
+            else if (previousDistance > currentDistance + 0.3D && speed.getBaseValue() >= 0.05*speedVal && !horse.isJumping()) {
+                speed.setBaseValue(speed.getValue()-0.01D);
+            }
+
+
+        }
+    }
+
+    @EventHandler
+    public void onHorseDamage(EntityDamageEvent e) {
+        if (e.getEntity().getType().equals(EntityType.HORSE)) {
+            Horse horse = (Horse) e.getEntity();
+            horse.setRearing(true);
         }
     }
 

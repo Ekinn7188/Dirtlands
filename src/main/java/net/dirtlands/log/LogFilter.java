@@ -7,11 +7,25 @@ import org.apache.logging.log4j.core.Logger;
 import org.apache.logging.log4j.core.filter.AbstractFilter;
 import org.apache.logging.log4j.message.Message;
 
+import java.util.List;
+
 public class LogFilter extends AbstractFilter {
 
     @Override
     public Result filter(LogEvent event) {
-        return event == null ? Result.NEUTRAL : isLoggable(event.getMessage().getFormattedMessage());
+        if (event == null) {
+            return Result.NEUTRAL;
+        }
+
+        // Check the logger Name (e.g. net.dirtlands.log.MyLogger)
+        String name = event.getLoggerName();
+        Result loggerResult = isLoggable(name);
+
+        if (loggerResult != Result.NEUTRAL) {
+            return loggerResult;
+        }
+
+        return isLoggable(event.getMessage().getFormattedMessage());
     }
 
     @Override
@@ -31,6 +45,23 @@ public class LogFilter extends AbstractFilter {
 
     private Result isLoggable(String msg) {
         if (msg != null) {
+
+            List<String> bootMessages =
+                    List.of(
+                            "org.flywaydb.core.internal.license.VersionPrinter",
+                            "org.flywaydb.core.internal.database.base.BaseDatabaseType",
+                            "org.flywaydb.core.internal.schemahistory.JdbcTableSchemaHistory",
+                            "org.flywaydb.core.internal.command.DbRepair",
+                            "org.flywaydb.core.internal.license.VersionPrinter",
+                            "org.flywaydb.core.internal.command.DbValidate",
+                            "org.flywaydb.core.internal.command.DbMigrate",
+                            "org.reflections.Reflections"
+                    );
+
+            if (bootMessages.contains(msg)) {
+                return Result.DENY;
+            }
+
 
             if (msg.contains("issued server command:")) {
                 if (msg.contains("/warn") || msg.contains("/unmute") || msg.contains("/unban") || msg.contains("/ban")

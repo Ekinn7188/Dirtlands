@@ -5,6 +5,7 @@ import jeeper.utils.MessageTools;
 import net.citizensnpcs.api.CitizensAPI;
 import net.dirtlands.Main;
 import net.dirtlands.database.ItemSerialization;
+import net.dirtlands.economy.Currency;
 import net.dirtlands.tools.ItemTools;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -47,7 +48,7 @@ public class Editor implements Listener {
     private static final HashMap<HumanEntity, ClosedEditorData> closingEditor = new HashMap<>();
     //gives a 1-second cooldown before opening any inventories
     private static final Map<UUID, Long> editorCooldown = new HashMap<>();
-    protected static final List<ItemStack> editorHotbar = Stream.of(
+    public static final List<ItemStack> editorHotbar = Stream.of(
             makeHotbarItem(generateGuiBackground()),
 
             ItemTools.createGuiItem(Material.BARRIER, MessageTools.parseText("&cDelete Shop"), 1),
@@ -56,7 +57,7 @@ public class Editor implements Listener {
                     List.of(Component.text(" "),
                             MessageTools.parseText("<#856f2d>Example Item Description"),
                             Component.text(" "),
-                            MessageTools.parseText("<#856f2d>Buy/Sell: <#7c3e12>{price} <#856f2d>expensive diamonds")
+                            MessageTools.parseText("<#856f2d>Buy/Sell: Buy: 1.10")
                     ).toArray(new Component[0])
             ),
 
@@ -177,16 +178,16 @@ public class Editor implements Listener {
                             //oldSize/size helps deal with making the inventory work smaller and bigger
                             inv.setContents(Arrays.copyOfRange(contents, 0, oldSize < updatedSize ? oldSize - 9 : updatedSize - 9));
 
-                            for (int i = 0; i < 9; i++) {
-                                inv.setItem(i + updatedSize - 9, editorHotbar.get(0));
-                            }
+                            ItemStack[] hotbar = Arrays.copyOfRange(contents, contents.length-9, contents.length);
 
-                            inv.setItem(updatedSize - 9, editorHotbar.get(1));
-                            inv.setItem(updatedSize - 8, editorHotbar.get(2));
-                            inv.setItem(updatedSize - 6, editorHotbar.get(3));
-                            inv.setItem(updatedSize - 5, updatedChestLore(size));
-                            inv.setItem(updatedSize - 4, editorHotbar.get(5));
-                            inv.setItem(updatedSize - 2, editorHotbar.get(6));
+                            for (int i = 0; i < 9; i++) {
+                                ItemStack hotbarItem = hotbar[i];
+                                if (hotbarItem.getType().equals(Material.CHEST)) {
+                                    inv.setItem(inv.getSize() - 9 + i, updatedChestLore(size));
+                                    continue;
+                                }
+                                inv.setItem(inv.getSize() - 9 + i, hotbarItem);
+                            }
 
                             invReference.inv = inv;
                             return AnvilGUI.Response.close();
@@ -248,8 +249,6 @@ public class Editor implements Listener {
             }
             return;
         }
-
-
 
         if (!e.isCancelled()) {
             parseNewItem(e.getCursor());
@@ -324,17 +323,23 @@ public class Editor implements Listener {
             ItemMeta meta = item.getItemMeta();
             for (Component line : lore) {
                 String plainLore = PlainTextComponentSerializer.plainText().serialize(line);
-                if (plainLore.toUpperCase().startsWith("BUY: ")) {
-                    String noBuyText = plainLore.substring(5);
-                    lore.set(lore.indexOf(line), ItemTools.enableItalicUsage(MessageTools.parseText("<#2BD5D5>Buy: <aqua>" + noBuyText + " <dark_aqua><bold>❖")));
-                    continue;
-                } else if (plainLore.toUpperCase().startsWith("SELL: ")) {
-                    String noSellText = plainLore.substring(6);
-                    lore.set(lore.indexOf(line), ItemTools.enableItalicUsage(MessageTools.parseText("<#2BD5D5>Sell: <aqua>" + noSellText + " <dark_aqua><bold>❖")));
-                    continue;
-                } else if (plainLore.equalsIgnoreCase("Carbon Copy")) {
-                    lore.set(lore.indexOf(line), ItemTools.enableItalicUsage(MessageTools.parseText("<italic><#2BD5D5>Carbon Copy")));
-                    continue;
+                if (!plainLore.contains("❖") && !plainLore.contains("☀")) {
+                    if (plainLore.toUpperCase().startsWith("BUY: ")) {
+                        var temp = createSellBuyLore(plainLore, line, "Buy");
+                        if (temp != null) {
+                            lore.set(lore.indexOf(line), temp);
+                        }
+                        continue;
+                    } else if (plainLore.toUpperCase().startsWith("SELL: ")) {
+                        var temp = createSellBuyLore(plainLore, line, "Sell");
+                        if (temp != null) {
+                            lore.set(lore.indexOf(line), temp);
+                        }
+                        continue;
+                    } else if (plainLore.equalsIgnoreCase("Carbon Copy")) {
+                        lore.set(lore.indexOf(line), ItemTools.enableItalicUsage(MessageTools.parseText("<italic><#2BD5D5>Carbon Copy")));
+                        continue;
+                    }
                 }
                 lore.set(lore.indexOf(line),
                         ItemTools.enableItalicUsage(
@@ -354,6 +359,50 @@ public class Editor implements Listener {
         }
 
         return item;
+    }
+
+    private Component createSellBuyLore(String plainLore, Component line, String buySell) {
+        String noExtraText = plainLore.toUpperCase().replaceFirst("(BUY: )|(SELL: )", "").trim();
+        try {
+            //Confirms that this is a double
+            Double.parseDouble(noExtraText);
+        } catch (NumberFormatException e) {
+            return null;
+        }
+        // splitCost[0] == diamond, splitCost[1] == token
+        String[] splitCost = noExtraText.split("\\.");
+        if (splitCost.length < 1) {
+            return null;
+        }
+        if ((splitCost[0].equals("0") || splitCost[0].equals("")) ||
+                (noExtraText.contains(".") && noExtraText.indexOf(".") < noExtraText.toUpperCase().indexOf(splitCost[0]))) {
+            try {
+                Currency currency = new Currency(0, Integer.parseInt(splitCost[1]));
+                currency.convertTokensToDiamonds();
+                if (currency.getDiamonds() > 0) {
+                    if (currency.getTokens() == 0) {
+                        return ItemTools.enableItalicUsage(MessageTools.parseText("<#2BD5D5>" + buySell + ": <dark_aqua>" +
+                                currency.getDiamonds() + " <bold>❖"));
+                    } else {
+                        return ItemTools.enableItalicUsage(MessageTools.parseText("<#2BD5D5>" + buySell + ": <dark_aqua>" +
+                                currency.getDiamonds() + " <bold>❖</bold> <gold>" + currency.getTokens() + " ☀"));
+                    }
+                } else {
+                    return ItemTools.enableItalicUsage(MessageTools.parseText("<#2BD5D5>" + buySell + ": <gold>" +
+                            currency.getTokens() + " ☀"));
+                }
+            } catch (NumberFormatException e) {
+                return ItemTools.enableItalicUsage(MessageTools.parseText("<#2BD5D5>" + buySell + ": <gold>" +
+                        splitCost[0] + " ☀"));
+            }
+        }
+        else if (splitCost[1].equals("0") || splitCost[1].equals("")) {
+            return ItemTools.enableItalicUsage(MessageTools.parseText("<#2BD5D5>" + buySell + ": <dark_aqua>" +
+                            splitCost[0] + " <bold>❖"));
+        } else {
+            return ItemTools.enableItalicUsage(MessageTools.parseText("<#2BD5D5>" + buySell + ": <dark_aqua>" +
+                    splitCost[0] + " <bold>❖</bold> <gold>" + splitCost[1] + " ☀"));
+        }
     }
 
     @EventHandler
@@ -432,7 +481,7 @@ public class Editor implements Listener {
         }
     }
 
-    protected static ItemStack generateGuiBackground() {
+    public static ItemStack generateGuiBackground() {
         ItemStack item = ItemTools.createGuiItem(Material.BLACK_STAINED_GLASS_PANE, Component.text(" "), 1);
         NamespacedKey backgroundKey = new NamespacedKey(Main.getPlugin(), "GuiBackground");
         ItemMeta meta = item.getItemMeta();
@@ -441,7 +490,7 @@ public class Editor implements Listener {
         return item;
     }
 
-    protected static ItemStack makeHotbarItem(ItemStack item) {
+    public static ItemStack makeHotbarItem(ItemStack item) {
         NamespacedKey editorHotbarKey = new NamespacedKey(Main.getPlugin(), "EditorHotbar");
         ItemMeta meta = item.getItemMeta();
         meta.getPersistentDataContainer().set(editorHotbarKey, PersistentDataType.BYTE, (byte)1);
@@ -449,14 +498,14 @@ public class Editor implements Listener {
         return item;
     }
 
-    protected static ItemStack removeHotbarItem(ItemStack item) {
+    public static ItemStack removeHotbarItem(ItemStack item) {
         ItemMeta meta = item.getItemMeta();
         meta.getPersistentDataContainer().remove(new NamespacedKey(Main.getPlugin(), "EditorHotbar"));
         item.setItemMeta(meta);
         return item;
     }
 
-    protected static boolean isHotbarItem(ItemStack item) {
+    public static boolean isHotbarItem(ItemStack item) {
         return item.getItemMeta().getPersistentDataContainer()
                 .has(new NamespacedKey(Main.getPlugin(), "EditorHotbar"));
     }

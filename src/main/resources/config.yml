@@ -35,6 +35,9 @@ Unsafe Spawn Location: '<#856f2d>Unsafe Spawn Location.'
 # Drop Confirmation
 Drop Confirmation: '<#856f2d>Press ''<key:key.drop>'' again to confirm drop'
 
+# Block Breaking
+Cant Break Block: '<#856f2d>You need a stronger tool to dig this block'
+
 # Commands
 No Command Permission: '&cYou dont have permission to use this command!'
 Player Only Command: '<#b8a567>You must be a player to execute this command!'
@@ -42,29 +45,25 @@ Player Doesnt Exist: '<#856f2d><player><#b8a567> doesn''t exist!'
 Player Hasnt Logged In: '<#856f2d><player><#b8a567> has never logged in before!'
 Player Is Offline: '<#856f2d><player><#b8a567> is offline!'
 Correct Usage: '<#b8a567>Usage: <#856f2d><command>'
+Item In Hand: '<#856f2d>You must have an item in your hand to use this command!'
 
 # Input Errors
 Invalid Number: '<#856f2d>Invalid number!'
 
 # Economy
-Money Gained Actionbar: '<#2BD5D5>+<aqua><money></aqua> <dark_aqua><bold>❖</bold></dark_aqua>'
-Money Set Actionbar: '<#2BD5D5>Your Balance Has Been Set To <aqua><money> <dark_aqua><bold>❖'
-Money Lost Actionbar: '<#2BD5D5>-<aqua><money></aqua> <dark_aqua><bold>❖</bold></dark_aqua>'
 Cant Afford Message: '<#b8a567>You can''t afford this!'
-Player Doesnt Have Enough Money: '<#856f2d><player><#b8a567> doesn''t have enough money for this action'
-Baltop Header: '<#b8a567>&m----------&r <#7c3e12>Baltop <#b8a567>&m-</#b8a567>&r <#7c3e12>Page</#7c3e12> <#856f2d><page><#7c3e12>/</#7c3e12><pages> <#b8a567>&m----------'
-Baltop Names: '<#b8a567>(#<position>) <#856f2d><name>: <aqua><balance></aqua> <dark_aqua><bold>❖'
-Player Balance: <#2BD5D5><player> has <aqua><balance></aqua> <dark_aqua>Expensive Diamonds
-Balance: '<#2BD5D5>You have <aqua><balance></aqua> <dark_aqua>Expensive Diamonds'
 
 # Playtime
-Your Playtime: '<#856f2d>You have been playing for <#b8a567><hours></#b8a567> hours and <#b8a567><minutes></#b8a567> minutes'
+Your Playtime: '<#b8a567>You have been playing for <#856f2d><hours></#856f2d> hours and <#856f2d><minutes></#856f2d> minutes'
 Other Playtime: '<#856f2d><player><#b8a567> has been playing for <#b8a567><hours></#b8a567> hours and <#b8a567><minutes></#b8a567> minutes'
 
 # Shop
 No Space: '<#856f2d>You don''t have enough space in your inventory for this'
+No Space Drop: '<#856f2d>You don''t have enough space in your inventory for this, so the item has been dropped. <#b8a567>(Don''t worry, you''re the only one who can see it!)'
+Horse Max Upgrade: '<#856f2d>You''ve reached the max upgrade for this!'
 Quick Inventory: '<#856f2d>You are opening inventories too quickly!'
 Trade Error: '<#856f2d>There was a problem with this trade. Please contact an admin.'
+Shop Lore Set: '<#856f2d>Your item''s lore has been successfully updated!'
 
 # Word Filter
 Word Filter: ["Nigger", "Nigga", "Chink", "Coon", "Jap", "Kys", "Kill yourself", "Fag", "Faggot", "Retard", "Retarded"]

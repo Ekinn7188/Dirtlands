@@ -8,13 +8,6 @@ main: net.dirtlands.Main
 commands:
   dirtlands:
     description: dirtlands command that branches out to other server-related commands
-  economy:
-    description: used for giving, removing, and setting money
-    aliases: [econ, eco]
-  baltop:
-    description: gets the top richest players
-  bal:
-    description: gets the balance of a player
   garp:
     description: warps to the shop
   playtime:
@@ -22,12 +15,24 @@ commands:
   horsemount:
     description: gives the player a horse mount with the specified arguments
     aliases: [horse]
+  buy:
+    description: edits the lore of an item to make a buy item
+  sell:
+    description: edits the lore of an item to make a sell item
+  carboncopy:
+    description: edits the lore of an item to make it a carbon copy
+  durability:
+    description: adds custom durability to an item
+  diamond:
+    description: gives the player a diamond
+  token:
+    description: gives the player a token
 permissions:
   dirtlands.dirtlands:
     description: gives access to server-related commands
     default: op
   dirtlands.economy:
-    description: gives access to the /economy command!
+    description: gives access to economy-related commands
     default: op
   dirtlands.shopkeeper:
     description: gives access to editing shopkeepers
@@ -37,4 +42,7 @@ permissions:
     default: op
   dirtlands.horsemount:
     description: allows the use of the /horsemount command
+    default: op
+  dirtlands.durability:
+    description: allows players to set custom durability on an item
     default: op
