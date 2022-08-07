@@ -40,7 +40,7 @@ public class HorseShop implements Listener {
     static {
         BOOTS_ITEM = ItemTools.createGuiItem(Material.GOLDEN_BOOTS,
                 MessageTools.parseText("<green>Upgrade Jump Height"), 1,
-                MessageTools.parseText("<#2BD5D5>Cost: " + JUMP_UPGRADE_COST + " <dark_aqua><bold>❖"));
+                MessageTools.parseText("<#2BD5D5>Cost: " + JUMP_UPGRADE_COST + " " + Currency.EXPENSIVE_TOKEN_ITEM));
         ItemMeta meta = BOOTS_ITEM.getItemMeta() == null ? Bukkit.getItemFactory().getItemMeta(BOOTS_ITEM.getType()) : BOOTS_ITEM.getItemMeta();
         meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
         BOOTS_ITEM.setItemMeta(meta);
@@ -48,7 +48,7 @@ public class HorseShop implements Listener {
     }
     static ItemStack FEATHER_ITEM = makeHorseShopItem(ItemTools.createGuiItem(Material.FEATHER,
             MessageTools.parseText("<aqua>Upgrade Movement Speed"),1,
-            MessageTools.parseText("<#2BD5D5>Cost: " + SPEED_UPGRADE_COST + " <dark_aqua><bold>❖")), "SpeedUpgrade");
+            MessageTools.parseText("<#2BD5D5>Cost: " + SPEED_UPGRADE_COST + " " + Currency.EXPENSIVE_TOKEN_CHARACTER)), "SpeedUpgrade");
 
     @EventHandler
     public void onHorseShopItemClick(InventoryClickEvent e) {
@@ -98,7 +98,7 @@ public class HorseShop implements Listener {
                         continue;
                     }
 
-                    plain = plain.toUpperCase().replace("BUY: ", "").replace(" ❖", "");
+                    plain = plain.toUpperCase().replace("BUY: ", "").replace(" " + Currency.EXPENSIVE_TOKEN_CHARACTER, "");
 
                     int cost = Integer.parseInt(plain);
                     horseCost.put(e.getWhoClicked().getUniqueId(), cost);
@@ -189,7 +189,7 @@ public class HorseShop implements Listener {
         if (cost == null) {
             return;
         }
-        lore.add(MessageTools.parseText("<!italic><#2BD5D5>Buy: <aqua>" + cost + " <dark_aqua><bold>❖"));
+        lore.add(MessageTools.parseText("<!italic><#2BD5D5>Buy: <aqua>" + cost + " " + Currency.EXPENSIVE_TOKEN_CHARACTER));
         lore.add(MessageTools.parseText("<italic><#2BD5D5>Carbon Copy"));
 
         ItemMeta meta = saddle.getItemMeta();

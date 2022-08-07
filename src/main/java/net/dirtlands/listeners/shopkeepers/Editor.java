@@ -323,7 +323,7 @@ public class Editor implements Listener {
             ItemMeta meta = item.getItemMeta();
             for (Component line : lore) {
                 String plainLore = PlainTextComponentSerializer.plainText().serialize(line);
-                if (!plainLore.contains("❖") && !plainLore.contains("☀")) {
+                if (!plainLore.contains(Currency.EXPENSIVE_TOKEN_CHARACTER + "") && !plainLore.contains(Currency.TOKEN_CHARACTER + "")) {
                     if (plainLore.toUpperCase().startsWith("BUY: ")) {
                         var temp = createSellBuyLore(plainLore, line, "Buy");
                         if (temp != null) {
@@ -369,7 +369,7 @@ public class Editor implements Listener {
         } catch (NumberFormatException e) {
             return null;
         }
-        // splitCost[0] == diamond, splitCost[1] == token
+        // splitCost[0] == expensive tokens, splitCost[1] == token
         String[] splitCost = noExtraText.split("\\.");
         if (splitCost.length < 1) {
             return null;
@@ -378,30 +378,30 @@ public class Editor implements Listener {
                 (noExtraText.contains(".") && noExtraText.indexOf(".") < noExtraText.toUpperCase().indexOf(splitCost[0]))) {
             try {
                 Currency currency = new Currency(0, Integer.parseInt(splitCost[1]));
-                currency.convertTokensToDiamonds();
-                if (currency.getDiamonds() > 0) {
+                currency.convertTokensToExpensiveTokens();
+                if (currency.getExpensiveTokens() > 0) {
                     if (currency.getTokens() == 0) {
                         return ItemTools.enableItalicUsage(MessageTools.parseText("<#2BD5D5>" + buySell + ": <dark_aqua>" +
-                                currency.getDiamonds() + " <bold>❖"));
+                                currency.getExpensiveTokens() + " " + Currency.EXPENSIVE_TOKEN_CHARACTER));
                     } else {
                         return ItemTools.enableItalicUsage(MessageTools.parseText("<#2BD5D5>" + buySell + ": <dark_aqua>" +
-                                currency.getDiamonds() + " <bold>❖</bold> <gold>" + currency.getTokens() + " ☀"));
+                                currency.getExpensiveTokens() + " " + Currency.EXPENSIVE_TOKEN_CHARACTER + " <gold>" + currency.getTokens() + " " + Currency.TOKEN_CHARACTER));
                     }
                 } else {
                     return ItemTools.enableItalicUsage(MessageTools.parseText("<#2BD5D5>" + buySell + ": <gold>" +
-                            currency.getTokens() + " ☀"));
+                            currency.getTokens() + " " + Currency.TOKEN_CHARACTER));
                 }
             } catch (NumberFormatException e) {
                 return ItemTools.enableItalicUsage(MessageTools.parseText("<#2BD5D5>" + buySell + ": <gold>" +
-                        splitCost[0] + " ☀"));
+                        splitCost[0] + " " + Currency.TOKEN_CHARACTER));
             }
         }
         else if (splitCost[1].equals("0") || splitCost[1].equals("")) {
             return ItemTools.enableItalicUsage(MessageTools.parseText("<#2BD5D5>" + buySell + ": <dark_aqua>" +
-                            splitCost[0] + " <bold>❖"));
+                            splitCost[0] + " " + Currency.EXPENSIVE_TOKEN_CHARACTER));
         } else {
             return ItemTools.enableItalicUsage(MessageTools.parseText("<#2BD5D5>" + buySell + ": <dark_aqua>" +
-                    splitCost[0] + " <bold>❖</bold> <gold>" + splitCost[1] + " ☀"));
+                    splitCost[0] + " " + Currency.EXPENSIVE_TOKEN_CHARACTER + " <gold>" + splitCost[1] + " " + Currency.TOKEN_CHARACTER));
         }
     }
 

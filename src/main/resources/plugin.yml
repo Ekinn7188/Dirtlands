@@ -23,8 +23,8 @@ commands:
     description: edits the lore of an item to make it a carbon copy
   durability:
     description: adds custom durability to an item
-  diamond:
-    description: gives the player a diamond
+  expensive-token:
+    description: gives the player an expensive-token
   token:
     description: gives the player a token
 permissions:

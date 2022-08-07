@@ -31,7 +31,7 @@ public class Buy extends PluginCommand {
     public void execute(Player player, String[] args) {
         if (args.length == 0) {
             player.sendMessage(MessageTools.parseFromPath(Main.getPlugin().config(), "Correct Usage",
-                    Placeholder.unparsed("command", "/buy <diamonds> <tokens>")));
+                    Placeholder.unparsed("command", "/buy <expensive tokens> <tokens>")));
         }
 
         buySellLoreCommand(player, args, "Buy");
@@ -50,9 +50,9 @@ public class Buy extends PluginCommand {
             lore = new ArrayList<>();
         }
 
-        int diamonds = 0, tokens = 0;
+        int expensiveTokens = 0, tokens = 0;
         try {
-            diamonds = Integer.parseInt(args[0]);
+            expensiveTokens = Integer.parseInt(args[0]);
             tokens = Integer.parseInt(args[1]);
         } catch (NumberFormatException e) {
             player.sendMessage(MessageTools.parseFromPath(Main.getPlugin().config(), "Invalid Number"));
@@ -61,10 +61,10 @@ public class Buy extends PluginCommand {
             //Continue, the value will be 0 if there's an index exception
         }
 
-        Currency price = new Currency(diamonds, tokens);
-        price.convertTokensToDiamonds();
+        Currency price = new Currency(expensiveTokens, tokens);
+        price.convertTokensToExpensiveTokens();
 
-        diamonds = price.getDiamonds();
+        expensiveTokens = price.getExpensiveTokens();
         tokens = price.getTokens();
 
         AtomicInteger buySellLine = new AtomicInteger(-1);
@@ -77,26 +77,26 @@ public class Buy extends PluginCommand {
         });
 
         if (buySellLine.get() == -1) {
-            if (diamonds != 0 && tokens != 0) {
+            if (expensiveTokens != 0 && tokens != 0) {
                 lore.add(MessageTools.parseText("<!italic><#2BD5D5>" + buySell + ": <dark_aqua>" +
-                        diamonds + " <bold>❖</bold> <gold>" + tokens + " ☀"));
+                        expensiveTokens + " " + Currency.EXPENSIVE_TOKEN_CHARACTER + " <gold>" + tokens + " " + Currency.TOKEN_CHARACTER));
             } else if (tokens != 0) {
                 lore.add(MessageTools.parseText("<!italic><#2BD5D5>" + buySell + ": <gold>" +
-                        tokens + " ☀"));
+                        tokens + " " + Currency.TOKEN_ITEM));
             } else {
                 lore.add(MessageTools.parseText("<!italic><#2BD5D5>" + buySell + ": <dark_aqua>" +
-                        diamonds + " <bold>❖"));
+                        expensiveTokens + " " + Currency.EXPENSIVE_TOKEN_CHARACTER));
             }
         } else {
-            if (diamonds != 0 && tokens != 0) {
+            if (expensiveTokens != 0 && tokens != 0) {
                 lore.set(buySellLine.get(), MessageTools.parseText("<!italic><#2BD5D5>" + buySell + ": <dark_aqua>" +
-                        diamonds + " <bold>❖</bold> <gold>" + tokens + " ☀"));
+                        expensiveTokens + " " + Currency.EXPENSIVE_TOKEN_CHARACTER + " <gold>" + tokens + " " + Currency.TOKEN_ITEM));
             } else if (tokens != 0) {
                 lore.set(buySellLine.get(), MessageTools.parseText("<!italic><#2BD5D5>" + buySell + ": <gold>" +
-                        tokens + " ☀"));
+                        tokens + " " + Currency.TOKEN_CHARACTER));
             } else {
                 lore.set(buySellLine.get(), MessageTools.parseText("<!italic><#2BD5D5>" + buySell + ": <dark_aqua>" +
-                        diamonds + " <bold>❖"));
+                        expensiveTokens + " " + Currency.EXPENSIVE_TOKEN_CHARACTER));
             }
         }
 

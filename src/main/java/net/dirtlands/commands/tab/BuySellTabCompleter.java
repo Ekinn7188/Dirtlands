@@ -15,7 +15,7 @@ public class BuySellTabCompleter extends PluginTabCompleter {
     @Override
     public List<String> tabCompleter(Player player, @NotNull String[] args) {
         if (args.length == 1) {
-            return List.of("<diamonds>");
+            return List.of("<expensive tokens>");
         }
         else if (args.length == 2) {
             return List.of("<tokens>");

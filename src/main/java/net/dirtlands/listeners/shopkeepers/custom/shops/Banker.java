@@ -47,7 +47,7 @@ public class Banker implements Listener {
 
 
         if (bankerData == null || bankerData.equals("")) {
-            if (!item.asOne().equals(Currency.TOKEN_ITEM) && !item.asOne().equals(Currency.DIAMOND_ITEM)) {
+            if (!item.asOne().equals(Currency.TOKEN_ITEM) && !item.asOne().equals(Currency.EXPENSIVE_TOKEN_ITEM)) {
                 if (openStorageMenu.containsKey(e.getWhoClicked().getUniqueId())) {
                     e.setCancelled(true);
                 }

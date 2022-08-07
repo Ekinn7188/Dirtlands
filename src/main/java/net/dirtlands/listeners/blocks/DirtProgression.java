@@ -96,7 +96,7 @@ public class DirtProgression implements Listener {
                 if (item == null) {
                     return;
                 }
-                if (item.asOne().equals(Currency.DIAMOND_ITEM) || item.asOne().equals(Currency.TOKEN_ITEM)) {
+                if (item.asOne().equals(Currency.EXPENSIVE_TOKEN_ITEM) || item.asOne().equals(Currency.TOKEN_ITEM)) {
                     location.getWorld().dropItemNaturally(location, item);
 
                     box.getInventory().remove(item);
@@ -125,7 +125,7 @@ public class DirtProgression implements Listener {
         if (item == null) {
             return;
         }
-        if (item.asOne().equals(Currency.DIAMOND_ITEM) || item.asOne().equals(Currency.TOKEN_ITEM)) {
+        if (item.asOne().equals(Currency.EXPENSIVE_TOKEN_ITEM) || item.asOne().equals(Currency.TOKEN_ITEM)) {
             location.getWorld().dropItemNaturally(location, item);
             inv.remove(item);
         }

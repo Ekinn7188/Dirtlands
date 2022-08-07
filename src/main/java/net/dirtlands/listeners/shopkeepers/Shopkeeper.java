@@ -230,7 +230,6 @@ public class Shopkeeper implements Listener {
         for (int i = 0 ; i < lore.size(); i++) {
             String plainLine = PlainTextComponentSerializer.plainText().serialize(lore.get(i)).toUpperCase();
 
-            //Buy: 20 expensive diamonds
             if (plainLine.startsWith("BUY: ")) {
                 buyLoreIndex = i;
             } else if (plainLine.toUpperCase().startsWith("SELL: ")) {
@@ -345,15 +344,15 @@ public class Shopkeeper implements Listener {
             lore.add(Component.empty());
             if (newPrice.getTokens() <= 0) {
                 lore.add(ItemTools.enableItalicUsage(MessageTools.parseText("<#2BD5D5>" + buyOrSell + ": <dark_aqua>" +
-                        newPrice.getDiamonds() + " <bold>❖")));
+                        newPrice.getExpensiveTokens() + " " + Currency.EXPENSIVE_TOKEN_CHARACTER)));
             }
-            else if (newPrice.getDiamonds() <= 0) {
+            else if (newPrice.getExpensiveTokens() <= 0) {
                 lore.add(ItemTools.enableItalicUsage(MessageTools.parseText("<#2BD5D5>" + buyOrSell + ": <gold>"
-                        + newPrice.getTokens() + " ☀")));
+                        + newPrice.getTokens() + " " + Currency.TOKEN_CHARACTER)));
             }
             else {
                 lore.add(ItemTools.enableItalicUsage(MessageTools.parseText("<#2BD5D5>" + buyOrSell + ": <dark_aqua>" +
-                        newPrice.getDiamonds() + " <bold>❖</bold> <gold>" + newPrice.getTokens() + " ☀")));
+                        newPrice.getExpensiveTokens() + " " + Currency.EXPENSIVE_TOKEN_CHARACTER + " <gold>" + newPrice.getTokens() + " " + Currency.TOKEN_CHARACTER)));
             }
             item.lore(lore);
             return item;
@@ -361,15 +360,15 @@ public class Shopkeeper implements Listener {
 
         if (newPrice.getTokens() <= 0) {
             lore.set(loreIndex, ItemTools.enableItalicUsage(MessageTools.parseText("<#2BD5D5>" + buyOrSell + ": <dark_aqua>" +
-                    newPrice.getDiamonds() + " <bold>❖")));
+                    newPrice.getExpensiveTokens() + " " + Currency.EXPENSIVE_TOKEN_CHARACTER)));
         }
-        else if (newPrice.getDiamonds() <= 0) {
+        else if (newPrice.getExpensiveTokens() <= 0) {
             lore.set(loreIndex, ItemTools.enableItalicUsage(MessageTools.parseText("<#2BD5D5>" + buyOrSell + ": <gold>"
-                    + newPrice.getTokens() + " ☀")));
+                    + newPrice.getTokens() + " " + Currency.TOKEN_CHARACTER)));
         }
         else {
             lore.set(loreIndex, ItemTools.enableItalicUsage(MessageTools.parseText("<#2BD5D5>" + buyOrSell + ": <dark_aqua>" +
-                    newPrice.getDiamonds() + " <bold>❖</bold> <gold>" + newPrice.getTokens() + " ☀")));
+                    newPrice.getExpensiveTokens() + " " + Currency.EXPENSIVE_TOKEN_CHARACTER + " <gold>" + newPrice.getTokens() + " " + Currency.TOKEN_CHARACTER)));
         }
 
         if (carbonCopyLine != null) {
@@ -619,43 +618,43 @@ public class Shopkeeper implements Listener {
         if (costLine == null) {
             return null;
         }
-        boolean diamonds = false;
+        boolean expensiveTokens = false;
         boolean tokens = false;
 
-        if (costLine.contains("❖")) {
-            diamonds = true;
+        if (costLine.contains(Currency.EXPENSIVE_TOKEN_CHARACTER + "")) {
+            expensiveTokens = true;
         }
-        if (costLine.contains("☀")) {
+        if (costLine.contains(Currency.TOKEN_CHARACTER + "")) {
             tokens = true;
         }
 
-        costLine = costLine.replaceAll("(BUY: )|(SELL: )|(☀)", "");
-        if (costLine.contains("❖")) {
-            costLine = costLine.replace("❖", ".").replaceAll(" ", "");
+        costLine = costLine.replaceAll("(BUY: )|(SELL: )|(" + Currency.TOKEN_CHARACTER + ")", "");
+        if (costLine.contains(Currency.EXPENSIVE_TOKEN_CHARACTER + "")) {
+            costLine = costLine.replace(Currency.EXPENSIVE_TOKEN_CHARACTER + "", ".").replaceAll(" ", "");
         } else {
             costLine = "0." + costLine.trim();
         }
 
         Currency buySellPrice;
 
-        // splitCost[0] == Diamonds, splitCost[1] == Tokens
+        // splitCost[0] == Expensive Tokens, splitCost[1] == Tokens
         String[] splitCost = costLine.trim().split("\\.");
         try {
             Double.parseDouble(costLine);
             if (splitCost.length == 1) {
-                if (diamonds) {
+                if (expensiveTokens) {
                     buySellPrice = new Currency(Integer.parseInt(splitCost[0]), 0);
                 }
                 else if (tokens) {
                     buySellPrice = new Currency(0, Integer.parseInt(splitCost[0]));
                 }
                 else {
-                    throw new NumberFormatException("Currency isn't tokens nor diamonds");
+                    throw new NumberFormatException("Currency isn't tokens nor expensiveTokens");
                 }
             } else {
-                int diamondCost = Integer.parseInt(splitCost[0]);
+                int expensiveTokenCost = Integer.parseInt(splitCost[0]);
                 int tokenCost = Integer.parseInt(splitCost[1]);
-                buySellPrice = new Currency(diamondCost, tokenCost);
+                buySellPrice = new Currency(expensiveTokenCost, tokenCost);
             }
         } catch (NumberFormatException ex) {
             player.sendMessage(MessageTools.parseFromPath(config, "Trade Error"));
@@ -663,7 +662,7 @@ public class Shopkeeper implements Listener {
             return null;
         }
 
-        buySellPrice.convertTokensToDiamonds();
+        buySellPrice.convertTokensToExpensiveTokens();
         return new SellData(item, buyOrSell, buySellPrice, buySellLine, carbonCopy, carbonCopyLine);
     }
 

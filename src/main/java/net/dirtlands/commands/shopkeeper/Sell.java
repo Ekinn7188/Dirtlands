@@ -22,7 +22,7 @@ public class Sell extends PluginCommand {
     public void execute(Player player, String[] args) {
         if (args.length == 0) {
             player.sendMessage(MessageTools.parseFromPath(Main.getPlugin().config(), "Correct Usage",
-                    Placeholder.unparsed("command", "/sell <diamonds> <tokens>")));
+                    Placeholder.unparsed("command", "/sell <expensive tokens> <tokens>")));
         }
 
         Buy.buySellLoreCommand(player, args, "Sell");
