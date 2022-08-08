@@ -78,25 +78,27 @@ public class Buy extends PluginCommand {
 
         if (buySellLine.get() == -1) {
             if (expensiveTokens != 0 && tokens != 0) {
-                lore.add(MessageTools.parseText("<!italic><#2BD5D5>" + buySell + ": <dark_aqua>" +
-                        expensiveTokens + " " + Currency.EXPENSIVE_TOKEN_CHARACTER + " <gold>" + tokens + " " + Currency.TOKEN_CHARACTER));
+                lore.add(MessageTools.parseText("<!italic><#2BD5D5>" + buySell + ": <dark_aqua><white>"
+                        + Currency.EXPENSIVE_TOKEN_CHARACTER + "</white> x " + expensiveTokens + " <gold><white>"
+                        + Currency.TOKEN_CHARACTER + "</white> x " + tokens));
             } else if (tokens != 0) {
-                lore.add(MessageTools.parseText("<!italic><#2BD5D5>" + buySell + ": <gold>" +
-                        tokens + " " + Currency.TOKEN_ITEM));
+                lore.add(MessageTools.parseText("<!italic><#2BD5D5>" + buySell + ": <gold><white>"
+                        + Currency.TOKEN_CHARACTER + "</white> x " + tokens));
             } else {
-                lore.add(MessageTools.parseText("<!italic><#2BD5D5>" + buySell + ": <dark_aqua>" +
-                        expensiveTokens + " " + Currency.EXPENSIVE_TOKEN_CHARACTER));
+                lore.add(MessageTools.parseText("<!italic><#2BD5D5>" + buySell + ": <dark_aqua><white>"
+                        + Currency.EXPENSIVE_TOKEN_CHARACTER + "</white> x " + expensiveTokens));
             }
         } else {
             if (expensiveTokens != 0 && tokens != 0) {
-                lore.set(buySellLine.get(), MessageTools.parseText("<!italic><#2BD5D5>" + buySell + ": <dark_aqua>" +
-                        expensiveTokens + " " + Currency.EXPENSIVE_TOKEN_CHARACTER + " <gold>" + tokens + " " + Currency.TOKEN_ITEM));
+                lore.set(buySellLine.get(), MessageTools.parseText("<!italic><#2BD5D5>" + buySell + ": <dark_aqua><white>"
+                        + Currency.EXPENSIVE_TOKEN_CHARACTER + "</white> x " + expensiveTokens + " <gold><white>"
+                        + Currency.TOKEN_CHARACTER + "</white> x " + tokens));
             } else if (tokens != 0) {
-                lore.set(buySellLine.get(), MessageTools.parseText("<!italic><#2BD5D5>" + buySell + ": <gold>" +
-                        tokens + " " + Currency.TOKEN_CHARACTER));
+                lore.set(buySellLine.get(), MessageTools.parseText("<!italic><#2BD5D5>" + buySell + ": <gold><white>"
+                        + Currency.TOKEN_CHARACTER + "</white> x " + tokens));
             } else {
-                lore.set(buySellLine.get(), MessageTools.parseText("<!italic><#2BD5D5>" + buySell + ": <dark_aqua>" +
-                        expensiveTokens + " " + Currency.EXPENSIVE_TOKEN_CHARACTER));
+                lore.set(buySellLine.get(), MessageTools.parseText("<!italic><#2BD5D5>" + buySell + ": <dark_aqua><white>"
+                        + Currency.EXPENSIVE_TOKEN_CHARACTER + "</white> x " + expensiveTokens));
             }
         }
 

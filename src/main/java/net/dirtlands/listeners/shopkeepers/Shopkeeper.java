@@ -343,32 +343,34 @@ public class Shopkeeper implements Listener {
             lore = new ArrayList<>();
             lore.add(Component.empty());
             if (newPrice.getTokens() <= 0) {
-                lore.add(ItemTools.enableItalicUsage(MessageTools.parseText("<#2BD5D5>" + buyOrSell + ": <dark_aqua>" +
-                        newPrice.getExpensiveTokens() + " " + Currency.EXPENSIVE_TOKEN_CHARACTER)));
+                lore.add(ItemTools.enableItalicUsage(MessageTools.parseText("<#2BD5D5>" + buyOrSell + ": <dark_aqua><white>"
+                        + Currency.EXPENSIVE_TOKEN_CHARACTER + "</white> x "+ newPrice.getExpensiveTokens())));
             }
             else if (newPrice.getExpensiveTokens() <= 0) {
-                lore.add(ItemTools.enableItalicUsage(MessageTools.parseText("<#2BD5D5>" + buyOrSell + ": <gold>"
-                        + newPrice.getTokens() + " " + Currency.TOKEN_CHARACTER)));
+                lore.add(ItemTools.enableItalicUsage(MessageTools.parseText("<#2BD5D5>" + buyOrSell + ": <gold><white>"
+                        + Currency.TOKEN_CHARACTER + "</white> x " + newPrice.getTokens())));
             }
             else {
-                lore.add(ItemTools.enableItalicUsage(MessageTools.parseText("<#2BD5D5>" + buyOrSell + ": <dark_aqua>" +
-                        newPrice.getExpensiveTokens() + " " + Currency.EXPENSIVE_TOKEN_CHARACTER + " <gold>" + newPrice.getTokens() + " " + Currency.TOKEN_CHARACTER)));
+                lore.add(ItemTools.enableItalicUsage(MessageTools.parseText("<#2BD5D5>" + buyOrSell + ": <dark_aqua><white>"
+                        + Currency.EXPENSIVE_TOKEN_CHARACTER + "</white> x "+ newPrice.getExpensiveTokens()
+                        + " <gold><white>" + Currency.TOKEN_CHARACTER + "</white> x " + newPrice.getTokens() )));
             }
             item.lore(lore);
             return item;
         }
 
         if (newPrice.getTokens() <= 0) {
-            lore.set(loreIndex, ItemTools.enableItalicUsage(MessageTools.parseText("<#2BD5D5>" + buyOrSell + ": <dark_aqua>" +
-                    newPrice.getExpensiveTokens() + " " + Currency.EXPENSIVE_TOKEN_CHARACTER)));
+            lore.set(loreIndex, ItemTools.enableItalicUsage(MessageTools.parseText("<#2BD5D5>" + buyOrSell + ": <dark_aqua><white>"
+                    + Currency.EXPENSIVE_TOKEN_CHARACTER + "</white> x "+ newPrice.getExpensiveTokens())));
         }
         else if (newPrice.getExpensiveTokens() <= 0) {
-            lore.set(loreIndex, ItemTools.enableItalicUsage(MessageTools.parseText("<#2BD5D5>" + buyOrSell + ": <gold>"
-                    + newPrice.getTokens() + " " + Currency.TOKEN_CHARACTER)));
+            lore.set(loreIndex, ItemTools.enableItalicUsage(MessageTools.parseText("<#2BD5D5>" + buyOrSell + ": <gold><white>"
+                    + Currency.TOKEN_CHARACTER + "</white> x " + newPrice.getTokens())));
         }
         else {
-            lore.set(loreIndex, ItemTools.enableItalicUsage(MessageTools.parseText("<#2BD5D5>" + buyOrSell + ": <dark_aqua>" +
-                    newPrice.getExpensiveTokens() + " " + Currency.EXPENSIVE_TOKEN_CHARACTER + " <gold>" + newPrice.getTokens() + " " + Currency.TOKEN_CHARACTER)));
+            lore.set(loreIndex, ItemTools.enableItalicUsage(MessageTools.parseText("<#2BD5D5>" + buyOrSell + ": <dark_aqua><white>"
+                    + Currency.EXPENSIVE_TOKEN_CHARACTER + "</white> x "+ newPrice.getExpensiveTokens()
+                    + " <gold><white>" + Currency.TOKEN_CHARACTER + "</white> x " + newPrice.getTokens() )));
         }
 
         if (carbonCopyLine != null) {
@@ -628,11 +630,14 @@ public class Shopkeeper implements Listener {
             tokens = true;
         }
 
-        costLine = costLine.replaceAll("(BUY: )|(SELL: )|(" + Currency.TOKEN_CHARACTER + ")", "");
+        costLine = costLine.replaceAll("(BUY: )|(SELL: )", "").replace(Currency.TOKEN_CHARACTER +  " X ", ".");
         if (costLine.contains(Currency.EXPENSIVE_TOKEN_CHARACTER + "")) {
-            costLine = costLine.replace(Currency.EXPENSIVE_TOKEN_CHARACTER + "", ".").replaceAll(" ", "");
+            if (!tokens) {
+                costLine = costLine + ".";
+            }
+            costLine = costLine.replaceAll("("+Currency.EXPENSIVE_TOKEN_CHARACTER+")|(X)|(\s)", "");
         } else {
-            costLine = "0." + costLine.trim();
+            costLine = "0" + costLine.trim();
         }
 
         Currency buySellPrice;
@@ -641,7 +646,7 @@ public class Shopkeeper implements Listener {
         String[] splitCost = costLine.trim().split("\\.");
         try {
             Double.parseDouble(costLine);
-            if (splitCost.length == 1) {
+            if (splitCost.length == 1 || splitCost[0].equals("") || splitCost[1].equals("")) {
                 if (expensiveTokens) {
                     buySellPrice = new Currency(Integer.parseInt(splitCost[0]), 0);
                 }

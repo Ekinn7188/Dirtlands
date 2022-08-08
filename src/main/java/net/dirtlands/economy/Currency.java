@@ -26,17 +26,19 @@ public class Currency {
         meta.lore(List.of(MessageTools.parseText("<!italic><aqua>Shiny and Grindy")));
         meta.addEnchant(Enchantment.DURABILITY, 3, true);
         meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
-        EXPENSIVE_TOKEN_ITEM.setItemMeta(meta);
 
         NamespacedKey key = new NamespacedKey(Main.getPlugin(), "currency");
-        meta.getPersistentDataContainer().set(key, PersistentDataType.STRING, "token");
+        meta.getPersistentDataContainer().set(key, PersistentDataType.STRING, "expensive_token");
+
+        EXPENSIVE_TOKEN_ITEM.setItemMeta(meta);
 
         meta = TOKEN_ITEM.getItemMeta();
         meta.displayName(MessageTools.parseText("<!italic><gold>Token"));
         meta.lore(List.of(MessageTools.parseText("<!italic><yellow>As cheap as it can get")));
-        TOKEN_ITEM.setItemMeta(meta);
 
-        meta.getPersistentDataContainer().set(key, PersistentDataType.STRING, "expensive_token");
+        meta.getPersistentDataContainer().set(key, PersistentDataType.STRING, "token");
+
+        TOKEN_ITEM.setItemMeta(meta);
     }
 
     private int expensiveTokens;
